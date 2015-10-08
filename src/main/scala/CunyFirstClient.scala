@@ -1,3 +1,5 @@
+package cunyfirst
+
 import com.gargoylesoftware.htmlunit._
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html._
@@ -46,6 +48,19 @@ class CunyFirstClient extends WebClient {
     settings.setRequestParameters(updatedSettings)
     getPage(settings)
   }
+
+  def getNewResults(newDept: String) = getResults(mapToList(withDept(params, newDept)))
+
+
+  def withDept(params: Map[String, String], dept: String): Map[String, String] =
+    params updated ("SSR_CLSRCH_WRK_SUBJECT_SRCH", dept)
+
+  def mapToList(m: Map[String, String]) = {
+    def toNVPair(p: (String, String)) = new NameValuePair(p._1, p._2)
+    seqAsJavaList((m map toNVPair).toList)
+  }
+
+
 }
 
 object Silent extends IncorrectnessListener {
