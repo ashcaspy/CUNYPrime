@@ -1,4 +1,4 @@
-//package cunyfirst;
+package cunyfirst;
 
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.io.IOException;
 import java.net.URL;
 
-class CunyFirstClient extends WebClient {
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+
+public class CunyFirstClient extends WebClient {
     public CunyFirstClient() {
+        super(BrowserVersion.CHROME); //silence errors
         getOptions().setCssEnabled(false);
         getOptions().setJavaScriptEnabled(true);
         getCookieManager().setCookiesEnabled(true);
@@ -19,7 +22,7 @@ class CunyFirstClient extends WebClient {
 
         try {
             request = new WebRequest(
-                    new URL("https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL"),
+                    new URL(ID.url),
                     HttpMethod.POST);
             searchPage = getPage(request);
 
@@ -39,19 +42,19 @@ class CunyFirstClient extends WebClient {
 
     //set institution, term, and course number
     public void setup(String school, String semester) {
-        HtmlSelect inst = getSelect("CLASS_SRCH_WRK2_INSTITUTION$42$");
+        HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(inst.getOptionByText(school), true);
         waitForBackgroundJavaScript(10000);
 
-        HtmlSelect term = getSelect("CLASS_SRCH_WRK2_STRM$45$");
+        HtmlSelect term = getSelect(ID.selectTerm);
         term.setSelectedAttribute(term.getOptionByText(semester), true);
         waitForBackgroundJavaScript(10000);
 
         //has to be done after school and term are set
         //search for course numbers > 0
-        HtmlSelect match = getSelect("SSR_CLSRCH_WRK_SSR_EXACT_MATCH1$1");
-        match.setSelectedAttribute(match.getOptionByValue("G"), true);
-        ((HtmlTextInput)searchPage.getElementById("SSR_CLSRCH_WRK_CATALOG_NBR$1")).setText("0");
+        HtmlSelect match = getSelect(ID.matchId);
+        match.setSelectedAttribute(match.getOptionByValue(ID.matchValue), true);
+        ((HtmlTextInput)searchPage.getElementById(ID.courseNbrId)).setText("0");
 
         List<NameValuePair> list = searchPage.getForms().get(0).getWebRequest(null).getRequestParameters();
 
@@ -60,13 +63,15 @@ class CunyFirstClient extends WebClient {
             parameters.put(p.getName(), p.getValue());
         }
 
-        parameters.put("ICAction", "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH");
-        parameters.put("SSR_CLSRCH_WRK_SSR_OPEN_ONLY$chk$5", "N");
+        parameters.put(ID.submitCode.getName(), ID.submitCode.getValue());
+        parameters.put(ID.showClosed.getName(), ID.showClosed.getValue());
 
     }
 
     public HtmlPage getResults(String dept) throws IOException {
-        parameters.put("SSR_CLSRCH_WRK_SUBJECT_SRCH", dept);
+        parameters.put(ID.deptCode, dept);
+
+        //convert map to list
         List<NameValuePair> newParams = new ArrayList<>();
         parameters.entrySet().stream().map(e -> new NameValuePair(e.getKey(), e.getValue())).forEach(newParams::add);
 
