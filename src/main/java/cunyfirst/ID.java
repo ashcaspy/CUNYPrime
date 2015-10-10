@@ -27,5 +27,17 @@ public class ID {
     public final static NameValuePair showClosed = new NameValuePair("SSR_CLSRCH_WRK_SSR_OPEN_ONLY$chk$5", "N");
     public final static String deptCode = "SSR_CLSRCH_WRK_SUBJECT_SRCH";
 
+    //parse results pages
+    private static String searchId(String id) {
+        return "[id^="+id+"]";
+    }
+    public final static String course = searchId("win0divSSR_CLSRSLT_WRK_GROUPBOX2");
+    public final static String courseName = searchId("win0divGPSSR_CLSRSLT_WRK_GROUPBOX2");
+
+    public final static String section = searchId("win0divSSR_CLSRCH_MTG");
+    public final static String instructor = searchId("MTG_INSTR");
+    public final static String sectionTime = searchId("MTG_DAYTIME");
+    public final static String sectionRoom = searchId("MTG_ROOM");
+    public final static String sectionNbr = searchId("MTG_CLASSNAME");
 
 }
