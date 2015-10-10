@@ -40,4 +40,6 @@ public class ID {
     public final static String sectionRoom = searchId("MTG_ROOM");
     public final static String sectionNbr = searchId("MTG_CLASSNAME");
 
+    public final static String TBA = "TBA";
+
 }
