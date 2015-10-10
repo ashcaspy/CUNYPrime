@@ -19,7 +19,10 @@ public class Section {
         }
         room = Selector.select(ID.sectionRoom, elem).get(0).ownText();
         instructor = Selector.select(ID.instructor, elem).get(0).ownText();
-        nbr = Selector.select(ID.sectionNbr, elem).get(0).ownText();
+
+        //drop "Regular"
+        //I don't know what it does and have yet to see a section that doesn't have it
+        nbr = Selector.select(ID.sectionNbr, elem).get(0).ownText().split(" ")[0];
     }
 
     public String toString() {
