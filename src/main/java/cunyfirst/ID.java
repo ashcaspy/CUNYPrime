@@ -1,6 +1,7 @@
 package cunyfirst;
 
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import scala.actors.threadpool.Arrays;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,5 +42,8 @@ public class ID {
     public final static String sectionNbr = searchId("MTG_CLASSNAME");
 
     public final static String TBA = "TBA";
+
+    //they break database constraints and aren't relevant to scheduling anyway
+    public final static List<String> skippedDepts = Arrays.asList(new String[]{"PERM", "STABD"});
 
 }

@@ -23,6 +23,10 @@ class Main {
             HashMap<String, Parser> departments = new HashMap<>(depts.size()-1);
             for(HtmlOption o: depts.subList(1,depts.size())) {
                 String deptCode = o.getValueAttribute();
+                if(ID.skippedDepts.contains(deptCode)) {
+
+                    continue;
+                }
                 departments.put(deptCode, new Parser(wc.getResults(deptCode).asXml()));
             }
 
