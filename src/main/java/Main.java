@@ -23,17 +23,24 @@ class Main {
             String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
             try {
                 conn = DriverManager.getConnection(url, args[0], args[1]);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return;
+            }
 
             //the first option is blank
             for (HtmlOption o : depts.subList(1, depts.size())) {
+                try {
                 String deptCode = o.getValueAttribute();
                 if(ID.skippedDepts.contains(deptCode)) {
-
                     continue;
                 }
                 new Parser(wc.getResults(deptCode).asXml()).addToTable(conn);
+                } catch (IOException | SQLException e) {
+                    e.printStackTrace();
+                }
             }
-
+        try {
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
