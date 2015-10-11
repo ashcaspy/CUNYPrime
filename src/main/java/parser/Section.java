@@ -7,7 +7,7 @@ import org.jsoup.select.Selector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.sql.Types;
 
 public class Section {
     public Section(Element elem) {
@@ -58,12 +58,30 @@ public class Section {
     //the caller adds course info
     PreparedStatement prepareStatement(Connection conn) throws SQLException {
         PreparedStatement st = conn.prepareStatement("INSERT INTO sections VALUES (?,?,?,?,?,?,?,?)");
-        //todo: setNull
         st.setString(3, nbr);
-        st.setInt(4, start);
-        st.setInt(5, end);
-        st.setString(6, days);
-        st.setString(7, room);
+
+        if(start < 0) {
+            st.setNull(4, Types.INTEGER);
+            st.setNull(5, Types.INTEGER);
+        }
+        else {
+            st.setInt(4, start);
+            st.setInt(5, end);
+        }
+
+        if(days.equals(ID.TBA)) {
+            st.setNull(6, Types.VARCHAR);
+        }
+        else {
+            st.setString(6, days);
+        }
+
+        if(room.equals(ID.TBA)) {
+            st.setNull(7, Types.VARCHAR);
+        }
+        else {
+            st.setString(7, room);
+        }
         st.setString(8, instructor);
         return st;
     }
