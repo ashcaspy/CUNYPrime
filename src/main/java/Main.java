@@ -1,5 +1,6 @@
 
 import java.io.IOException;
+import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,6 +9,8 @@ import cunyfirst.CunyFirstClient;
 import cunyfirst.ID;
 
 import parser.Parser;
+
+import java.sql.*;
 
 class Main {
         public static void main(String[] args) throws IOException {
@@ -22,8 +25,22 @@ class Main {
                 String deptCode = o.getValueAttribute();
                 departments.put(deptCode, new Parser(wc.getResults(deptCode).asXml()));
             }
-            //Parser p = new Parser(wc.getResults("CSCI").asXml());
-            System.out.println("CSCI 12100: 4 sections");
-            departments.get("CSCI").get("CSCI 12100").stream().forEach(System.out::println);
+
+            try {
+                String serverName = "localhost:3306";
+                String mydatabase = "cunyfirst";
+                String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
+
+                Connection conn = DriverManager.getConnection(url, args[0], args[1]);
+
+                for(Parser p: departments.values()) {
+                    p.addToTable(conn);
+                }
+
+                conn.close();
+            }
+            catch (SQLException e){
+                e.printStackTrace();
+            }
         }
 }

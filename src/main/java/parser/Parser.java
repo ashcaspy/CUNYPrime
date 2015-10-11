@@ -10,6 +10,10 @@ import org.jsoup.nodes.Element;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class Parser {
     public Parser(String page) {
         Elements courses = Selector.select(ID.course, Jsoup.parse(page));
@@ -38,6 +42,26 @@ public class Parser {
     //for testing
     public ArrayList<Section> get(String key) {
         return map.get(key);
+    }
+
+    public void addToTable(Connection conn) throws SQLException {
+        String[] temp;
+        String dept, number, name;
+        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?)");
+        for(String course: map.keySet()) {
+            //XXXX NNNNN - Name of Course
+            temp = course.split(" - ");
+            name = temp[1];
+            st.setString(3, name);
+
+            temp = temp[0].split(" ");
+            dept = temp[0];
+            number = temp[1];
+            st.setString(1, dept);
+            st.setString(2, number);
+
+            st.executeUpdate();
+        }
     }
 
 }
