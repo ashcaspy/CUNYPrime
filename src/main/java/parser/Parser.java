@@ -48,6 +48,7 @@ public class Parser {
         String[] temp;
         String dept, number, name;
         PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?)");
+        PreparedStatement insertSection;
         for(String course: map.keySet()) {
             //XXXX NNNNN - Name of Course
             temp = course.split(" - ");
@@ -61,6 +62,16 @@ public class Parser {
             st.setString(2, number);
 
             st.executeUpdate();
+//            if(number.length() > 5)
+                System.out.println(dept+" "+number);
+
+            for(Section sec: map.get(course)) {
+                insertSection = sec.prepareStatement(conn);
+                insertSection.setString(1, dept);
+                insertSection.setString(2, number);
+
+                insertSection.executeUpdate();
+            }
         }
     }
 

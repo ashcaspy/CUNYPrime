@@ -4,6 +4,11 @@ import cunyfirst.ID;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Selector;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 public class Section {
     public Section(Element elem) {
         String[] temp = parseTime(Selector.select(ID.sectionTime, elem).get(0).ownText());
@@ -48,6 +53,19 @@ public class Section {
         else {
             return numbers;
         }
+    }
+
+    //the caller adds course info
+    PreparedStatement prepareStatement(Connection conn) throws SQLException {
+        PreparedStatement st = conn.prepareStatement("INSERT INTO sections VALUES (?,?,?,?,?,?,?,?)");
+        //todo: setNull
+        st.setString(3, nbr);
+        st.setInt(4, start);
+        st.setInt(5, end);
+        st.setString(6, days);
+        st.setString(7, room);
+        st.setString(8, instructor);
+        return st;
     }
 
     public final String nbr;
