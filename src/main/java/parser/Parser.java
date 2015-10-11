@@ -39,11 +39,6 @@ public class Parser {
         return list;
     }
 
-    //for testing
-    public ArrayList<Section> get(String key) {
-        return map.get(key);
-    }
-
     public void addToTable(Connection conn) throws SQLException {
         String[] temp;
         String dept, number, name;
@@ -62,8 +57,6 @@ public class Parser {
             st.setString(2, number);
 
             st.executeUpdate();
-//            if(number.length() > 5)
-                System.out.println(dept+" "+number);
 
             for(Section sec: map.get(course)) {
                 insertSection = sec.prepareStatement(conn);

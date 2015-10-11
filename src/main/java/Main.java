@@ -12,7 +12,11 @@ import parser.Parser;
 import java.sql.*;
 
 class Main {
-        public static void main(String[] args) throws IOException {
+        public static void main(String[] args) {
+            if(args.length != 2) {
+                return;
+            }
+
             CunyFirstClient wc = new CunyFirstClient();
             wc.setup("Hunter College", ID.semester("Fall", 2015));
 
