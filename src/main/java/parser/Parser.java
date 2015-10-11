@@ -13,8 +13,6 @@ import java.util.HashMap;
 public class Parser {
     public Parser(String page) {
         Elements courses = Selector.select(ID.course, Jsoup.parse(page));
-        //getNames();
-        //getSections(courses.get(0));
         map = new HashMap<>(courses.size());
         for(Element c: courses) {
             String name = getName(c);
@@ -24,8 +22,9 @@ public class Parser {
     private HashMap<String, ArrayList<Section>> map;
 
     public String getName(Element course) {
-        return Selector.select(ID.courseName, course).get(0).ownText().split(" - ")[0].trim()
-                .substring(1); //remove whatever that is at the beginning
+        //get the whole title, will need it later
+        String temp = Selector.select(ID.courseName, course).get(0).ownText();
+        return temp.substring(1, temp.length()-1); //remove whatever that is at the ends
                 //.replaceAll("[^ a-zA-Z0-9"+"\\p{Punct}"+"]", "");
     }
 
@@ -36,6 +35,7 @@ public class Parser {
         return list;
     }
 
+    //for testing
     public ArrayList<Section> get(String key) {
         return map.get(key);
     }
