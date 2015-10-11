@@ -40,10 +40,10 @@ class Main {
                     e.printStackTrace();
                 }
             }
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-    }
 }
