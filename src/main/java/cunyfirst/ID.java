@@ -46,4 +46,8 @@ public class ID {
     //they break database constraints and aren't relevant to scheduling anyway
     public final static List<String> skippedDepts = Arrays.asList(new String[]{"PERM", "STABD"});
 
+    private final static String dayFormat = "\\p{Upper}\\p{Lower}";
+    private final static String timeFormat = "\\p{Digit}\\p{Digit}?:\\p{Digit}\\p{Digit}[AP]M";
+    public final static String dayTimeRegex = "("+dayFormat+")+ "+timeFormat+" - "+timeFormat;
+
 }

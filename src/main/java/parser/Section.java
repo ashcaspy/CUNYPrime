@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import java.util.HashSet;
+import java.util.Arrays;
 import java.util.regex.*;
 
 public class Section {
@@ -42,6 +44,16 @@ public class Section {
             days = start = end = new String[] {ID.TBA};
         }
 
+        if(count > 1) {
+            HashSet<String> starts = new HashSet<>(Arrays.asList(start)), ends = new HashSet<>(Arrays.asList(end));
+            //if this happens, then the only reason the timeslots were listed separately is the rooms
+            condense = (starts.size() == 1 && ends.size() == 1);
+        }
+        else {
+            //there is only one
+            condense = true;
+        }
+
         room = Selector.select(ID.sectionRoom, elem).get(0).ownText();
         instructor = Selector.select(ID.instructor, elem).get(0).ownText();
 
@@ -51,10 +63,6 @@ public class Section {
     }
 
     public final String delimiter = ",";
-
-    public String toString() {
-        return nbr+" "+days+" "+start+" "+end+" "+room+" "+instructor;
-    }
 
     //return strings representing the days and the hours
     private String[] parseTime(String secTime) {
@@ -86,6 +94,10 @@ public class Section {
             st.setNull(4, Types.VARCHAR);
             st.setNull(5, Types.VARCHAR);
         }
+        else if(condense) {
+            st.setString(4, start[0]);
+            st.setString(5, end[0]);
+        }
         else {
             st.setString(4, String.join(delimiter, start));
             st.setString(5, String.join(delimiter, end));
@@ -93,6 +105,9 @@ public class Section {
 
         if(days[0].equals(ID.TBA)) {
             st.setNull(6, Types.VARCHAR);
+        }
+        else if(condense) {
+            st.setString(6, String.join("",days));
         }
         else {
             st.setString(6, String.join(delimiter, days));
@@ -109,9 +124,13 @@ public class Section {
     }
 
     public final String nbr;
+
+    //handle multiple timeslots
     public final String[] start;
     public final String[] end;
     public final String[] days;
+    private final boolean condense;
+
     public final String room;
     public final String instructor;
 }
