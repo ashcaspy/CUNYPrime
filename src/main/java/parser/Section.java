@@ -9,19 +9,39 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import java.util.regex.*;
+
 public class Section {
     public Section(Element elem) {
-        String[] temp = parseTime(Selector.select(ID.sectionTime, elem).get(0).ownText());
-        days = temp[0];
-        if(temp[1].equals(ID.TBA)) {
-            start = -1;
-            end = -1;
+        Pattern p = Pattern.compile(ID.dayTimeRegex);
+        Matcher m = p.matcher(Selector.select(ID.sectionTime, elem).get(0).ownText());
+        int count;
+        for(count = 0; m.find(); ++count){ }
+
+
+        if(count > 0) {
+            days = new String[count];
+            start = new String[count];
+            end = new String[count];
+            m.reset();
+            for (int i = 0; m.find(); ++i) {
+                String[] temp = parseTime(m.group());
+                days[i] = temp[0];
+                if (temp[1].equals(ID.TBA)) {
+                    start[i] = ID.TBA;
+                    end[i] = ID.TBA;
+                } else {
+                    temp = temp[1].split(" - ");
+                    start[i] = Integer.toString(hoursToInt(temp[0]));
+                    end[i] = Integer.toString(hoursToInt(temp[1]));
+                }
+            }
         }
         else {
-            temp = temp[1].split(" - ");
-            start = hoursToInt(temp[0]);
-            end = hoursToInt(temp[1]);
+            //everything is TBA
+            days = start = end = new String[] {ID.TBA};
         }
+
         room = Selector.select(ID.sectionRoom, elem).get(0).ownText();
         instructor = Selector.select(ID.instructor, elem).get(0).ownText();
 
@@ -29,6 +49,8 @@ public class Section {
         //I don't know what it does and have yet to see a section that doesn't have it
         nbr = Selector.select(ID.sectionNbr, elem).get(0).ownText().split(" ")[0];
     }
+
+    public final String delimiter = ",";
 
     public String toString() {
         return nbr+" "+days+" "+start+" "+end+" "+room+" "+instructor;
@@ -60,20 +82,20 @@ public class Section {
         PreparedStatement st = conn.prepareStatement("INSERT INTO sections VALUES (?,?,?,?,?,?,?,?)");
         st.setString(3, nbr);
 
-        if(start < 0) {
-            st.setNull(4, Types.INTEGER);
-            st.setNull(5, Types.INTEGER);
+        if(start[0].equals(ID.TBA)) {
+            st.setNull(4, Types.VARCHAR);
+            st.setNull(5, Types.VARCHAR);
         }
         else {
-            st.setInt(4, start);
-            st.setInt(5, end);
+            st.setString(4, String.join(delimiter, start));
+            st.setString(5, String.join(delimiter, end));
         }
 
-        if(days.equals(ID.TBA)) {
+        if(days[0].equals(ID.TBA)) {
             st.setNull(6, Types.VARCHAR);
         }
         else {
-            st.setString(6, days);
+            st.setString(6, String.join(delimiter, days));
         }
 
         if(room.equals(ID.TBA)) {
@@ -87,9 +109,9 @@ public class Section {
     }
 
     public final String nbr;
-    public final int start;
-    public final int end;
-    public final String days;
+    public final String[] start;
+    public final String[] end;
+    public final String[] days;
     public final String room;
     public final String instructor;
 }
