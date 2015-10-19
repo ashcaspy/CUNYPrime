@@ -72,7 +72,25 @@ public class CunyFirstClient extends WebClient {
         searchParameters.put(ID.deptCode, dept);
 
         request.setRequestParameters(paramsToList(searchParameters));
-        return getPage(request);
+        HtmlPage results = getPage(request);
+
+        //set up sectionRequestParams
+        if(null == sectionRequestParams) {
+            List<NameValuePair> secParams = getFormParams(results);
+            sectionRequestParams = new HashMap<>(secParams.size());
+            for (NameValuePair p : secParams) {
+                sectionRequestParams.put(p.getName(), p.getValue());
+            }
+        }
+        return results;
+    }
+
+    public HtmlPage getSection(String sectionNbr) throws IOException {
+        sectionRequestParams.put(ID.submitCode.getName(), sectionNbr);
+        request.setRequestParameters(paramsToList(sectionRequestParams));
+        HtmlPage sectionPage = getPage(request);
+        waitForBackgroundJavaScript(10000);
+        return sectionPage;
     }
 
     private List<NameValuePair> paramsToList(HashMap<String, String> params) {
