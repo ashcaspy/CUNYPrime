@@ -71,12 +71,15 @@ public class CunyFirstClient extends WebClient {
     public HtmlPage getResults(String dept) throws IOException {
         parameters.put(ID.deptCode, dept);
 
+        request.setRequestParameters(paramsToList(parameters));
+        return getPage(request);
+    }
+
+    private List<NameValuePair> paramsToList(HashMap<String, String> params) {
         //convert map to list
         List<NameValuePair> newParams = new ArrayList<>();
-        parameters.entrySet().stream().map(e -> new NameValuePair(e.getKey(), e.getValue())).forEach(newParams::add);
-
-        request.setRequestParameters(newParams);
-        return getPage(request);
+        params.entrySet().stream().map(e -> new NameValuePair(e.getKey(), e.getValue())).forEach(newParams::add);
+        return newParams;
     }
 }
 
