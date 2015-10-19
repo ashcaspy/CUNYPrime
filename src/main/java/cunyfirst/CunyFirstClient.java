@@ -33,7 +33,7 @@ public class CunyFirstClient extends WebClient {
 
     private WebRequest request = null;
     private HtmlPage searchPage = null;
-    HashMap<String, String> parameters = null;
+    HashMap<String, String> searchParameters = null;
 
     public HtmlSelect getSelect(String id) {
         return (HtmlSelect) searchPage.getElementById(id);
@@ -57,21 +57,20 @@ public class CunyFirstClient extends WebClient {
         ((HtmlTextInput)searchPage.getElementById(ID.courseNbrId)).setText("0");
 
         List<NameValuePair> list = searchPage.getForms().get(0).getWebRequest(null).getRequestParameters();
-
-        parameters = new HashMap<>();
+        searchParameters = new HashMap<>();
         for(NameValuePair p: list) {
-            parameters.put(p.getName(), p.getValue());
+            searchParameters.put(p.getName(), p.getValue());
         }
 
-        parameters.put(ID.submitCode.getName(), ID.submitCode.getValue());
-        parameters.put(ID.showClosed.getName(), ID.showClosed.getValue());
+        searchParameters.put(ID.submitCode.getName(), ID.submitCode.getValue());
+        searchParameters.put(ID.showClosed.getName(), ID.showClosed.getValue());
 
     }
 
     public HtmlPage getResults(String dept) throws IOException {
-        parameters.put(ID.deptCode, dept);
+        searchParameters.put(ID.deptCode, dept);
 
-        request.setRequestParameters(paramsToList(parameters));
+        request.setRequestParameters(paramsToList(searchParameters));
         return getPage(request);
     }
 
