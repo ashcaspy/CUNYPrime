@@ -34,6 +34,7 @@ public class CunyFirstClient extends WebClient {
     private WebRequest request = null;
     private HtmlPage searchPage = null;
     HashMap<String, String> searchParameters = null;
+    HashMap<String, String> sectionRequestParams = null;
 
     public HtmlSelect getSelect(String id) {
         return (HtmlSelect) searchPage.getElementById(id);
@@ -56,8 +57,8 @@ public class CunyFirstClient extends WebClient {
         match.setSelectedAttribute(match.getOptionByValue(ID.matchValue), true);
         ((HtmlTextInput)searchPage.getElementById(ID.courseNbrId)).setText("0");
 
-        List<NameValuePair> list = searchPage.getForms().get(0).getWebRequest(null).getRequestParameters();
-        searchParameters = new HashMap<>();
+        List<NameValuePair> list = getFormParams(searchPage);
+        searchParameters = new HashMap<>(list.size());
         for(NameValuePair p: list) {
             searchParameters.put(p.getName(), p.getValue());
         }
@@ -80,6 +81,11 @@ public class CunyFirstClient extends WebClient {
         params.entrySet().stream().map(e -> new NameValuePair(e.getKey(), e.getValue())).forEach(newParams::add);
         return newParams;
     }
+
+    private List<NameValuePair> getFormParams(HtmlPage page) {
+        return page.getForms().get(0).getWebRequest(null).getRequestParameters();
+    }
+
 }
 
 class Silent implements IncorrectnessListener {
