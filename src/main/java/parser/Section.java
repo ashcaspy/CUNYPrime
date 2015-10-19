@@ -59,7 +59,9 @@ public class Section {
 
         //drop "Regular"
         //I don't know what it does and have yet to see a section that doesn't have it
-        nbr = Selector.select(ID.sectionNbr, elem).get(0).ownText().split(" ")[0];
+        Element number = Selector.select(ID.sectionNbr, elem).get(0);
+        nbr = number.ownText().split(" ")[0];
+        id = number.id();
     }
 
     public final String delimiter = ",";
@@ -133,4 +135,6 @@ public class Section {
 
     public final String room;
     public final String instructor;
+
+    public final String id;
 }
