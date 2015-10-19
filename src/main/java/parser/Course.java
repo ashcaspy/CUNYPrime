@@ -39,7 +39,7 @@ public class Course {
         st.setString(1, dept);
         st.setString(2, number);
         st.setString(3, name);
-        st.setString(4, components);
+        st.setString(4, components.replaceAll(" Required", ""));
 
         st.executeUpdate();
 
