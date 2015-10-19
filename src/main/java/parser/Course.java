@@ -8,6 +8,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import java.util.ArrayList;
 
 
@@ -26,6 +30,24 @@ public class Course {
         Elements secs = Selector.select(ID.section, elem);
         sections = new ArrayList<>(secs.size());
         secs.stream().forEach(s -> sections.add(new Section(s)));
+    }
+
+    public void addToTable(Connection conn) throws SQLException {
+        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?)");
+        PreparedStatement insertSection;
+        st.setString(3, name);
+
+        st.setString(1, dept);
+        st.setString(2, number);
+
+        st.executeUpdate();
+
+        for(Section sec: sections) {
+            insertSection = sec.prepareStatement(conn);
+            insertSection.setString(1, dept);
+            insertSection.setString(2, number);
+            insertSection.executeUpdate();
+        }
     }
 
     public final String dept;

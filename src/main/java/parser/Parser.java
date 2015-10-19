@@ -32,23 +32,8 @@ public class Parser {
     private ArrayList<Course> courses;
 
     public void addToTable(Connection conn) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?)");
-        PreparedStatement insertSection;
         for(Course course: courses) {
-            st.setString(3, course.name);
-
-            st.setString(1, course.dept);
-            st.setString(2, course.number);
-
-            st.executeUpdate();
-
-            for(Section sec: course.sections) {
-                insertSection = sec.prepareStatement(conn);
-                insertSection.setString(1, course.dept);
-                insertSection.setString(2, course.number);
-
-                insertSection.executeUpdate();
-            }
+            course.addToTable(conn);
         }
     }
 

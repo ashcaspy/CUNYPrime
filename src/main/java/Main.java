@@ -56,7 +56,7 @@ class Main {
                 if(ID.skippedDepts.contains(deptCode)) {
                     continue;
                 }
-                new Parser(wc.getResults(deptCode).asXml()).addToTable(conn);
+                new Parser(wc, wc.getResults(deptCode)).addToTable(conn);
                 } catch (IOException | SQLException e) {
                     e.printStackTrace();
                 }
