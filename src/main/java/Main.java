@@ -32,6 +32,7 @@ class Main {
                         "dept varchar(6)," +
                         "nbr varchar(7)," +
                         "name varchar(90)," +
+                        "components varchar(60)," +
                         "PRIMARY KEY(dept, nbr)" +
                         ")");
                 st.executeUpdate("CREATE TABLE IF NOT EXISTS sections(" +

@@ -33,12 +33,13 @@ public class Course {
     }
 
     public void addToTable(Connection conn) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?)");
+        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?,?)");
         PreparedStatement insertSection;
-        st.setString(3, name);
 
         st.setString(1, dept);
         st.setString(2, number);
+        st.setString(3, name);
+        st.setString(4, components);
 
         st.executeUpdate();
 
