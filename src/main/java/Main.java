@@ -54,11 +54,11 @@ class Main {
             //the first option is blank
             for (HtmlOption o : depts.subList(1, depts.size())) {
                 try {
-                String deptCode = o.getValueAttribute();
-                if(ID.skippedDepts.contains(deptCode)) {
-                    continue;
-                }
-                new Parser(wc, wc.getResults(deptCode)).addToTable(conn);
+                    String deptCode = o.getValueAttribute();
+                    if(ID.skippedDepts.contains(deptCode)) {
+                        continue;
+                    }
+                    new Parser(wc, wc.getResults(deptCode)).addToTable(conn);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
