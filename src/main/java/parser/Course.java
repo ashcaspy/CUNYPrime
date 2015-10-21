@@ -1,5 +1,6 @@
 package parser;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import cunyfirst.ID;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -26,6 +27,13 @@ public class Course {
         number = temp[1];
 
         components = firstSection.getElementById(ID.courseComponents).getTextContent().trim();
+        DomElement required = firstSection.getElementById(ID.prereqs);
+        if(null == required) {
+            requirements = "";
+        }
+        else {
+            requirements = required.getTextContent().trim();
+        }
 
         Elements secs = Selector.select(ID.section, elem);
         sections = new ArrayList<>(secs.size());
@@ -33,13 +41,14 @@ public class Course {
     }
 
     public void addToTable(Connection conn) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?,?)");
+        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?,?,?)");
         PreparedStatement insertSection;
 
         st.setString(1, dept);
         st.setString(2, number);
         st.setString(3, name);
         st.setString(4, components.replaceAll(" Required", ""));
+        st.setString(5, requirements);
 
         st.executeUpdate();
 
@@ -55,5 +64,6 @@ public class Course {
     public final String number;
     public final String name;
     public final String components;
+    public final String requirements;
     public final ArrayList<Section> sections;
 }
