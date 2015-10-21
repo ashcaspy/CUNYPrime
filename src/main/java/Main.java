@@ -33,6 +33,7 @@ class Main {
                         "nbr varchar(7)," +
                         "name varchar(90)," +
                         "components varchar(60)," +
+                        "requirements varchar(200)," +
                         "PRIMARY KEY(dept, nbr)" +
                         ")");
                 st.executeUpdate("CREATE TABLE IF NOT EXISTS sections(" +
@@ -58,7 +59,7 @@ class Main {
                     continue;
                 }
                 new Parser(wc, wc.getResults(deptCode)).addToTable(conn);
-                } catch (IOException | SQLException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
