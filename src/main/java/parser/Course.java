@@ -53,10 +53,14 @@ public class Course {
         st.executeUpdate();
 
         for(Section sec: sections) {
-            insertSection = sec.prepareStatement(conn);
-            insertSection.setString(1, dept);
-            insertSection.setString(2, number);
-            insertSection.executeUpdate();
+            try {
+                insertSection = sec.prepareStatement(conn);
+                insertSection.setString(1, dept);
+                insertSection.setString(2, number);
+                insertSection.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
