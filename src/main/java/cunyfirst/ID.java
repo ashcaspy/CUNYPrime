@@ -54,5 +54,5 @@ public class ID {
     public final static String secCourseName = "DERIVED_CLSRCH_DESCR200";
     public final static String courseComponents = "win0divSSR_CLS_DTL_WRK_SSR_COMPONENT_LONG";
     public final static String prereqs = "SSR_CLS_DTL_WRK_SSR_REQUISITE_LONG";
-
+    public final static String courseDescription = "DERIVED_CLSRCH_DESCRLONG";
 }

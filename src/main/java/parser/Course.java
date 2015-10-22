@@ -36,13 +36,21 @@ public class Course {
             requirements = required.getTextContent().trim();
         }
 
+        DomElement desc = firstSection.getElementById(ID.courseDescription);
+        if(null == desc) {
+            description = "";
+        }
+        else {
+            description = desc.getTextContent().trim();
+        }
+
         Elements secs = Selector.select(ID.section, elem);
         sections = new ArrayList<>(secs.size());
         secs.stream().forEach(s -> sections.add(new Section(s)));
     }
 
     public void addToTable(Connection conn) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?,?,?)");
+        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?,?,?,?)");
         PreparedStatement insertSection;
 
         st.setString(1, dept);
@@ -50,6 +58,7 @@ public class Course {
         st.setString(3, name);
         st.setString(4, components.replaceAll(" Required", ""));
         st.setString(5, requirements);
+        st.setString(6, description);
 
         st.executeUpdate();
 
@@ -70,6 +79,7 @@ public class Course {
     public final String name;
     public final String components;
     public final String requirements;
+    public final String description;
     public final ArrayList<Section> sections;
 
     private static final String tablename = "courses";
@@ -82,6 +92,7 @@ public class Course {
                         "name varchar(90)," +
                         "components varchar(60)," +
                         "requirements varchar(300)," +
+                        "description varchar(1300)," +
                         "PRIMARY KEY(dept, nbr)" +
                         ")");
     }
