@@ -50,6 +50,10 @@ public class ID {
     private final static String timeFormat = "\\p{Digit}\\p{Digit}?:\\p{Digit}\\p{Digit}[AP]M";
     public final static String dayTimeRegex = "("+dayFormat+")+ "+timeFormat+" - "+timeFormat;
 
+    //open or closed
+    public final static String openClosed = searchId("win0divDERIVED_CLSRCH_SSR_STATUS_LONG");
+    //public final static
+
     //section page
     public final static String secCourseName = "DERIVED_CLSRCH_DESCR200";
     public final static String courseComponents = "win0divSSR_CLS_DTL_WRK_SSR_COMPONENT_LONG";
