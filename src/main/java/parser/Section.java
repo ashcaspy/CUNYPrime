@@ -4,6 +4,7 @@ import cunyfirst.ID;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Selector;
 
+import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -137,4 +138,20 @@ public class Section {
     public final String instructor;
 
     public final String id;
+
+    private final static String tablename = "sections";
+
+    public static void createTable(Connection conn) throws SQLException {
+        Statement st = conn.createStatement();
+        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + "(" +
+                        "cdept varchar(6)," +
+                        "cnbr varchar(7)," +
+                        "sec varchar(20)," +
+                        "starttime varchar(22)," +
+                        "endtime varchar(22)," +
+                        "days varchar(21)," +
+                        "room varchar(40)," +
+                        "instructor varchar(200)" +
+                        ")");
+    }
 }

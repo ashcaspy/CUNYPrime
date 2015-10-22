@@ -7,7 +7,9 @@ import com.gargoylesoftware.htmlunit.html.*;
 import cunyfirst.CunyFirstClient;
 import cunyfirst.ID;
 
+import parser.Course;
 import parser.Parser;
+import parser.Section;
 
 import java.sql.*;
 
@@ -27,25 +29,8 @@ class Main {
             String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
             try {
                 conn = DriverManager.getConnection(url, args[0], args[1]);
-                Statement st = conn.createStatement();
-                st.executeUpdate("CREATE TABLE IF NOT EXISTS courses(" +
-                        "dept varchar(6)," +
-                        "nbr varchar(7)," +
-                        "name varchar(90)," +
-                        "components varchar(60)," +
-                        "requirements varchar(200)," +
-                        "PRIMARY KEY(dept, nbr)" +
-                        ")");
-                st.executeUpdate("CREATE TABLE IF NOT EXISTS sections(" +
-                        "cdept varchar(6)," +
-                        "cnbr varchar(7)," +
-                        "sec varchar(20)," +
-                        "starttime varchar(22)," +
-                        "endtime varchar(22)," +
-                        "days varchar(21)," +
-                        "room varchar(40)," +
-                        "instructor varchar(200)" +
-                        ")");
+                Course.createTable(conn);
+                Section.createTable(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
                 return;

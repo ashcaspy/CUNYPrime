@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import java.sql.Statement;
 import java.util.ArrayList;
 
 
@@ -70,4 +71,18 @@ public class Course {
     public final String components;
     public final String requirements;
     public final ArrayList<Section> sections;
+
+    private static final String tablename = "courses";
+
+    public static void createTable(Connection conn) throws SQLException {
+        Statement st = conn.createStatement();
+        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + "(" +
+                        "dept varchar(6)," +
+                        "nbr varchar(7)," +
+                        "name varchar(90)," +
+                        "components varchar(60)," +
+                        "requirements varchar(300)," +
+                        "PRIMARY KEY(dept, nbr)" +
+                        ")");
+    }
 }
