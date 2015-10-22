@@ -12,25 +12,26 @@ import java.net.URL;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
-public class CunyFirstClient extends WebClient {
+public class CunyFirstClient {
     public CunyFirstClient() {
-        super(BrowserVersion.CHROME); //silence errors
-        getOptions().setCssEnabled(false);
-        getOptions().setJavaScriptEnabled(true);
-        getCookieManager().setCookiesEnabled(true);
-        setIncorrectnessListener(new Silent());
+        client = new WebClient(BrowserVersion.CHROME); //silence errors
+        client.getOptions().setCssEnabled(false);
+        client.getOptions().setJavaScriptEnabled(true);
+        client.getCookieManager().setCookiesEnabled(true);
+        client.setIncorrectnessListener(new Silent());
 
         try {
             request = new WebRequest(
                     new URL(ID.url),
                     HttpMethod.POST);
-            searchPage = getPage(request);
+            searchPage = client.getPage(request);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private WebClient client;
     private WebRequest request = null;
     private HtmlPage searchPage = null;
     HashMap<String, String> searchParameters = null;
@@ -45,11 +46,11 @@ public class CunyFirstClient extends WebClient {
     public void setup(String school, String semester) {
         HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(inst.getOptionByText(school), true);
-        waitForBackgroundJavaScript(10000);
+        client.waitForBackgroundJavaScript(10000);
 
         HtmlSelect term = getSelect(ID.selectTerm);
         term.setSelectedAttribute(term.getOptionByText(semester), true);
-        waitForBackgroundJavaScript(10000);
+        client.waitForBackgroundJavaScript(10000);
 
         //has to be done after school and term are set
         //search for course numbers > 0
@@ -72,7 +73,7 @@ public class CunyFirstClient extends WebClient {
         searchParameters.put(ID.deptCode, dept);
 
         request.setRequestParameters(paramsToList(searchParameters));
-        HtmlPage results = getPage(request);
+        HtmlPage results = client.getPage(request);
 
         //set up sectionRequestParams
         if(null == sectionRequestParams) {
@@ -88,7 +89,7 @@ public class CunyFirstClient extends WebClient {
     public HtmlPage getSection(String sectionNbr) throws IOException {
         sectionRequestParams.put(ID.submitCode.getName(), sectionNbr);
         request.setRequestParameters(paramsToList(sectionRequestParams));
-        return getPage(request);
+        return client.getPage(request);
     }
 
     private List<NameValuePair> paramsToList(HashMap<String, String> params) {
