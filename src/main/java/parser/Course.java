@@ -32,7 +32,7 @@ public class Course {
                 .trim().replaceAll(" Required", "");
         DomElement required = firstSection.getElementById(ID.prereqs);
         if(null == required) {
-            requirements = "";
+            requirements = null;
         }
         else {
             requirements = required.getTextContent().trim();
@@ -64,6 +64,11 @@ public class Course {
             st.setString(4, components);
         } else {
             st.setNull(4, Types.VARCHAR);
+        }
+        if(null != requirements) {
+            st.setString(5, requirements);
+        } else {
+            st.setNull(5, Types.VARCHAR);
         }
         st.setString(5, requirements);
         st.setString(6, description);
