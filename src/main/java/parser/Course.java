@@ -12,6 +12,7 @@ import org.jsoup.select.Selector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ public class Course {
         dept = temp[0];
         number = temp[1];
 
-        components = firstSection.getElementById(ID.courseComponents).getTextContent().trim();
+        components = firstSection.getElementById(ID.courseComponents).getTextContent()
+                .trim().replaceAll(" Required", "");
         DomElement required = firstSection.getElementById(ID.prereqs);
         if(null == required) {
             requirements = "";
@@ -58,7 +60,11 @@ public class Course {
         st.setString(1, dept);
         st.setString(2, number);
         st.setString(3, name);
-        st.setString(4, components.replaceAll(" Required", ""));
+        if(components.split(",").length > 1) {
+            st.setString(4, components);
+        } else {
+            st.setNull(4, Types.VARCHAR);
+        }
         st.setString(5, requirements);
         st.setString(6, description);
         st.setFloat(7, credits);
