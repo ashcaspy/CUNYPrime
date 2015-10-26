@@ -1,0 +1,83 @@
+<script>loadInfo();</script>	
+<div id = "profile_container">
+<form>
+    <b> Username:</b>
+    <input id = "username" type = "text">
+    <br />
+    <br />
+    <b> E-mail:</b>
+    <input id = "email" type = "text">
+    <br />
+    <br />
+    <b> Academic Standing </b>
+    <select id = "academic_standing">
+        <option value = "--"> -select- </option>
+        <option value = "transfer 2013+"> Transfer </option>
+
+    </select>
+    <br />
+    <br />
+    <b> College:</b>
+
+    <script>populateColleges();</script>
+    
+    <select id = "colleges" onchange="javascript:collegeSelected();">
+        <option value = "--"> -select- </option>
+        <option value = "Hunter"> Hunter College </option>
+
+    </select>
+    <br />
+    <br />
+    <div id = "major_wrapper" style = "display:none;">
+        <b>Major: </b>
+        <select id = "majors" onchange = 'javascript:myFunc("majors");'>
+            <option value = '--'> -select- </option> 
+            <option value = ' Accounting ' > Accounting </option> 
+        </select> 
+    </div>
+
+    <div id = "coursesTaken" style = "display: none;">
+        <br />
+        <br />
+        <u><b>Please check the courses you have taken below:</b></u>
+    </div>
+
+    <div id="accounting" style = "display: none;"> 
+        <br />
+        <b>Accounting:</b> <br />
+        <input type ="checkbox" value = "ECO 27100"> ECO 27100 - Accounting I <br />
+        <input type ="checkbox" value = "ECO 27200"> ECO 27200 - Accounting II <br />
+        <input type ="checkbox" value = "ECO 37100"> ECO 37100 - Intermediate Accounting I <br />
+        <input type ="checkbox" value = "ECO 37200"> ECO 37200 - Intermediate Accounting II <br />
+        <input type ="checkbox" value = "ECO 37300"> ECO 37300 - Federal Income Taxation <br />
+        <input type ="checkbox" value = "ECO 37400"> ECO 37400 - Managerial Accounting (Cost Accounting) <br />
+        <input type ="checkbox" value = "ECO 47100"> ECO 47100 - Advanced Accounting I <br />
+        <input type ="checkbox" value = "ECO 47200"> ECO 47200 - Advanced Accounting II <br />
+        <input type ="checkbox" value = "ECO 47300"> ECO 47300 - Business Taxes <br />
+        <input type ="checkbox" value = "ECO 47500"> ECO 47500 - Auditing<br />
+        <b>Statistic</b><br />
+        <input type ="checkbox" value = "ECO 22100"> ECO 22100 - Economic Statistics <br />
+        <b>Business Law</b><br />
+        <input type ="checkbox" value = "ECO 28000"> ECO 28000 - Business Law I <br />
+        <input type ="checkbox" value = "ECO 38000"> ECO 38000 - Business Law II <br />
+        <b>Business-Core:</b><br />
+        <input type ="checkbox" value = "ECO 20000"> ECO 20000 - Principles of Microeconomics <br />
+        <input type ="checkbox" value = "ECO 47600"> ECO 47600 - Computer Accounting System 
+
+    </div>
+
+    <div id = "finance" style = "display: none;">
+        <b>Finance:</b> <br />
+        <input type ="checkbox"	value = "ECO 21000"> ECO 21000 - Money and Banking <br />
+        <input type ="checkbox" value = "ECO 36500"> ECO 36500 - Corporate Finance <br />
+        <input type ="checkbox" value = "ECO 36600"> ECO 36600 - Security and Investment Analysis <br />
+        <input type ="checkbox" value = "ECO 36700"> ECO 36700 - Analysis of Financial Statements
+    </div>
+
+
+    <br />
+    <br />
+    <button type = "button" onclick="javascript:store();"> Submit </button>
+
+</form>
+</div>

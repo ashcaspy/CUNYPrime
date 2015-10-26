@@ -1,0 +1,105 @@
+#base_page{
+    width: 100vw;
+    height: 86vh;
+    min-width: 100vw;
+    min-height: 85vh;
+    /*background: #0D3692;*/
+    background: white;
+    text-align: center;
+    
+}
+#base_page h1{
+    display: block;
+    margin: 0;
+    position: relative;
+    top: 40%;
+}
+
+
+#profile, #resume{
+    display: none;
+    height: 83vh;
+    width: 75vw;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 901;
+    position: relative;
+    min-height: 83vh;
+    min-width: 75vw;
+    background: #FFFFFF;
+    left: 12.5vw;
+    top: 1vh;
+    text-align: center;
+    border-radius: 25px;
+}
+
+#scheduler{
+    display: none;
+    height: 85vh;
+    width: 90vw;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    z-index: 901;
+    position: relative;
+    min-height: 85vh;
+    min-width: 90vw;
+    background: #FFFFFF;
+    left: 5vw;
+    top: 0.5vh;
+    text-align: center;
+    border-radius: 25px;
+}
+
+.blanket{
+    display: none;
+    height: 86vh;
+    width: 100vw;
+    top: 7vh;
+    overflow: hidden;
+    z-index: 900;
+    position: absolute;
+    min-height: 86vh;
+    min-width: 100vw;
+    background: rgba(100, 100, 100, 0.75);
+}
+
+#profile_container{
+    display: block;
+    text-align: left;
+    position: relative;
+    width: 65vw;
+    height: 83vh;
+    margin: 0 auto;
+}
+#profile_container form{
+    margin: 0 auto;
+    position: relative;
+    width: 25vw; 
+    height: 50vh;
+    top: 15vh;
+}
+    
+#username, #email, #colleges, #majors, #academic_standing{
+    position: relative;
+    float: right;
+    width: 10vw;
+    background: white;
+    border-radius: 25px;
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
+    
+}
+
+#colleges, #majors, #academic_standing{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url(images/triangle_down.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
+
+
+

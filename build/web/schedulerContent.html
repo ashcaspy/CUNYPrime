@@ -1,0 +1,95 @@
+<!--Main Container-->
+<div id = "container">
+
+<!--Schedule begin-->
+	<div id = "schedule" class = "column">
+		<div id = "schedule_header">           
+		</div>
+		<div id = "schedule_content">
+			<!--
+                needs to have same capabilities regardless of tab, so use classes, not ids
+                load different divs for each tab? or just reload tab contents?
+                probably best to load different divs -- stores user data better
+                needs to create/prep divs from user profile info
+-->
+            <div class = "user_schedule" id = "test_tab">
+                <div id = "day-list"></div>
+                <div id = "hour-list"></div>
+                <div id = "timeslot-list"></div>
+            </div>
+            
+            
+            
+            
+		</div>
+		<div id = "schedule_footer">
+            <!-- Functions by changing contents of #schedule_content -->
+            
+            
+		</div>
+	</div>
+<!--Schedule end-->
+
+<!--Left column begin-->
+	<div id = "left_column" class = "column">
+        <div class = "tabset">
+            <ul id = "tab_list">
+                <li><a href = "javascript:loadTab(1)" class = "tab_link" id = "tab1">QuickSearch</a></li>
+                <li><a href = "javascript:loadTab(2)" class = "tab_link" id = "tab2">Adv. Search</a></li>                
+            </ul>
+        </div>
+		<div class = "column_head"></div>
+		<div class = "scroll_wrapper" id = "left_scroll_wrapper">
+           
+        </div>
+		<div class = "column_foot"></div>
+
+	</div>
+    <script> //loadTab(1); </script>
+    
+<!--Left column end-->
+
+
+
+<!--Right column begin-->
+	<div id = "right_column" class = "column">
+        <div class = "tabset"></div>
+		<div class = "column_head"></div>
+		<!--<a href = "javascript:testButton()">CLICK</a>-->
+		<div class = "scroll_wrapper" id = "right_scroll_wrapper">
+			<div><a href="javascript:loadList(1)" id = "list_section_header_1">(+) Best Fit</a></div>
+				<div id = "list_section_1"></div>
+				
+			<div><a href="javascript:loadList(2)" id = "list_section_header_2">(+) Some Conflicts</a></div>
+				<div id = "list_section_2"></div>
+			
+			<div><a href="javascript:loadList(3)" id = "list_section_header_3">(+) Others</a></div>
+				<div id = "list_section_3"></div>				
+
+		</div>
+		<div class = "column_foot"></div>
+	</div>
+<!--Right column end-->
+
+
+<!--Course Info list containers-->
+<!--
+    <div id="course_info_1"> 
+    </div>
+    <div id="course_info_2"> 
+    </div>
+    <div id="course_info_3"> 
+    </div>
+-->
+<!--End course info list containers-->
+    
+    
+</div>
+<!--Container end-->
+<script src = "schedule_functions.js"></script>
+<script>
+    createDivs();
+    createTools();
+    loadScheduleTabObjs();
+    loadScheduleTab(0);
+</script>

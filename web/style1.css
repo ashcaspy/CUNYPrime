@@ -1,0 +1,481 @@
+body{
+	margin: 0;
+	padding: 0;
+	min-width: 650px;
+	min-height: 400px;
+	background: #FFFFFF;
+    overflow-y: hidden;
+    font-family: custom-font-1;
+}
+
+#base_page{
+}
+
+#large-navigation-links{
+    position: absolute;
+    width: 100vw;
+    height: 30vw;
+    margin-top: -15vw;
+    top: 50%;
+}
+
+.navigation-link-labels{
+    width: 20vw;
+    height: 4vw;
+    display: table-cell;
+    vertical-align: middle;
+    position: relative;
+    font-family: custom-font-1;
+    font-size: 2em;
+    font-weight: bold;
+    padding: 0;
+}
+
+.navigation-link-containers{
+    width: 20vw;
+    height: 25vw;
+    position: relative;
+    display: inline-block;
+    margin-top: -12.5vw;
+    top: 50%;
+    padding: 0;
+}
+
+.navigation-link-containers img{
+    width: 20vw;
+    height: 20vw;
+    position: relative;
+}
+
+/*HEADER AND FOOTER*/
+#header, #footer{
+	display: table-cell;
+	vertical-align: middle;
+	padding: 0;
+	background: #0D3692;
+	color: #FF8C13;
+	min-width: 910px;
+	width: 100vw;
+	height: 7vh;
+	max-height:7vh;
+	overflow: hidden;
+	background-image: url(images/1.png);
+	margin: 0 auto;
+}
+#footer{
+	clear: both;
+}
+
+h3{
+	padding-left: 1vh;
+	margin: 0;
+    text-align: left; 
+    display: inline;
+    float: left;
+}
+
+#header a, #header a:visited{
+    display: block;
+    position: relative;
+    float: right;
+    background: #FFFFFF;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    padding-top: 0.5vh;
+    padding-bottom: 0.5vh;
+    width: 2vw;
+    max-width: 2vw;
+    height: 4vh;
+    max-height: 4vh;
+    font-size: 1.25em;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    color: #000000;
+    margin-left: 0.25vw;
+    margin-right: 0.25vw;
+    border-radius: 10px;
+    background-image: url(images/2.png);
+    border: 1px solid #00AEEF;
+}
+#header a:hover{
+    background-image: url(images/1.png);
+    color: #FFFFFF;
+}
+#header a img{
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+
+
+/*MAIN CONTENT*/
+#container{
+	margin: 0 auto;
+	display: block; 
+	height: 85vh;
+	max-height: 85vh;
+	position: relative;
+	width: 90vw;
+	min-width: 650px;
+}
+#page{
+	
+	display: block; 
+	height: 100vh;
+	max-height: 100vh;
+	position: relative;
+    top: 0;
+    left: 0;
+	width: 100vw;
+	min-width: 650px;
+    /*z-index: 0;*/
+    /*background: #000000;*/
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+
+#container .column {
+	position: relative;
+	float: left;
+}
+#container {
+	overflow: hidden;
+}
+
+
+/*SEARCH COLUMN*/
+
+#left_column{
+	background: #FFFFFF;
+	width: 15vw;
+    height: 85vh;
+	padding: 0 0px;
+	left: -60vw;
+	text-align: center;
+	min-width: 130px;
+	overflow: hidden;
+}
+
+
+#left_column .scroll_wrapper ul{
+	list-style: none;
+	padding: 0px;
+	width: 15vw;
+	margin:0;
+	min-width: 130px;
+}
+
+#left_column .scroll_wrapper ul li{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+	width: 15vw;
+	text-align:left;
+	height: 7vh;
+	min-width: 130px;
+}
+
+#left_column .scroll_wrapper ul li a, #left_column .scroll_wrapper ul li a:visited{
+	display:table-cell;
+	vertical-align: middle;
+	list-style: none;
+	padding: 0;
+	width: 15vw;
+	padding-left:12px;
+	padding-top:0px;
+	text-align:left;
+	background-image:url(images/2.png);
+	background-repeat:repeat-x;
+	color:#000000;
+	text-decoration:none;
+	font-size:15px;
+	font-weight:bold;
+	height: 7vh;
+	min-width: 130px;
+	
+}
+#left_column .scroll_wrapper ul li a:hover{
+	background-image:url(images/1.png);
+	background-repeat: repeat-x;
+	color: #FFFFFF;
+}
+
+
+/*RESULT COLUMN*/
+#right_column{
+	background: #FFFFFF;
+	width: 15vw;
+    height: 85vh;
+	padding: 0 0px;
+    left: 0;
+    right: 10vw;
+	text-align: center;
+	min-width: 130px;
+	overflow: hidden;
+}
+
+#right_column ul{
+	list-style: none;
+	padding: 0px;
+	width: 15vw;
+	margin:0;
+	min-width: 130px;
+}
+
+#right_column ul li{
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+	width: 15vw;
+	text-align:left;
+	height: 7vh;
+	min-width: 130px;
+	min-height: 30px;
+}
+
+#right_column ul li a, #right_column ul li a:visited{
+	display:table-cell;
+	vertical-align: middle;
+	list-style: none;
+	padding: 0;
+	width: 15vw;
+	padding-left:12px;
+	padding-top:0px;
+	text-align:left;
+	background-image:url(images/2.png);
+	background-repeat:repeat-x;
+	color:#000000;
+	text-decoration:none;
+    font-weight: normal!important;
+	height: 7vh;
+	min-width: 130px;
+	min-height: 30px;
+}
+
+#right_column ul li a:hover, #right_column a:hover{
+	background-image:url(images/1.png)!important;
+	background-repeat: repeat-x;
+	color: #FFFFFF!important;
+}
+
+#right_column a, #right_column a:visited{
+	display:table-cell;
+	vertical-align: middle;
+	list-style: none;
+	padding: 0;
+	width: 15vw;
+	padding-left:12px;
+	padding-top:0px;
+	text-align:left;
+	background-image:url(images/2.png);
+	background-repeat:repeat-x;
+	color:#000000;
+	text-decoration:none;
+	font-size:15px;
+	font-weight:bold;
+	height: 2em;
+	min-width: 130px;
+    min-height: 30px;
+}
+
+#course_info{
+    text-align:center;
+	background-image:url(images/2.png);
+	background-repeat:repeat-x;
+	color:#000000;
+	font-size:15px;
+	font-weight:bold;
+}
+
+/*INTERACTIVE SCHEDULE*/
+#schedule{
+	background: #DDDDDD;
+	width: 60vw;
+	min-width: 390;
+    position: relative;
+    left: 15vw;
+}
+
+#schedule_content{
+	text-align: center;
+	height: 75vh;
+	max-height:75vh;
+	overflow: hidden;
+    width: 60vw;
+    max-width: 60vw;
+}
+
+#schedule_header{
+	background: #EEEEEE;
+    background-image: url(images/1.png);
+	text-align: right;
+	padding: 0 0;
+	height: 5vh;
+	max-height:5vh;
+	overflow: visible;
+    width: inherit;
+}
+
+#schedule_footer{
+	background: #EEEEEE;
+	height: 5vh;
+	max-height:5vh;
+	overflow: hidden;
+    background-image: url(images/1.png);
+}
+
+
+/*ADDITIONAL*/
+
+#right_scroll_wrapper{
+	height: 77vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+    position: relative;
+	min-width: 130px;
+    width: 20vw;
+}
+
+#left_scroll_wrapper{
+	height: 77vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+    position: relative;
+	min-width: 130px;
+}
+.column_foot{
+	background-image: url(images/leftmenu_bottom.png);
+	background-repeat: no-repeat;
+	background-size: 15vw 2vh;
+	position: relative;
+	bottom: 0vh;
+	height: 2vh;
+	width: 15vw;
+	min-width: 130px;
+	min-height: 10px;
+}
+.column_head{
+	background-image: url(images/leftmenu_top.png);
+	background-repeat: no-repeat;
+	background-size: 15vw 2vh;
+	position: relative;
+	top: 0vh;
+	height: 2vh;
+	width: 15vw;
+	min-width: 130px;
+	min-height: 10px;
+}
+
+
+.tabset{
+    position: relative;
+    text-align: left;
+    width: 15vw;
+    height: 3.5vh;
+}
+
+#tab_list{
+    list-style: none;
+    position: relative;
+    width: 15vw;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+#tab_list li{
+    list-style: none;
+    float: left;
+    text-align: left;
+    position: relative;
+}
+#tab_list li .tab_link, #tab_list li .tab_link:visited{
+    display: block;
+    vertical-align: middle;
+    position: relative;
+    width: 7vw;
+    height: 4vh;
+    padding-left: 0.5vw;
+    padding-top: 0vh;
+    top: 0.5vh;
+    left: 0.25vw;
+    background-image: url(images/tab2.png);
+    background-size: 7vw 4vh;
+    background-repeat: no-repeat;
+    text-decoration: none;
+    color: #000000;
+}
+
+#tab_list li .tab_link:hover{
+    background-image: url(images/tab.png)!important;
+    color: #FFFFFF!important;
+}
+
+#search_form{
+    text-align: left;
+    display: block;
+    
+}
+
+#search_form select, #search_form input{
+    position: relative;
+    float: right;
+    width: 5vw;
+    background: white;
+    border-radius: 25px;
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
+    margin-right: 0.5vw;
+}
+
+#search_form select{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url(images/triangle_down.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right;
+    width: 7.5vw;
+}
+
+
+
+/*
+Animation of list expansion, but not what I'm looking for (will need JS/JQuery).
+Keeping it here just in case I can find a use for it.
+*/
+#listTest{
+	overflow:hidden;
+	-moz-transition: 0.5s linear;
+}
+/*
+a:focus + #listTest, a:visited  + #listTest{
+  max-height:85vh;
+}
+  
+a:focus {
+  pointer-events: none;
+}
+*/
+
+* html body {
+	overflow: hidden;
+}
+
+* html #footer-wrapper {
+	float: left;
+	position: relative;
+	width: 100vw;
+	padding-bottom: 10010px;
+	margin-bottom: -10000px;
+	background: #fff;
+	min-width: 650px;
+}
+
+@font-face{
+    font-family: custom-font-1;
+    src: url("PTF55F.ttf");    
+}
