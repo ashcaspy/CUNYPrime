@@ -58,6 +58,10 @@ public class CunyFirstClient {
         match.setSelectedAttribute(match.getOptionByValue(ID.matchValue), true);
         ((HtmlTextInput)searchPage.getElementById(ID.courseNbrId)).setText("0");
 
+        //only find undergrad courses
+        HtmlSelect career = getSelect(ID.selectCareer);
+        career.setSelectedAttribute(career.getOptionByText("Undergraduate"), true);
+
         List<NameValuePair> list = getFormParams(searchPage);
         searchParameters = new HashMap<>(list.size());
         for(NameValuePair p: list) {

@@ -13,6 +13,7 @@ public class ID {
     public final static String selectSchool = "CLASS_SRCH_WRK2_INSTITUTION$42$";
     public final static String selectTerm = "CLASS_SRCH_WRK2_STRM$45$";
     public final static String selectDept = "SSR_CLSRCH_WRK_SUBJECT_SRCH$0";
+    public final static String selectCareer = "SSR_CLSRCH_WRK_ACAD_CAREER$2";
 
     public final static String matchId = "SSR_CLSRCH_WRK_SSR_EXACT_MATCH1$1";
     public final static String matchValue = "G";
