@@ -12,6 +12,11 @@ import java.net.URL;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
+
+import java.sql.Connection;
+import parser.Parser;
+
+
 public class CunyFirstClient {
     public CunyFirstClient() {
         client = new WebClient(BrowserVersion.CHROME); //silence errors
@@ -36,6 +41,17 @@ public class CunyFirstClient {
     private HtmlPage searchPage = null;
     HashMap<String, String> searchParameters = null;
     HashMap<String, String> sectionRequestParams = null;
+
+    public void retrieve(String college, String season, int year, Iterable<String> departments, Connection db) {
+        setup(college, ID.semester(season, year));
+        for(String dept: departments) {
+            try {
+                new Parser(this, getResults(dept)).addToTable(db);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public HtmlSelect getSelect(String id) {
         return (HtmlSelect) searchPage.getElementById(id);
