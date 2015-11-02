@@ -82,9 +82,7 @@ public class Course {
                 insertSection.setString(1, dept);
                 insertSection.setString(2, number);
                 insertSection.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            } catch (SQLException e) {}
         }
     }
 

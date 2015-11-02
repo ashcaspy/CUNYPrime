@@ -34,9 +34,7 @@ public class Parser {
         for(Course course: courses) {
             try {
                 course.addToTable(conn);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            } catch (SQLException e) {}
         }
     }
 
