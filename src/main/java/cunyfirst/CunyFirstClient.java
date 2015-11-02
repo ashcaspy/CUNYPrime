@@ -42,8 +42,10 @@ public class CunyFirstClient {
     HashMap<String, String> searchParameters = null;
     HashMap<String, String> sectionRequestParams = null;
 
-    public void retrieve(String college, String season, int year, Iterable<String> departments, Connection db) {
-        setup(college, ID.semester(season, year));
+    public void retrieve(String college, String season, int year,
+                         MatchValuePair courseNumber,
+                         Iterable<String> departments, Connection db) {
+        setup(college, ID.semester(season, year), courseNumber);
         for(String dept: departments) {
             try {
                 new Parser(this, getResults(dept)).addToTable(db);
@@ -59,7 +61,7 @@ public class CunyFirstClient {
 
 
     //set institution, term, and course number
-    public void setup(String school, String semester) {
+    public void setup(String school, String semester, MatchValuePair courseNumber) {
         HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(inst.getOptionByText(school), true);
         client.waitForBackgroundJavaScript(10000);
@@ -71,8 +73,9 @@ public class CunyFirstClient {
 
         //has to be done after school and term are set
 
-        //search for course numbers > 0
-        setMatch(ID.matchNbrId, ID.courseNbrId, new MatchValuePair(ID.greaterThan, "0"));
+        if(null != courseNumber) {
+            setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
+        }
 
         //only find undergrad courses
         HtmlSelect career = getSelect(ID.selectCareer);

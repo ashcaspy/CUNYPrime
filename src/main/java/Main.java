@@ -1,6 +1,7 @@
 
 import java.io.IOException;
 import java.sql.DriverManager;
+import java.util.Arrays;
 import java.util.List;
 
 import com.gargoylesoftware.htmlunit.html.*;
@@ -20,9 +21,10 @@ class Main {
             }
 
             CunyFirstClient wc = new CunyFirstClient();
-            wc.setup("Hunter College", ID.semester("Fall", 2015));
 
-            List<HtmlOption> depts = wc.getSelect(cunyfirst.ID.selectDept).getOptions();
+            /*
+             * ASHLEY
+             */
             Connection conn;
             String serverName = "localhost:3306";
             String mydatabase = "cunyfirst";
@@ -36,18 +38,8 @@ class Main {
                 return;
             }
 
-            //the first option is blank
-            for (HtmlOption o : depts.subList(1, depts.size())) {
-                try {
-                    String deptCode = o.getValueAttribute();
-                    if(ID.skippedDepts.contains(deptCode)) {
-                        continue;
-                    }
-                    new Parser(wc, wc.getResults(deptCode)).addToTable(conn);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            wc.retrieve("Hunter College", "Fall", 2015, null, Arrays.asList(new String[]{"CSCI", "ANTHC"}), conn);
+
             try {
                 conn.close();
             } catch (SQLException e) {
