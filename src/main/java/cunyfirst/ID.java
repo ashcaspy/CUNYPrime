@@ -14,10 +14,11 @@ public class ID {
     public final static String selectDept = "SSR_CLSRCH_WRK_SUBJECT_SRCH$0";
     public final static String selectCareer = "SSR_CLSRCH_WRK_ACAD_CAREER$2";
 
-    public final static String matchId = "SSR_CLSRCH_WRK_SSR_EXACT_MATCH1$1";
     public final static String greaterThan = "G";
     public final static String lessThan = "T";
     public final static String exact = "E";
+
+    public final static String matchNbrId = "SSR_CLSRCH_WRK_SSR_EXACT_MATCH1$1";
     public final static String courseNbrId = "SSR_CLSRCH_WRK_CATALOG_NBR$1";
 
     public static String semester(String season, int year) {

@@ -72,7 +72,7 @@ public class CunyFirstClient {
         //has to be done after school and term are set
 
         //search for course numbers > 0
-        setMatch(ID.matchId, ID.courseNbrId, new MatchValuePair(ID.greaterThan, "0"));
+        setMatch(ID.matchNbrId, ID.courseNbrId, new MatchValuePair(ID.greaterThan, "0"));
 
         //only find undergrad courses
         HtmlSelect career = getSelect(ID.selectCareer);
