@@ -68,11 +68,11 @@ public class CunyFirstClient {
         term.setSelectedAttribute(term.getOptionByText(semester), true);
         client.waitForBackgroundJavaScript(10000);
 
+
         //has to be done after school and term are set
+
         //search for course numbers > 0
-        HtmlSelect match = getSelect(ID.matchId);
-        match.setSelectedAttribute(match.getOptionByValue(ID.matchValue), true);
-        ((HtmlTextInput)searchPage.getElementById(ID.courseNbrId)).setText("0");
+        setMatch(ID.matchId, ID.courseNbrId, new MatchValuePair(ID.greaterThan, "0"));
 
         //only find undergrad courses
         HtmlSelect career = getSelect(ID.selectCareer);
@@ -87,6 +87,13 @@ public class CunyFirstClient {
         searchParameters.put(ID.submitCode.getName(), ID.submitCode.getValue());
         searchParameters.put(ID.showClosed.getName(), ID.showClosed.getValue());
 
+    }
+
+    //sets one search term (selectId -> pair.comparison, textId -> pair.value)
+    public void setMatch(String selectId, String textId, MatchValuePair pair) {
+        HtmlSelect match = getSelect(selectId);
+        match.setSelectedAttribute(match.getOptionByValue(pair.comparison), true);
+        ((HtmlTextInput)searchPage.getElementById(textId)).setText(pair.value);
     }
 
     public HtmlPage getResults(String dept) throws IOException {

@@ -3,8 +3,7 @@ package cunyfirst;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import scala.actors.threadpool.Arrays;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ID {
     public final static String url = "https://hrsa.cunyfirst.cuny.edu/psc/cnyhcprd/GUEST/HRMS/c/COMMUNITY_ACCESS.CLASS_SEARCH.GBL";
@@ -16,8 +15,9 @@ public class ID {
     public final static String selectCareer = "SSR_CLSRCH_WRK_ACAD_CAREER$2";
 
     public final static String matchId = "SSR_CLSRCH_WRK_SSR_EXACT_MATCH1$1";
-    public final static String matchValue = "G";
-
+    public final static String greaterThan = "G";
+    public final static String lessThan = "T";
+    public final static String exact = "E";
     public final static String courseNbrId = "SSR_CLSRCH_WRK_CATALOG_NBR$1";
 
     public static String semester(String season, int year) {
