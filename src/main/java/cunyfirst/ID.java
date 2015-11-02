@@ -21,6 +21,12 @@ public class ID {
     public final static String matchNbrId = "SSR_CLSRCH_WRK_SSR_EXACT_MATCH1$1";
     public final static String courseNbrId = "SSR_CLSRCH_WRK_CATALOG_NBR$1";
 
+    public final static String between = "BT";
+
+    public final static String start = "SSR_CLSRCH_WRK_SSR_START_TIME_OPR$8";
+    public final static String startVal1 = "SSR_CLSRCH_WRK_MEETING_TIME_START$8";
+    public final static String startVal2 = "SSR_CLSRCH_WRK_SSR_MTGTIME_START2$8";
+
     public static String semester(String season, int year) {
         return Integer.toString(year) + " " + season + " Term";
     }

@@ -44,8 +44,9 @@ public class CunyFirstClient {
 
     public void retrieve(String college, String season, int year,
                          MatchValuePair courseNumber,
+                         TimeRange start,
                          Iterable<String> departments, Connection db) {
-        setup(college, ID.semester(season, year), courseNumber);
+        setup(college, ID.semester(season, year), courseNumber, start);
         for(String dept: departments) {
             try {
                 new Parser(this, getResults(dept)).addToTable(db);
@@ -61,7 +62,7 @@ public class CunyFirstClient {
 
 
     //set institution, term, and course number
-    public void setup(String school, String semester, MatchValuePair courseNumber) {
+    public void setup(String school, String semester, MatchValuePair courseNumber, TimeRange start) {
         HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(inst.getOptionByText(school), true);
         client.waitForBackgroundJavaScript(10000);
@@ -75,6 +76,10 @@ public class CunyFirstClient {
 
         if(null != courseNumber) {
             setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
+        }
+
+        if(null != start) {
+            setTime(true, start);
         }
 
         //only find undergrad courses
@@ -93,10 +98,27 @@ public class CunyFirstClient {
     }
 
     //sets one search term (selectId -> pair.comparison, textId -> pair.value)
-    public void setMatch(String selectId, String textId, MatchValuePair pair) {
+    void setMatch(String selectId, String textId, MatchValuePair pair) {
         HtmlSelect match = getSelect(selectId);
         match.setSelectedAttribute(match.getOptionByValue(pair.comparison), true);
         ((HtmlTextInput)searchPage.getElementById(textId)).setText(pair.value);
+    }
+
+    void setTime(boolean start, TimeRange time) {
+        String selectId, textId1, textId2;
+
+            selectId = ID.start;
+            textId1 = ID.startVal1;
+            textId2 = ID.startVal2;
+
+        HtmlSelect select = (HtmlSelect)searchPage.getElementById(selectId);
+        select.setSelectedAttribute(select.getOptionByValue(ID.between), true);
+        client.waitForBackgroundJavaScript(2000);
+
+        HtmlTextInput val1 = (HtmlTextInput)searchPage.getElementById(textId1);
+        HtmlTextInput val2 = (HtmlTextInput)searchPage.getElementById(textId2);
+        val1.setText(Integer.toString(time.min));
+        val2.setText(Integer.toString(time.max));
     }
 
     public HtmlPage getResults(String dept) throws IOException {
