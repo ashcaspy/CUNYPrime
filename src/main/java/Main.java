@@ -1,15 +1,9 @@
 
-import java.io.IOException;
 import java.sql.DriverManager;
 import java.util.Arrays;
-import java.util.List;
 
-import com.gargoylesoftware.htmlunit.html.*;
-import cunyfirst.CunyFirstClient;
-import cunyfirst.ID;
-
+import cunyfirst.*;
 import parser.Course;
-import parser.Parser;
 import parser.Section;
 
 import java.sql.*;
@@ -38,7 +32,9 @@ class Main {
                 return;
             }
 
-            wc.retrieve("Hunter College", "Fall", 2015, null, Arrays.asList(new String[]{"CSCI", "ANTHC"}), conn);
+            wc.retrieve("Hunter College", "Fall", 2015,
+                    new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12),
+                    Arrays.asList(new String[]{"CSCI", "ANTHC"}), conn);
 
             try {
                 conn.close();

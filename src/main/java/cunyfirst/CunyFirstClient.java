@@ -78,10 +78,6 @@ public class CunyFirstClient {
             setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
         }
 
-        if(null != start) {
-            setTime(true, start);
-        }
-
         //only find undergrad courses
         HtmlSelect career = getSelect(ID.selectCareer);
         career.setSelectedAttribute(career.getOptionByText("Undergraduate"), true);
@@ -95,6 +91,12 @@ public class CunyFirstClient {
         searchParameters.put(ID.submitCode.getName(), ID.submitCode.getValue());
         searchParameters.put(ID.showClosed.getName(), ID.showClosed.getValue());
 
+        //set times
+        if(null != start) {
+            searchParameters.put(ID.start, ID.between);
+            searchParameters.put(ID.startVal1, Integer.toString(start.min));
+            searchParameters.put(ID.startVal2, Integer.toString(start.max));
+        }
     }
 
     //sets one search term (selectId -> pair.comparison, textId -> pair.value)
@@ -102,23 +104,6 @@ public class CunyFirstClient {
         HtmlSelect match = getSelect(selectId);
         match.setSelectedAttribute(match.getOptionByValue(pair.comparison), true);
         ((HtmlTextInput)searchPage.getElementById(textId)).setText(pair.value);
-    }
-
-    void setTime(boolean start, TimeRange time) {
-        String selectId, textId1, textId2;
-
-            selectId = ID.start;
-            textId1 = ID.startVal1;
-            textId2 = ID.startVal2;
-
-        HtmlSelect select = (HtmlSelect)searchPage.getElementById(selectId);
-        select.setSelectedAttribute(select.getOptionByValue(ID.between), true);
-        client.waitForBackgroundJavaScript(2000);
-
-        HtmlTextInput val1 = (HtmlTextInput)searchPage.getElementById(textId1);
-        HtmlTextInput val2 = (HtmlTextInput)searchPage.getElementById(textId2);
-        val1.setText(Integer.toString(time.min));
-        val2.setText(Integer.toString(time.max));
     }
 
     public HtmlPage getResults(String dept) throws IOException {
@@ -135,6 +120,8 @@ public class CunyFirstClient {
                 sectionRequestParams.put(p.getName(), p.getValue());
             }
         }
+        //System.out.println("'"+searchParameters.get(ID.endVal1)+"'");
+        //System.out.println("'"+searchParameters.get(ID.startVal1)+"'");
         return results;
     }
 
