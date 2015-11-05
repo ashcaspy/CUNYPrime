@@ -35,6 +35,23 @@ public class ID {
     public final static String profMatch = "SSR_CLSRCH_WRK_SSR_EXACT_MATCH2$16";
     public final static String professor = "SSR_CLSRCH_WRK_LAST_NAME$16";
 
+    public final static String whichDays = "SSR_CLSRCH_WRK_INCLUDE_CLASS_DAYS$9";
+    public final static String includeOnly = "I";
+    public final static Map<Integer, String> daysOfWeek = Collections.unmodifiableMap(new HashMap<Integer, String>(7) {
+        {
+            this.put(0, "SSR_CLSRCH_WRK_SUN$chk$9");
+            this.put(1, "SSR_CLSRCH_WRK_MON$chk$9");
+            this.put(2, "SSR_CLSRCH_WRK_TUES$chk$9");
+            this.put(3, "SSR_CLSRCH_WRK_WED$chk$9");
+            this.put(4, "SSR_CLSRCH_WRK_THURS$chk$9");
+            this.put(5, "SSR_CLSRCH_WRK_FRI$chk$9");
+            this.put(6, "SSR_CLSRCH_WRK_SAT$chk$9");
+        }
+    });
+
+    public final static String selected = "Y";
+
+
     public static String semester(String season, int year) {
         return Integer.toString(year) + " " + season + " Term";
     }

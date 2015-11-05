@@ -46,9 +46,10 @@ public class CunyFirstClient {
                          MatchValuePair courseNumber,
                          TimeRange start, TimeRange end,
                          String keyword, String professor,
+                         int[] days,
                          Iterable<String> departments, Connection db) {
         setup(college, ID.semester(season, year));
-        setSearchTerms(courseNumber, start, end, keyword, professor);
+        setSearchTerms(courseNumber, start, end, keyword, professor, days);
         for(String dept: departments) {
             try {
                 new Parser(this, getResults(dept)).addToTable(db);
@@ -92,7 +93,8 @@ public class CunyFirstClient {
     }
 
     //call after setup
-    public void setSearchTerms(MatchValuePair courseNumber, TimeRange start, TimeRange end, String keyword, String professor) {
+    public void setSearchTerms(MatchValuePair courseNumber, TimeRange start, TimeRange end,
+                               String keyword, String professor, int[] days) {
         if(null != courseNumber) {
             setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
         }
@@ -116,6 +118,13 @@ public class CunyFirstClient {
         if(null != professor) {
             searchParameters.put(ID.profMatch, ID.exact);
             searchParameters.put(ID.professor, professor);
+        }
+
+        if(null != days) {
+            searchParameters.put(ID.whichDays, ID.includeOnly);
+            for(int i: days) {
+                searchParameters.put(ID.daysOfWeek.get(i), ID.selected);
+            }
         }
     }
 
