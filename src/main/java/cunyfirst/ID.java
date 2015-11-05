@@ -32,6 +32,9 @@ public class ID {
 
     public final static String keyword = "SSR_CLSRCH_WRK_DESCR$11";
 
+    public final static String profMatch = "SSR_CLSRCH_WRK_SSR_EXACT_MATCH2$16";
+    public final static String professor = "SSR_CLSRCH_WRK_LAST_NAME$16";
+
     public static String semester(String season, int year) {
         return Integer.toString(year) + " " + season + " Term";
     }
