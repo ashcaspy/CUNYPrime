@@ -12,6 +12,9 @@ import java.util.List;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class ProfileParser {
 
@@ -221,8 +224,6 @@ public class ProfileParser {
         String dept = "";
         boolean lastOne = false;
         boolean dealingWithException = false;
-        boolean hitInProgressSec = false;
-        boolean hitFallThroughSec = false;
         ReqCategory reqCategory = new ReqCategory();
         Requirements requirements = new Requirements();
         Requirements mySubReq = new Requirements();
@@ -238,7 +239,6 @@ public class ProfileParser {
         String creditApp = "";
         boolean needToPutInCat = false;
         boolean needCollege = true;
-        boolean needMajor = true;
         String college = "";
         String major = "";
         boolean hasReq = false;
@@ -250,7 +250,8 @@ public class ProfileParser {
         List<String> npCourses = new ArrayList<>();
         List<String> inProgressCourses = new ArrayList<>();
         List<String> transferCourses = new ArrayList<>();
-
+        Map inProgressMap = new HashMap<>();
+        Map trasnferMap = new HashMap<>();
 
         for (int i = 0; i < data.length; i++) {
             if(data[i].equals("Catalog Year:") || data[i].equals("Academic Year:")|| data[i].contains("Catalog Year:")){
@@ -301,6 +302,9 @@ public class ProfileParser {
 
                         counter++;
                         catName = data[i-1];
+                        if(catName.contains("Major")){
+                            major = data[i-1];
+                        }
 
                         if (counter >= 0) {
                             needToPutInCat = true;
@@ -332,6 +336,9 @@ public class ProfileParser {
 
                         counter++;
                         catName = data[i];
+                        if(catName.contains("Major")){
+                            major = data[i];
+                        }
 
                         if (counter >= 0) {
                             needToPutInCat = true;
@@ -356,7 +363,7 @@ public class ProfileParser {
             }
 
 
-            if((data[i].contains("FALL") || data[i].contains("SPRING") || data[i].contains("SUMMER") || data[i].contains("WINTER")) && !data[i].contains("Term")){
+            if((data[i].contains("FALL") || data[i].contains("Fall")|| data[i].contains("SPRING") || data[i].contains("Spring") || data[i].contains("SUMMER") || data[i].contains("Summer") || data[i].contains("WINTER") || data[i].contains("Winter")|| data[i].contains("IP") || data[i].contains("TRANSFER")) && !data[i].contains("Term")){
                 String hold = "";
                 boolean infoNeed = false;
                 if(data[i].equals("SUMMER") && isInfoIneed(data[i - 1])){
@@ -375,30 +382,36 @@ public class ProfileParser {
                     hold = data[i];
                 }
 
-		if(hasSub){
+                if(hasSub){
                     requirements.getElementFromSublist(requirements.getIndexForSubList()).addToCountAsDone(data[i]);
 
                 }
-					 
+
 
                 String temp [] = hold.split(" ");
                 boolean withdrewFromClass = false;
                 boolean isNotCompleted = false;
+                boolean isInProgress = false;
+                boolean isTransfer = false;
                 String output = "";
                 boolean start = false;
                 if(temp.length > 0){
-                    if(temp[temp.length - 2].contains("FALL") || temp[temp.length - 2].contains("SPRING") || temp[temp.length - 2].contains("SUMMER") || temp[temp.length - 2].contains("WINTER") || infoNeed){
-                        
-								
-								for (int n = 0; n < temp.length; n++){
+                    if(data[i].contains("TRANSFER") || temp[temp.length - 2].contains("FALL") || temp[temp.length - 2].contains("Fall")|| temp[temp.length - 2].contains("SPRING") ||temp[temp.length - 2].contains("Spring") || temp[temp.length - 2].contains("SUMMER") || temp[temp.length - 2].contains("Summer")|| temp[temp.length - 2].contains("WINTER") || temp[temp.length - 2].contains("Winter")|| infoNeed){
+
+
+                        for (int n = 0; n < temp.length; n++){
                             if(temp[n].equals("W")){
                                 withdrewFromClass = true;
                             } else if(temp[n].equals("NC")){
                                 isNotCompleted = true;
+                            }  else if(temp[n].equals("IP")){
+                                isInProgress = true;
+                            } else if(temp[n].contains("TRANSFER")){
+                                isTransfer = true;
                             }
                             if(n < temp.length - 1) {
 
-                                if (isAllCaps(temp[n]) &&  isAllDigit(temp[n + 1]) && temp[n + 1].length() == 5) {
+                                if (isAllCaps(temp[n]) && temp[n].length() > 1 && temp[n + 1].length() == 5) {
 
 
                                     start = true;
@@ -409,12 +422,26 @@ public class ProfileParser {
                             }
                         }
                         if(!output.isEmpty()) {
-                            if (!withdrewFromClass && !isNotCompleted) {
+                            if (!withdrewFromClass && !isNotCompleted && !isInProgress && !isTransfer) {
                                 coursesTaken.add(output);
                             } else if (withdrewFromClass) {
                                 withdrawnCourses.add(output);
                             } else if (isNotCompleted) {
                                 npCourses.add(output);
+                            } else if(isInProgress){
+                                String splitOutput [] = output.split(" ");
+                                String theKey = splitOutput[indexOf0].concat(splitOutput[indexOf1]);
+                                if(!inProgressMap.containsKey(theKey)) {
+                                    inProgressCourses.add(output);
+                                    inProgressMap.put(theKey, inProgressCourses.size() - 1);
+                                }
+                            } else if(isTransfer){
+                                String splitOutput [] = output.split(" ");
+                                String theKey = splitOutput[indexOf0].concat(splitOutput[indexOf1]);
+                                if(!trasnferMap.containsKey(theKey)) {
+                                    transferCourses.add(output);
+                                    trasnferMap.put(theKey, transferCourses.size() - 1);
+                                }
                             }
                         }
 
@@ -425,11 +452,6 @@ public class ProfileParser {
                 college = data[i];
                 needCollege = false;
 
-            } else if(data[i].contains("Advisor 2")) {
-                String temp []= data[i].split("Major ");
-                if(temp.length > 1) {
-                    major = temp[indexOf1];
-                }
             } else if (isInfoIneed(data[i]) || data[i].contains("Choose")) {
 
                 if (data[i].contains("Choose from")) {
@@ -692,7 +714,12 @@ public class ProfileParser {
                     } else {
                         //System.out.println(data[i]);
                         if(!dealingWithException) {
-                            mySubReq2.addToList(data[i]);
+                            if(isFirstCharDigit(data[i])){
+                                mySubReq2.addToList(dept + data[i]);
+
+                            } else {
+                                mySubReq2.addToList(data[i]);
+                            }
                         } else if(dealingWithException){
                             mySubReq2.addToExceptList(data[i]);
                         }
@@ -799,7 +826,7 @@ public class ProfileParser {
                             courses = data[i].split("or ");
                         }
                         //if(data[i].contains("20600 or 22900 or CHEM 10301 or 10401 or 11000 or 24300 or")) {
-                            //SIGH
+                        //SIGH
 
 
                         if(courses.length == 1){
@@ -989,73 +1016,9 @@ public class ProfileParser {
                 }
 
             } else if(data[i].contains("Disclaimer")){
-                hitFallThroughSec = false;
-                hitInProgressSec = false;
+
                 if (easyStyle){
                     myRequirements.add(requirements);
-                }
-                if(justOneClassInALine){
-                    justOneClassInALine = false;
-                        lastOne = false;
-                        requirements.addToSubList(mySubReq);
-                        myRequirements.add(requirements);
-                        mySubReq = new Requirements();
-
-
-                    requirements = new Requirements();
-
-                }
-                if(!isLastCat) {
-                    needToPutInCat = true;
-                    if (needToPutInCat) {
-                        reqCategory.setName(catName);
-                        reqCategory.setCreditReq(creditReq);
-                        reqCategory.setCreditApp(creditApp);
-                        reqCategory.setMyList(myRequirements);
-                        myReqCat.add(reqCategory);
-                        reqCategory = new ReqCategory();
-                        myRequirements = new ArrayList<>();
-                        needToPutInCat = false;
-                    }
-                    isLastCat = true;
-                }
-            } else if(data[i].contains("Non-Contributing Grades and Pending Permit Courses")){
-                hitFallThroughSec = false;
-                hitInProgressSec = false;
-                if (easyStyle){
-                    myRequirements.add(requirements);
-                    easyStyle = false;
-                }if(justOneClassInALine){
-                    justOneClassInALine = false;
-                    lastOne = false;
-                    requirements.addToSubList(mySubReq);
-                    myRequirements.add(requirements);
-                    mySubReq = new Requirements();
-
-
-                    requirements = new Requirements();
-
-                }
-                if(!isLastCat) {
-                    needToPutInCat = true;
-                    if (needToPutInCat) {
-                        reqCategory.setName(catName);
-                        reqCategory.setCreditReq(creditReq);
-                        reqCategory.setCreditApp(creditApp);
-                        reqCategory.setMyList(myRequirements);
-                        myReqCat.add(reqCategory);
-                        reqCategory = new ReqCategory();
-                        myRequirements = new ArrayList<>();
-                        needToPutInCat = false;
-                    }
-                    isLastCat = true;
-                }
-            } else if(data[i].contains("Fallthrough Courses")){
-                hitFallThroughSec = true;
-                hitInProgressSec = false;
-                if (easyStyle){
-                    myRequirements.add(requirements);
-                    easyStyle = false;
                 }
                 if(justOneClassInALine){
                     justOneClassInALine = false;
@@ -1082,23 +1045,6 @@ public class ProfileParser {
                     }
                     isLastCat = true;
                 }
-
-            }
-            if(hitFallThroughSec){
-                if(data[i].contains("TRANSFER")){
-                    transferCourses.add(data[i]);
-                }
-            }
-            if(hitInProgressSec){
-
-                if(data[i].contains("IP")){
-                    inProgressCourses.add(data[i]);
-                }
-            }
-            if(data[i].contains("In-progress")){
-
-                hitInProgressSec = true;
-                hitFallThroughSec = false;
             }
         }
 
@@ -1120,7 +1066,7 @@ public class ProfileParser {
         for(int j = 0; j < myReqCat.size(); j++){
             myReqCat.get(j).print();
             parsedOutput = parsedOutput + myReqCat.get(j).print() + "\r\n";
-            
+
         }
 
 
@@ -1185,7 +1131,7 @@ public class ProfileParser {
         System.setOut(old);
         String finalOutput = required.toString();
         System.out.println(finalOutput);
-        
+
         return parsedOutput;
     }
 }

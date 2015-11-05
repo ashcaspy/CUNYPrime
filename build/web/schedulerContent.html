@@ -57,14 +57,14 @@
 		<div class = "column_head"></div>
 		<!--<a href = "javascript:testButton()">CLICK</a>-->
 		<div class = "scroll_wrapper" id = "right_scroll_wrapper">
-			<div><a href="javascript:loadList(1)" id = "list_section_header_1">(+) Best Fit</a></div>
-				<div id = "list_section_1"></div>
+			<div><a href="javascript:loadList(0)" id = "list_section_header_0">(+) Best Fit</a></div>
+				<div id = "list_section_0"></div>
 				
-			<div><a href="javascript:loadList(2)" id = "list_section_header_2">(+) Some Conflicts</a></div>
-				<div id = "list_section_2"></div>
+			<div><a href="javascript:loadList(1)" id = "list_section_header_1">(+) Some Conflicts</a></div>
+				<div id = "list_section_1"></div>
 			
-			<div><a href="javascript:loadList(3)" id = "list_section_header_3">(+) Others</a></div>
-				<div id = "list_section_3"></div>				
+			<div><a href="javascript:loadList(2)" id = "list_section_header_2">(+) Others</a></div>
+				<div id = "list_section_2"></div>				
 
 		</div>
 		<div class = "column_foot"></div>
@@ -88,8 +88,10 @@
 <!--Container end-->
 <script src = "schedule_functions.js"></script>
 <script>
-    createDivs();
+    //createDivs();
     createTools();
-    loadScheduleTabObjs();
-    loadScheduleTab(0);
+    //loadScheduleTabObjs();
+    //loadScheduleTab(0);
+    createScheduleFooterTools();
+    loadScheduleTab(-1);
 </script>

@@ -3,10 +3,14 @@ var collegeNameArray = [];
 var majorArray = [];
 var numColleges = 10;
 var numMajors = [];
+var collegeOfStudent = "";
 
-var selectedCollege;
-var selectedMajor;
-
+var requirements = [];
+var coursesTaken = [];
+var coursesInProgress = [];
+var coursesWithdrew = [];
+var coursesNotCompleted = [];
+var coursesTransfer =[];
 
 function loadInfo(){
     
@@ -52,12 +56,175 @@ function populateMajors(){
     document.getElementById("majors").innerHTML = defaultSelect + newOpt;
     
 }
-
-
-function populateCourseRequirements(){
-
     
-}
+
+        function isAClass(input){
+            var inputSplit = input.split(" ");
+            if(inputSplit.length < 2  || input == "Sublist:"){
+                return false;
+            }
+            if(inputSplit[0] === inputSplit[0].toUpperCase()){
+                return true;
+            }
+            return false;
+        }
+
+        function putIntoArrays(lines){
+            if(lines.indexOf("Taken") > -1 || lines.indexOf("In-Progress") > -1 || lines.indexOf("Withdrawal") > -1 || lines.indexOf("Not-Completed") > -1 || lines.indexOf("Transfer") > -1 ){
+                    return false;
+            } 
+           return true;
+        }
+
+        function populateCourseRequirements(inputString){
+
+            var creditsOrClassNeeded = "";
+            var courses = [];
+            var index = 0;
+            var name = "";
+            var credReq = "";
+            var credApp = "";
+            var isCoursesTaken = false;
+            var isCouresTransfer = false;
+            var isCoursesInProgress = false;
+            var isCoursesNotCompleted = false;
+            var isCoursesWithdrawal = false;
+            var counter = 0;
+
+
+            var lines = inputString.split("\n");
+            for (var i = 0; i < lines.length; i++){
+                if(lines[i].indexOf("College") > -1){
+                    collegeOfStudent = lines[i];
+                } else if(lines[i].indexOf("in:") >-1) {
+                    if(courses.length > 0){
+                  
+                        var reqJson = {
+                            credOrClassNeeded: creditsOrClassNeeded,
+                            reqCourses: courses
+
+                        }
+                        
+                        requirements[index].push(reqJson);
+                        courses = [];
+                        creditsOrClassNeeded = "";
+
+                    }
+                    creditsOrClassNeeded = lines[i];
+                } else if(lines[i].indexOf("Choose") >-1){
+                    if(courses.length > 0){
+                        var reqJson = {
+                            credOrClassNeeded: creditsOrClassNeeded,
+                            reqCourses: courses
+                        }
+                       
+                        requirements[index].push(reqJson);
+                        creditsOrClassNeeded = "";
+                        
+                        courses = [];
+                    }
+
+                    if(i != 0 && lines[i -1] != "or"){
+                        requirements[index].push("[".concat(lines[i]));
+                        
+                    } else if(i != 0 && lines[i - 1] == "or"){
+                        requirements[index].push(lines[i]);
+
+                    }
+                } else if(lines[i] == "or" || lines[i] == "and"){
+                        var reqJson = {
+                            credOrClassNeeded: creditsOrClassNeeded,
+                            reqCourses: courses
+                        }
+
+                        requirements[index].push(reqJson);
+                        if(lines[i] == "and"){
+                            requirements[index].push("&");
+                        }
+                        courses = [];                
+                        creditsOrClassNeeded = "";
+                        counter = 0;
+
+                } else if(lines[i].indexOf("*") >-1){
+                    counter++;
+                } else if(isAClass(lines[i]) && !isCoursesTaken && !isCoursesInProgress && !isCoursesNotCompleted && !isCouresTransfer && !isCoursesWithdrawal){
+                    var temp = lines[i].replace("or", "");
+                    temp = temp.replace("OR", "");
+                    temp = temp.replace(")", "");
+                    temp = temp.replace("and", "");
+                    courses.push(temp);
+                } else if(lines[i].indexOf("~") > -1){
+                    index++; 
+                } else if(isCoursesTaken && putIntoArrays(lines[i])) {
+
+                    coursesTaken.push(lines[i]);
+                } else if(isCoursesInProgress && putIntoArrays(lines[i])){
+                    coursesInProgress.push(lines[i]);
+                } else if(isCoursesWithdrawal && putIntoArrays(lines[i])){
+                    coursesWithdrew.push(lines[i]);
+                } else if(isCoursesNotCompleted && putIntoArrays(lines[i])){
+                    coursesNotCompleted.push(lines[i]);
+                } else if(isCouresTransfer && putIntoArrays(lines[i])){
+                    coursesTransfer.push(lines[i]);
+                }
+
+                if(counter >= 2){
+                    //if(i != 0 && lines[i - 1].indexOf("*") > -1){
+
+                    var reqJson = {
+                    credOrClassNeeded: creditsOrClassNeeded, 
+                    reqCourses: courses
+
+                    }
+                    requirements[index].push(reqJson);
+                    requirements[index].push("]");
+                    creditsOrClassNeeded = "";
+                    courses = [];
+                    counter = 0;
+                    //}
+                } 
+
+                if(lines[i].indexOf("Taken") > -1){
+                    isCoursesTaken = true;
+                } else if(lines[i].indexOf("In-Progress") > -1){
+                    isCoursesTaken = false;
+                    isCoursesInProgress = true;
+                } else if(lines[i].indexOf("Withdrawal") > -1){ 
+                    isCoursesInProgress = false;
+                    isCoursesTaken = false;
+                    isCoursesWithdrawal = true;
+                } else if(lines[i].indexOf("Not-Completed") > -1){
+                    isCoursesInProgress = false;
+                    isCoursesTaken = false;
+                    isCoursesWithdrawal = false;
+                    isCoursesNotCompleted = true;
+                } else if(lines[i].indexOf("Transfer") > -1){
+                    isCoursesInProgress = false;
+                    isCoursesTaken = false;
+                    isCoursesWithdrawal = false;
+                    isCoursesNotCompleted = false;
+                    isCouresTransfer = true;
+                } else {
+
+                    if(lines[i].indexOf("Required") > -1){
+                        credReq = lines[i];
+                    } else if(lines[i].indexOf("Applied") > -1){
+                        credApp = lines[i];
+                        var reqCat = {
+                            name: name, 
+                            credReq: credReq, 
+                            credApp: credApp
+                        }
+                        requirements.push([reqCat]);
+
+                    } else {
+
+                        name = lines[i];
+
+                    }
+                }
+            }
+        }
 
 
 function collegeSelected(){
@@ -77,66 +244,19 @@ function createDbObject(evt){
 
 }
 
-function myFunc(id){
 
-    var getChoices = document.getElementById(id);
-    var chosen = getChoices.options[getChoices.selectedIndex].text;
-    document.getElementById("coursesTaken").style.display = "block";
-
-    switch(chosen){
-        case "Accounting":
-            document.getElementById("accounting").style.display = "block";
-            document.getElementById("finance").style.display = "block";
-            break;
-
-
-    }
-
-    //var accountingElective = ["ECO 26000", "ECO 48000", "Any 300 - or 400 - level ECO course", "one comp sci class may be used as elective"]; //12 credits
-}
-
-function storeClassesNeeded(){
-    var getColleges = document.getElementById("colleges");
-    var theCollege = getColleges.options[getColleges.selectedIndex].text;
-    var getChoices = document.getElementById(theCollege);
-    var chosen = getChoices.options[getChoices.selectedIndex].text;
-    var uncheck = {};
-
-    switch(chosen){
-        case "Accounting":
-            var classes = document.getElementById("accounting").getElementsByTagName("INPUT");
-
-            var classes2 = document.getElementById("finance").getElementsByTagName("input");
-            var index = 0;
-            for (var i = 0; i < classes.length; i++){
-                if(!classes[i].checked){
-                    /*uncheck[index] = classes[i].value;
-                    index++;*/
-                    uncheck[classes[i].value] = classes[i].value;
-                    index++;
-                } 
-            }					
-            break;
-    }
-    return uncheck;
-}
-
-function store(profileResult){
-    var getColleges = document.getElementById("colleges");
-    var theCollege = getColleges.options[getColleges.selectedIndex].text;
-    var username = document.getElementById("username").value;
-    var email = document.getElementById("email").value;
-    var major = document.getElementById(theCollege).value;
+function store(){
+    /*var getColleges = document.getElementById("colleges");
+    var theCollege = getColleges.options[getColleges.selectedIndex].text;*/
+    //var username = document.getElementById("username").value;
+    //var email = document.getElementById("email").value;
+    /*var major = document.getElementById(theCollege).value;
     var college = document.getElementById("colleges").value;
-    var uncheck = storeClassesNeeded();
-    
+    var uncheck = storeClassesNeeded();*/
+
 
     var input = {
-        username: username,
-        email: email,
-        college: college,
-        major: major,
-        courses: uncheck
+        courses: requirements
     }
 
     var transaction = db.transaction(["gracefulTable"], "readwrite");
@@ -204,6 +324,9 @@ if (window.indexedDB){
     //ADD REGULAR LOCAL STORAGE HERE
 }
 
+
+
+
 /********************************************/
 // Server communication
 /********************************************/
@@ -258,8 +381,17 @@ function uploadPDF() {
         processData: false,
         contentType: false,
         success: function(data){
+            $("#testsubmission").html(outputString);
+            var outputString = data.replace(/(\r\n|\n|\r)/gm, "\n");
+            
+            populateCourseRequirements(outputString);
+            $("#footer").html("helllooo");
+            store();
+            
             var outputString = data.replace(/(\r\n|\n|\r)/gm, "<br>");
             $("#testsubmission").html(outputString);
+            
+            //store(outputString);
             //store(outputString);
         }
             
