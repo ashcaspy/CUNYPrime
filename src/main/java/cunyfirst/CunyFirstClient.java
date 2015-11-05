@@ -14,6 +14,8 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 
 
 import java.sql.Connection;
+import java.util.Map;
+
 import parser.Parser;
 
 
@@ -42,6 +44,8 @@ public class CunyFirstClient {
     HashMap<String, String> searchParameters = null;
     HashMap<String, String> sectionRequestParams = null;
 
+    private HashMap<String, String> resetParameters = null;
+
     public void retrieve(String college, String season, int year,
                          MatchValuePair courseNumber,
                          TimeRange start, TimeRange end,
@@ -64,7 +68,8 @@ public class CunyFirstClient {
     }
 
 
-    //set institution, term, and course number
+    //set institution, term
+    //has the effect of resetting all other search terms
     public void setup(String school, String semester) {
         HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(inst.getOptionByText(school), true);
@@ -90,6 +95,22 @@ public class CunyFirstClient {
         searchParameters.put(ID.submitCode.getName(), ID.submitCode.getValue());
         searchParameters.put(ID.showClosed.getName(), ID.showClosed.getValue());
 
+        //defaults
+        resetParameters = (HashMap<String, String>) searchParameters.clone();
+    }
+
+    //reset select search terms
+    public void resetTerms(String... keys) {
+        for(String k: keys) {
+            searchParameters.put(k, resetParameters.get(k));
+        }
+    }
+
+    //reset all search terms, except for the ones chosen in setup()
+    public void resetTerms() {
+        for(Map.Entry<String, String> e: resetParameters.entrySet()) {
+            searchParameters.put(e.getKey(), e.getValue());
+        }
     }
 
     //call after setup
