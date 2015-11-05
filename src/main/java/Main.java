@@ -33,7 +33,7 @@ class Main {
             }
 
             wc.retrieve("Hunter College", "Fall", 2015,
-                    new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12),
+                    new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12), new TimeRange(11, 14),
                     Arrays.asList(new String[]{"CSCI", "ANTHC"}), conn);
 
             try {

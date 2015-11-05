@@ -27,6 +27,10 @@ public class ID {
     public final static String startVal1 = "SSR_CLSRCH_WRK_MEETING_TIME_START$8";
     public final static String startVal2 = "SSR_CLSRCH_WRK_SSR_MTGTIME_START2$8";
 
+    public final static String end = "SSR_CLSRCH_WRK_SSR_END_TIME_OPR$8";
+    public final static String endVal1 = "SSR_CLSRCH_WRK_MEETING_TIME_END$8";
+    public final static String endVal2 = "SSR_CLSRCH_WRK_SSR_MTGTIME_END2$8";
+
     public static String semester(String season, int year) {
         return Integer.toString(year) + " " + season + " Term";
     }

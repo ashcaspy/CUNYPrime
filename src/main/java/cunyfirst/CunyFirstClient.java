@@ -44,9 +44,9 @@ public class CunyFirstClient {
 
     public void retrieve(String college, String season, int year,
                          MatchValuePair courseNumber,
-                         TimeRange start,
+                         TimeRange start, TimeRange end,
                          Iterable<String> departments, Connection db) {
-        setup(college, ID.semester(season, year), courseNumber, start);
+        setup(college, ID.semester(season, year), courseNumber, start, end);
         for(String dept: departments) {
             try {
                 new Parser(this, getResults(dept)).addToTable(db);
@@ -62,7 +62,7 @@ public class CunyFirstClient {
 
 
     //set institution, term, and course number
-    public void setup(String school, String semester, MatchValuePair courseNumber, TimeRange start) {
+    public void setup(String school, String semester, MatchValuePair courseNumber, TimeRange start, TimeRange end) {
         HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(inst.getOptionByText(school), true);
         client.waitForBackgroundJavaScript(10000);
@@ -96,6 +96,11 @@ public class CunyFirstClient {
             searchParameters.put(ID.start, ID.between);
             searchParameters.put(ID.startVal1, Integer.toString(start.min));
             searchParameters.put(ID.startVal2, Integer.toString(start.max));
+        }
+        if(null != end) {
+            searchParameters.put(ID.end, ID.between);
+            searchParameters.put(ID.endVal1, Integer.toString(end.min));
+            searchParameters.put(ID.endVal2, Integer.toString(end.max));
         }
     }
 
