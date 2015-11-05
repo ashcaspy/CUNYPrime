@@ -45,9 +45,10 @@ public class CunyFirstClient {
     public void retrieve(String college, String season, int year,
                          MatchValuePair courseNumber,
                          TimeRange start, TimeRange end,
+                         String keyword,
                          Iterable<String> departments, Connection db) {
         setup(college, ID.semester(season, year));
-        setSearchTerms(courseNumber, start, end);
+        setSearchTerms(courseNumber, start, end, keyword);
         for(String dept: departments) {
             try {
                 new Parser(this, getResults(dept)).addToTable(db);
@@ -91,7 +92,7 @@ public class CunyFirstClient {
     }
 
     //call after setup
-    public void setSearchTerms(MatchValuePair courseNumber, TimeRange start, TimeRange end) {
+    public void setSearchTerms(MatchValuePair courseNumber, TimeRange start, TimeRange end, String keyword) {
         if(null != courseNumber) {
             setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
         }
@@ -106,6 +107,10 @@ public class CunyFirstClient {
             searchParameters.put(ID.end, ID.between);
             searchParameters.put(ID.endVal1, Integer.toString(end.min));
             searchParameters.put(ID.endVal2, Integer.toString(end.max));
+        }
+
+        if(null != keyword) {
+            searchParameters.put(ID.keyword, keyword);
         }
     }
 
