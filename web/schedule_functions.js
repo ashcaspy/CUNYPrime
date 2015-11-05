@@ -1043,70 +1043,120 @@ function loadScheduleTabObjs(){
 function loadScheduleTab(num){
     if (currentScheduleTab == num)
         return;
-    
-    
-    $("#schedule-tab-" + num).css({"background-image" :"url(images/2.png)"});
-    $("#schedule-tab-" + currentScheduleTab).css({"background-image" : "url(images/schedule-tab.png)"});
-    
-    currentScheduleTab = num;
-    
-    dayStart = scheduleTabs[num].dayStart;
-    dayEnd = scheduleTabs[num].dayEnd;
-    hourStart = scheduleTabs[num].hourStart;
-    hourEnd = scheduleTabs[num].hourEnd;
-    
-    
-    openTimes.splice(0, openTimes.length);
-    closedTimes.splice(0, closedTimes.length);
-    selectedDivs.splice(0, selectedDivs.length);
+    if (num == -1){
+        alert(num);
+    }
+    else{
+        $("#schedule-tab-" + num).css({"background-image" :"url(images/2.png)"});
+        $("#schedule-tab-" + currentScheduleTab).css({"background-image" : "url(images/schedule-tab.png)"});
 
-    for(var i = 0; i < scheduleTabs[num].openTimes.length; i++){
-        openTimes.push(scheduleTabs[num].openTimes[i]);
-        selectedDivs.push(scheduleTabs[num].openTimes[i]);
+        currentScheduleTab = num;
+
+        dayStart = scheduleTabs[num].dayStart;
+        dayEnd = scheduleTabs[num].dayEnd;
+        hourStart = scheduleTabs[num].hourStart;
+        hourEnd = scheduleTabs[num].hourEnd;
+
+
+        openTimes.splice(0, openTimes.length);
+        closedTimes.splice(0, closedTimes.length);
+        selectedDivs.splice(0, selectedDivs.length);
+
+        for(var i = 0; i < scheduleTabs[num].openTimes.length; i++){
+            openTimes.push(scheduleTabs[num].openTimes[i]);
+            selectedDivs.push(scheduleTabs[num].openTimes[i]);
+        }
+
+        for(var i = 0; i < scheduleTabs[num].closedTimes.length; i++){
+            closedTimes.push(scheduleTabs[num].closedTimes[i]);
+            selectedDivs.push(scheduleTabs[num].closedTimes[i]);
+        }
+
+        numDivsX = dayEnd - dayStart + 1;
+        numDivsY = hourEnd - hourStart + 1;
+
+        $("#day-selection-dropdown-from-label-link").html(days[dayStart]);
+        $("#day-selection-dropdown-to-label-link").html(days[dayEnd]);
+        $("#hour-selection-dropdown-from-label-link").html(hours[hourStart]);
+        $("#hour-selection-dropdown-to-label-link").html(hours[hourEnd]);
+
+        if (hourStart / 12 > 1)
+            $("#ampm-selection-dropdown-from-label-link").html("PM");
+        else
+            $("#ampm-selection-dropdown-from-label-link").html("AM");
+
+
+        var $days = $("<ul>");
+        var $indivDay, $indivDayLink;
+        for (var i = dayStart; i < days.length; i++){
+            $indivDay = $("<li>");
+            $indivDayLink = $("<a>");
+            $indivDayLink.attr("href", "#");
+            $indivDayLink.html(days[i]);
+            $indivDay.append($indivDayLink);
+            $indivDay.appendTo($days);
+        }
+        $("#day-selection-dropdown-to-list").remove();
+        $days.attr("id", "day-selection-dropdown-to-list");
+        $days.appendTo($("#day-selection-dropdown-to"));
+
+
+        document.getElementById("day-list").innerHTML = "";
+        document.getElementById("hour-list").innerHTML = "";
+        document.getElementById("timeslot-list").innerHTML = "";
+        createDivs();
     }
-    
-    for(var i = 0; i < scheduleTabs[num].closedTimes.length; i++){
-        closedTimes.push(scheduleTabs[num].closedTimes[i]);
-        selectedDivs.push(scheduleTabs[num].closedTimes[i]);
-    }
-    
-    numDivsX = dayEnd - dayStart + 1;
-    numDivsY = hourEnd - hourStart + 1;
-    
-    $("#day-selection-dropdown-from-label-link").html(days[dayStart]);
-    $("#day-selection-dropdown-to-label-link").html(days[dayEnd]);
-    $("#hour-selection-dropdown-from-label-link").html(hours[hourStart]);
-    $("#hour-selection-dropdown-to-label-link").html(hours[hourEnd]);
-    
-    if (hourStart / 12 > 1)
-        $("#ampm-selection-dropdown-from-label-link").html("PM");
-    else
-        $("#ampm-selection-dropdown-from-label-link").html("AM");
-    
-    
-    var $days = $("<ul>");
-    var $indivDay, $indivDayLink;
-    for (var i = dayStart; i < days.length; i++){
-        $indivDay = $("<li>");
-        $indivDayLink = $("<a>");
-        $indivDayLink.attr("href", "#");
-        $indivDayLink.html(days[i]);
-        $indivDay.append($indivDayLink);
-        $indivDay.appendTo($days);
-    }
-    $("#day-selection-dropdown-to-list").remove();
-    $days.attr("id", "day-selection-dropdown-to-list");
-    $days.appendTo($("#day-selection-dropdown-to"));
-            
-    
-    document.getElementById("day-list").innerHTML = "";
-    document.getElementById("hour-list").innerHTML = "";
-    document.getElementById("timeslot-list").innerHTML = "";
-    createDivs();
-    
-    
-    
-    
-    
-    
 }
+
+/******************************************************************/
+// Overlay logic and buttons
+/******************************************************************/
+function createScheduleFooterTools(){
+    var $button;
+    $button = $("<div>").addClass("schedule_footer_tool");
+    $button.html("<a href = '#' id = 'schedule_footer_tool_new'>NEW</a>");
+    $button.appendTo($("#schedule_footer"));   
+    $button.hover(
+        function(e){
+            e.preventDefault();
+            $("#schedule_footer_tool_new").css({
+                "border": "1px solid white",
+                "background-image":"url(images/1.png)",
+                "color":"white",
+            });
+        },
+        function(e){
+            e.preventDefault();
+            $("#schedule_footer_tool_new").css({
+                "border" : "none",
+                "background-image":"url(images/2.png)",
+                "color" : "black",
+            });
+                 
+    });
+    
+    
+    $button = $("<div>").addClass("schedule_footer_tool");
+    $button.html("<a href = '#' id = 'schedule_footer_tool_save'>SAVE</a>");
+    $button.appendTo($("#schedule_footer"));   
+    $button.hover(
+        function(e){
+            e.preventDefault();
+            $("#schedule_footer_tool_save").css({
+                "border": "1px solid white",
+                "background-image":"url(images/1.png)",
+                "color":"white",
+            });
+        },
+        function(e){
+            e.preventDefault();
+            $("#schedule_footer_tool_save").css({
+                "border" : "none",
+                "background-image":"url(images/2.png)",
+                "color" : "black",
+            });
+    });
+}
+
+
+

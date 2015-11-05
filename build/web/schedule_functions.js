@@ -1103,10 +1103,8 @@ function loadScheduleTab(num){
     document.getElementById("hour-list").innerHTML = "";
     document.getElementById("timeslot-list").innerHTML = "";
     createDivs();
-    
-    
-    
-    
-    
-    
 }
+
+
+
+

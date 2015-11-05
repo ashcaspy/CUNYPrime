@@ -281,8 +281,9 @@ h3{
     min-height: 30px;
 }
 
-#course_info{
-    text-align:center;
+.course_info{
+    text-align:left;
+    padding: 1vw;
 	background-image:url(images/2.png);
 	background-repeat:repeat-x;
 	color:#000000;

@@ -121,7 +121,7 @@ function storeClassesNeeded(){
     return uncheck;
 }
 
-function store(){
+function store(profileResult){
     var getColleges = document.getElementById("colleges");
     var theCollege = getColleges.options[getColleges.selectedIndex].text;
     var username = document.getElementById("username").value;
@@ -129,7 +129,7 @@ function store(){
     var major = document.getElementById(theCollege).value;
     var college = document.getElementById("colleges").value;
     var uncheck = storeClassesNeeded();
-
+    
 
     var input = {
         username: username,
@@ -204,51 +204,72 @@ if (window.indexedDB){
     //ADD REGULAR LOCAL STORAGE HERE
 }
 
-var form = document.getElementById('file-form');
-var fileSelect = document.getElementById('file-select');
-var uploadButton = document.getElementById('upload-button');
+/********************************************/
+// Server communication
+/********************************************/
 
-form.onsubmit = function(event) {
-    event.preventDefault();
-
-    // Update button text.
-    uploadButton.innerHTML = 'Uploading...';
-
-    // Get the selected files from the input.
-    var files = fileSelect.files;
+var xhr;
+function testClick(){
+    $("#testsubmission").html("Processing...");
+    xhr = new XMLHttpRequest();
+    xhr.open("GET", "parseprofilepdf?fname=" + $("#fileName").val(), true);
+    xhr.onreadystatechange = callback;
+    xhr.send();
+    $("#footer").html($("#fileName").val());
     
-    // Create a new FormData object.
-    var formData = new FormData();
     
-    // Loop through each of the selected files.
-    for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-
-        // Check the file type.
-        if (!file.type.match('image.*')) {
-            continue;
-        }
-
-        // Add the file to the request.
-        formData.append('photos[]', file, file.name);
-    }
-    
-    // Set up the request.
-    var xhr = new XMLHttpRequest();
-    
-    // Open the connection.
-    xhr.open('POST', 'handler.php', true);
-    
-    // Set up a handler for when the request finishes.
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            // File(s) uploaded.
-            uploadButton.innerHTML = 'Upload';
-        } 
-        else {
-            alert('An error occurred!');
-        }
-    };
-    // Send the Data.
-    xhr.send(formData);
 }
+
+function callback() {
+    if (xhr.readyState == 4){// && xhr.status == 200){    
+        // File(s) uploaded.
+        //var xmlDoc = xhr.responseXML;
+        //var x = xmlDoc.getElementsByTagName("child")[0];
+        //var teststring = x.childNodes[0];
+        var outputString = xhr.responseText.replace(/(\r\n|\n|\r)/gm, "<br>");
+        $("#testsubmission").html(outputString);
+            
+    }
+};
+
+
+
+
+function uploadPDF() {
+    var form = document.getElementById('file-form');
+    var fileSelect = document.getElementById('file-select');
+    var uploadButton = document.getElementById('upload-button');
+    
+    // Get the selected files from the input.
+    
+    var selectedFile = fileSelect.files[0];
+    // Create a new FormData object.
+    
+    var formData = new FormData();
+    // Add the file to the request.
+    formData.append('pdffile', selectedFile, selectedFile.name);
+
+    // Set up the request.
+    $.ajax({
+        type: "POST",
+        url: "parseprofilepdf",
+        //enctype: "multipart/form-data",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data){
+            var outputString = data.replace(/(\r\n|\n|\r)/gm, "<br>");
+            $("#testsubmission").html(outputString);
+            //store(outputString);
+        }
+            
+    });
+}
+
+
+/********************************************/
+// Retrieving profile information for display
+/********************************************/
+//Currently test data:
+
+

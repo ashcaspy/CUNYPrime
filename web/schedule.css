@@ -320,3 +320,30 @@
     color: black;
     font-weight: bold;
 }
+
+.schedule_footer_tool{
+    width: 4vw;
+    height: 4vh;
+    top: 0.5vh;
+    background-image: url(images/2.png);
+    position: relative;
+    float: right;
+    display: table;
+    vertical-align: middle;
+    text-align: center;
+    margin-right: 0.5vw;
+    border-radius: 10px;
+}
+
+.schedule_footer_tool a, .schedule_footer_tool a:visited{
+    text-decoration: none;
+    color: black;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    font-weight: bold;
+    border-radius: 10px;
+    
+    
+    
+ }
