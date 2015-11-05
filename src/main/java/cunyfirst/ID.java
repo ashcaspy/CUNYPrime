@@ -1,7 +1,6 @@
 package cunyfirst;
 
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import scala.actors.threadpool.Arrays;
 
 import java.util.*;
 
