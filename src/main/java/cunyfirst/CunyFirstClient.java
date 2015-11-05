@@ -46,7 +46,8 @@ public class CunyFirstClient {
                          MatchValuePair courseNumber,
                          TimeRange start, TimeRange end,
                          Iterable<String> departments, Connection db) {
-        setup(college, ID.semester(season, year), courseNumber, start, end);
+        setup(college, ID.semester(season, year));
+        setSearchTerms(courseNumber, start, end);
         for(String dept: departments) {
             try {
                 new Parser(this, getResults(dept)).addToTable(db);
@@ -62,7 +63,7 @@ public class CunyFirstClient {
 
 
     //set institution, term, and course number
-    public void setup(String school, String semester, MatchValuePair courseNumber, TimeRange start, TimeRange end) {
+    public void setup(String school, String semester) {
         HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(inst.getOptionByText(school), true);
         client.waitForBackgroundJavaScript(10000);
@@ -73,10 +74,6 @@ public class CunyFirstClient {
 
 
         //has to be done after school and term are set
-
-        if(null != courseNumber) {
-            setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
-        }
 
         //only find undergrad courses
         HtmlSelect career = getSelect(ID.selectCareer);
@@ -90,6 +87,14 @@ public class CunyFirstClient {
 
         searchParameters.put(ID.submitCode.getName(), ID.submitCode.getValue());
         searchParameters.put(ID.showClosed.getName(), ID.showClosed.getValue());
+
+    }
+
+    //call after setup
+    public void setSearchTerms(MatchValuePair courseNumber, TimeRange start, TimeRange end) {
+        if(null != courseNumber) {
+            setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
+        }
 
         //set times
         if(null != start) {
