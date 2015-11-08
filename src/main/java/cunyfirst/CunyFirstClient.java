@@ -158,7 +158,11 @@ public class CunyFirstClient {
 
     public HtmlPage getResults(String dept) throws IOException {
         searchParameters.put(ID.deptCode, dept);
+        return getResults();
+    }
 
+    //assumes setup and setSearchTerms have been already called
+    private HtmlPage getResults() throws IOException {
         request.setRequestParameters(paramsToList(searchParameters));
         HtmlPage results = client.getPage(request);
 
@@ -170,8 +174,6 @@ public class CunyFirstClient {
                 sectionRequestParams.put(p.getName(), p.getValue());
             }
         }
-        //System.out.println("'"+searchParameters.get(ID.endVal1)+"'");
-        //System.out.println("'"+searchParameters.get(ID.startVal1)+"'");
         return results;
     }
 
