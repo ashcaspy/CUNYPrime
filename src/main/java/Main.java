@@ -28,7 +28,10 @@ class Main {
                     new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12), new TimeRange(11, 14), null, null,
                     new int[] {3},
                     Arrays.asList(new String[]{"CSCI", "ANTHC"}));
-
+            searcher.find(
+                    null, new TimeRange(12, 13), new TimeRange(13,15), null, null, new int[]{1},
+                    Arrays.asList(new String[]{"CSCI", "ENGL", "CHIN"})
+            );
             try {
                 conn.close();
             } catch (SQLException e) {

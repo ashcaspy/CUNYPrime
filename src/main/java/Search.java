@@ -31,6 +31,10 @@ public class Search {
                     TimeRange start, TimeRange end,
                     String keyword, String professor,
                     int[] days, Iterable<String> departments) {
+
+        //clear previous search parameters in case some of these are null
+        client.resetTerms();
+
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
         String offset = Integer.toString(counter);
