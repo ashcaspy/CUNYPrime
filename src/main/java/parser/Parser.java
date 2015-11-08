@@ -30,10 +30,10 @@ public class Parser {
     }
     private ArrayList<Course> courses;
 
-    public void addToTable(Connection conn) {
+    public void addToTable(Connection conn, String offset) {
         for(Course course: courses) {
             try {
-                course.addToTable(conn);
+                course.addToTable(conn, offset);
             } catch (SQLException e) {}
         }
     }

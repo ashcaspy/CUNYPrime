@@ -53,8 +53,8 @@ public class Course {
         secs.stream().forEach(s -> sections.add(new Section(s)));
     }
 
-    public void addToTable(Connection conn) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?,?,?,?,?)");
+    public void addToTable(Connection conn, String offset) throws SQLException {
+        PreparedStatement st = conn.prepareStatement("INSERT INTO courses" + offset + " VALUES (?,?,?,?,?,?,?)");
         PreparedStatement insertSection;
 
         st.setString(1, dept);
@@ -78,7 +78,7 @@ public class Course {
 
         for(Section sec: sections) {
             try {
-                insertSection = sec.prepareStatement(conn);
+                insertSection = sec.prepareStatement(conn, offset);
                 insertSection.setString(1, dept);
                 insertSection.setString(2, number);
                 insertSection.executeUpdate();
@@ -97,9 +97,9 @@ public class Course {
 
     private static final String tablename = "courses";
 
-    public static void createTable(Connection conn) throws SQLException {
+    public static void createTable(Connection conn, String offset) throws SQLException {
         Statement st = conn.createStatement();
-        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + "(" +
+        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + offset + "(" +
                         "dept varchar(6)," +
                         "nbr varchar(7)," +
                         "name varchar(90)," +

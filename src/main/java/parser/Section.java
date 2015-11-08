@@ -98,8 +98,8 @@ public class Section {
     }
 
     //the caller adds course info
-    PreparedStatement prepareStatement(Connection conn) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO sections VALUES (?,?,?,?,?,?,?,?,?)");
+    PreparedStatement prepareStatement(Connection conn, String offset) throws SQLException {
+        PreparedStatement st = conn.prepareStatement("INSERT INTO sections" + offset + " VALUES (?,?,?,?,?,?,?,?,?)");
         st.setString(3, nbr);
 
         if(start[0].equals(ID.TBA)) {
@@ -155,9 +155,9 @@ public class Section {
 
     private final static String tablename = "sections";
 
-    public static void createTable(Connection conn) throws SQLException {
+    public static void createTable(Connection conn, String offset) throws SQLException {
         Statement st = conn.createStatement();
-        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + "(" +
+        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + offset + "(" +
                         "cdept varchar(6)," +
                         "cnbr varchar(7)," +
                         "sec varchar(20)," +
