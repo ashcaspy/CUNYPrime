@@ -12,11 +12,8 @@ import java.net.URL;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
-
-import java.sql.Connection;
 import java.util.Map;
 
-import parser.Parser;
 
 
 public class CunyFirstClient {
@@ -45,23 +42,6 @@ public class CunyFirstClient {
     HashMap<String, String> sectionRequestParams = null;
 
     private HashMap<String, String> resetParameters = null;
-
-    public void retrieve(String college, String season, int year,
-                         MatchValuePair courseNumber,
-                         TimeRange start, TimeRange end,
-                         String keyword, String professor,
-                         int[] days,
-                         Iterable<String> departments, Connection db) {
-        setup(college, ID.semester(season, year));
-        setSearchTerms(courseNumber, start, end, keyword, professor, days);
-        for(String dept: departments) {
-            try {
-                new Parser(this, getResults(dept)).addToTable(db);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public HtmlSelect getSelect(String id) {
         return (HtmlSelect) searchPage.getElementById(id);

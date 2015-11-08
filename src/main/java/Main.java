@@ -31,11 +31,12 @@ class Main {
                 e.printStackTrace();
                 return;
             }
-
-            wc.retrieve("Hunter College", "Fall", 2015,
+            Search searcher = new Search(conn);
+            searcher.selectTerm("Hunter College", ID.semester("Fall", 2015));
+            searcher.find(
                     new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12), new TimeRange(11, 14), null, null,
                     new int[] {3},
-                    Arrays.asList(new String[]{"CSCI", "ANTHC"}), conn);
+                    Arrays.asList(new String[]{"CSCI", "ANTHC"}));
 
             try {
                 conn.close();
