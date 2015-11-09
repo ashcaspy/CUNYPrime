@@ -46,9 +46,17 @@ public class Search {
             return;
         }
 
-        for(String dept : departments) {
+        if(null != departments) {
+            for (String dept : departments) {
+                try {
+                    new Parser(client, client.getResults(dept)).addToTable(conn, offset);
+                } catch (IOException e) {
+                }
+            }
+        }
+        else {
             try {
-                new Parser(client, client.getResults(dept)).addToTable(conn, offset);
+                new Parser(client, client.getResults()).addToTable(conn, offset);
             } catch (IOException e) { }
         }
 

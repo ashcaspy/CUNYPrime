@@ -142,7 +142,7 @@ public class CunyFirstClient {
     }
 
     //assumes setup and setSearchTerms have been already called
-    private HtmlPage getResults() throws IOException {
+    public HtmlPage getResults() throws IOException {
         request.setRequestParameters(paramsToList(searchParameters));
         HtmlPage results = client.getPage(request);
 
