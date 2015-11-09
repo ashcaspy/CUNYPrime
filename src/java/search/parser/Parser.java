@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Parser {
@@ -31,9 +30,11 @@ public class Parser {
     }
     private ArrayList<Course> courses;
 
-    public void addToTable(Connection conn) throws SQLException {
+    public void addToTable(Connection conn) {
         for(Course course: courses) {
-            course.addToTable(conn);
+            try {
+                course.addToTable(conn);
+            } catch (SQLException e) {}
         }
     }
 

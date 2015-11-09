@@ -12,50 +12,79 @@ import java.net.URL;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
-public class CunyFirstClient extends WebClient {
+
+import java.sql.Connection;
+import java.util.Map;
+
+import search.parser.Parser;
+
+
+public class CunyFirstClient {
     public CunyFirstClient() {
-        super(BrowserVersion.CHROME); //silence errors
-        getOptions().setCssEnabled(false);
-        getOptions().setJavaScriptEnabled(true);
-        getCookieManager().setCookiesEnabled(true);
-        setIncorrectnessListener(new Silent());
+        client = new WebClient(BrowserVersion.CHROME); //silence errors
+        client.getOptions().setCssEnabled(false);
+        client.getOptions().setJavaScriptEnabled(true);
+        client.getCookieManager().setCookiesEnabled(true);
+        client.setIncorrectnessListener(new Silent());
 
         try {
             request = new WebRequest(
                     new URL(ID.url),
                     HttpMethod.POST);
-            searchPage = getPage(request);
+            searchPage = client.getPage(request);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private WebClient client;
     private WebRequest request = null;
     private HtmlPage searchPage = null;
     HashMap<String, String> searchParameters = null;
     HashMap<String, String> sectionRequestParams = null;
+
+    private HashMap<String, String> resetParameters = null;
+
+    public void retrieve(String college, String season, int year,
+                         MatchValuePair courseNumber,
+                         TimeRange start, TimeRange end,
+                         String keyword, String professor,
+                         int[] days,
+                         Iterable<String> departments, Connection db) {
+        setup(college, ID.semester(season, year));
+        setSearchTerms(courseNumber, start, end, keyword, professor, days);
+        for(String dept: departments) {
+            try {
+                new Parser(this, getResults(dept)).addToTable(db);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public HtmlSelect getSelect(String id) {
         return (HtmlSelect) searchPage.getElementById(id);
     }
 
 
-    //set institution, term, and course number
+    //set institution, term
+    //has the effect of resetting all other search terms
     public void setup(String school, String semester) {
         HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(inst.getOptionByText(school), true);
-        waitForBackgroundJavaScript(10000);
+        client.waitForBackgroundJavaScript(10000);
 
         HtmlSelect term = getSelect(ID.selectTerm);
         term.setSelectedAttribute(term.getOptionByText(semester), true);
-        waitForBackgroundJavaScript(10000);
+        client.waitForBackgroundJavaScript(10000);
+
 
         //has to be done after school and term are set
-        //search for course numbers > 0
-        HtmlSelect match = getSelect(ID.matchId);
-        match.setSelectedAttribute(match.getOptionByValue(ID.matchValue), true);
-        ((HtmlTextInput)searchPage.getElementById(ID.courseNbrId)).setText("0");
+
+        //only find undergrad courses
+        HtmlSelect career = getSelect(ID.selectCareer);
+        career.setSelectedAttribute(career.getOptionByText("Undergraduate"), true);
 
         List<NameValuePair> list = getFormParams(searchPage);
         searchParameters = new HashMap<>(list.size());
@@ -66,13 +95,72 @@ public class CunyFirstClient extends WebClient {
         searchParameters.put(ID.submitCode.getName(), ID.submitCode.getValue());
         searchParameters.put(ID.showClosed.getName(), ID.showClosed.getValue());
 
+        //defaults
+        resetParameters = (HashMap<String, String>) searchParameters.clone();
+    }
+
+    //reset select search terms
+    public void resetTerms(String... keys) {
+        for(String k: keys) {
+            searchParameters.put(k, resetParameters.get(k));
+        }
+    }
+
+    //reset all search terms, except for the ones chosen in setup()
+    public void resetTerms() {
+        for(Map.Entry<String, String> e: resetParameters.entrySet()) {
+            searchParameters.put(e.getKey(), e.getValue());
+        }
+    }
+
+    //call after setup
+    public void setSearchTerms(MatchValuePair courseNumber, TimeRange start, TimeRange end,
+                               String keyword, String professor, int[] days) {
+        if(null != courseNumber) {
+            setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
+        }
+
+        //set times
+        if(null != start) {
+            searchParameters.put(ID.start, ID.between);
+            searchParameters.put(ID.startVal1, Integer.toString(start.min));
+            searchParameters.put(ID.startVal2, Integer.toString(start.max));
+        }
+        if(null != end) {
+            searchParameters.put(ID.end, ID.between);
+            searchParameters.put(ID.endVal1, Integer.toString(end.min));
+            searchParameters.put(ID.endVal2, Integer.toString(end.max));
+        }
+
+        if(null != keyword) {
+            searchParameters.put(ID.keyword, keyword);
+        }
+
+        if(null != professor) {
+            searchParameters.put(ID.profMatch, ID.exact);
+            searchParameters.put(ID.professor, professor);
+        }
+
+        if(null != days) {
+            searchParameters.put(ID.whichDays, ID.includeOnly);
+            for(int i: days) {
+                searchParameters.put(ID.daysOfWeek.get(i), ID.selected);
+            }
+        }
+    }
+
+    //sets one search term (selectId -> pair.comparison, textId -> pair.value)
+    void setMatch(String selectId, String textId, MatchValuePair pair) {
+        HtmlSelect match = getSelect(selectId);
+        match.setSelectedAttribute(match.getOptionByValue(pair.comparison), true);
+        ((HtmlTextInput)searchPage.getElementById(textId)).setText(pair.value);
     }
 
     public HtmlPage getResults(String dept) throws IOException {
         searchParameters.put(ID.deptCode, dept);
 
         request.setRequestParameters(paramsToList(searchParameters));
-        HtmlPage results = getPage(request);
+        HtmlPage results = client.getPage(request);
 
         //set up sectionRequestParams
         if(null == sectionRequestParams) {
@@ -82,15 +170,15 @@ public class CunyFirstClient extends WebClient {
                 sectionRequestParams.put(p.getName(), p.getValue());
             }
         }
+        //System.out.println("'"+searchParameters.get(ID.endVal1)+"'");
+        //System.out.println("'"+searchParameters.get(ID.startVal1)+"'");
         return results;
     }
 
     public HtmlPage getSection(String sectionNbr) throws IOException {
         sectionRequestParams.put(ID.submitCode.getName(), sectionNbr);
         request.setRequestParameters(paramsToList(sectionRequestParams));
-        HtmlPage sectionPage = getPage(request);
-        waitForBackgroundJavaScript(10000);
-        return sectionPage;
+        return client.getPage(request);
     }
 
     private List<NameValuePair> paramsToList(HashMap<String, String> params) {

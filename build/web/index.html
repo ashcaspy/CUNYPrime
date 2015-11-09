@@ -40,17 +40,25 @@
 
 <!--End course info list containers-->
 <!--Profile Container-->
-    <div class = "blanket" id = "profile_blanket">
-        <div id = "profile">
-            <script>$("#profile").load("profileContent.html");</script>
-        </div>
-        <div id = "resume">
-            <script>$("#resume").load("resumeContent.html");</script>
-        </div>
-        <div id = "scheduler">
-            <script>$("#scheduler").load("schedulerContent.html");</script>
-        
-        </div>
+    <div class = "blanket" id = "profile_blanket"></div>
+    <div class = "blanket" id = "login_blanket"></div>
+    <div class = "blanket" id = "schedule_blanket"></div>
+    <div id = "login_overlay">
+        <a href = "#" id = "login_overlay_link">Select User</a>
+    </div>
+    <div id = "schedule_overlay">
+        <a href = "#" id = "schedule_overlay_link">CREATE NEW SCHEDULE</a>
+    </div>
+    
+    <div id = "profile">
+        <script>$("#profile").load("profileContent.html");</script>
+    </div>
+    <div id = "resume">
+        <script>$("#resume").load("resumeContent.html");</script>
+    </div>
+    <div id = "scheduler">
+        <script>$("#scheduler").load("schedulerContent.html");</script>
+
     </div>
 <!--End profile container-->
     
@@ -96,6 +104,6 @@
     
     
     <script src = "schedule_functions.js"></script>
-    
+    <script>selectUser();</script>
 </body>
 </html>

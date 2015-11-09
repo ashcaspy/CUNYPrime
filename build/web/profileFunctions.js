@@ -385,7 +385,6 @@ function uploadPDF() {
             var outputString = data.replace(/(\r\n|\n|\r)/gm, "\n");
             
             populateCourseRequirements(outputString);
-            $("#footer").html("helllooo");
             store();
             
             var outputString = data.replace(/(\r\n|\n|\r)/gm, "<br>");
@@ -403,5 +402,18 @@ function uploadPDF() {
 // Retrieving profile information for display
 /********************************************/
 //Currently test data:
+var userName = "";
+
+function selectUser(){
+    loadLoginOverlay();
+    
+    $("#login_overlay_link").click(function(e){
+        e.preventDefault();
+        userName = "user";
+        fadeLoginOverlay();
+    });
+}
+
+
 
 

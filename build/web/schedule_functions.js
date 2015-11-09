@@ -1068,7 +1068,7 @@ function loadScheduleTab(num){
         //alert(num);
         $("#day-list").html("");
         $("#hour-list").html("");
-        $("#timeslot-list").html("Press 'New' to create a schedule.");
+        $("#timeslot-list").html("");
     }
     else{
         $("#schedule-tab-" + num).css({"background-image" :"url(images/2.png)"});
@@ -1180,6 +1180,7 @@ function createScheduleFooterTools(){
             selectedDivs: new Array(),
             valid: true,
         };
+        
         scheduleTabs.push(tempTab);
         var $tabDiv = $("<div>").addClass("schedule-tab-selector");
         $tabDiv.attr("id", "schedule-tab-" + (scheduleTabs.length - 1));
@@ -1205,6 +1206,8 @@ function createScheduleFooterTools(){
             loadScheduleTab(index);
         });
         loadScheduleTab(scheduleTabs.length - 1);
+        fadeScheduleOverlay();
+        
         
     });
     
@@ -1243,13 +1246,55 @@ function createScheduleFooterTools(){
             }
         }
         if (index == -1){
-            //add blanket covering schedule prompting for "new"
             loadScheduleTab(-1);
+            loadScheduleOverlay();
         }
         
         
     });
 }
 
+function setupScheduleOverlay(){
+    $("#schedule_overlay_link").click(function(e){
+        e.preventDefault();
+        var tempTab = {
+            dayStart: 0,
+            dayEnd: 6,
+            hourStart: 0,
+            hourEnd: 23,
+            openTimes: new Array(),
+            closedTimes: new Array(),
+            selectedDivs: new Array(),
+            valid: true,
+        };
+        
+        scheduleTabs.push(tempTab);
+        var $tabDiv = $("<div>").addClass("schedule-tab-selector");
+        $tabDiv.attr("id", "schedule-tab-" + (scheduleTabs.length - 1));
+        $tabDiv.css({
+            "width" : "7vw",
+            "height" : "3vh",
+            "position" : "relative",
+            "left" : 1 + "vw",
+            "top" : "0.5vh",
+            "background-image" : "url(images/schedule-tab.png)",
+            "float" : "left",
+            "border-bottom-left-radius" : "10px",
+            "border-bottom-right-radius" : "10px",
+        });
+        var schedName = "Schedule" + (scheduleTabs.length);
+        $tabDiv.html("<a href = '#' class = 'tab-links'>" + schedName + "</a>");
+        
+        $("#schedule_footer").append($tabDiv);    
+        $tabDiv.click(function(e){
+            
+            e.preventDefault();
+            var index = $(e.target).parent().attr("id").substring(13, $(e.target).parent().attr("id").length);
+            loadScheduleTab(index);
+        });
+        loadScheduleTab(scheduleTabs.length - 1);
+        fadeScheduleOverlay();
+    });
+}
 
 

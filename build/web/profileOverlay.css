@@ -23,12 +23,12 @@
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 901;
-    position: relative;
+    position: absolute;
     min-height: 83vh;
     min-width: 75vw;
     background: #FFFFFF;
     left: 12.5vw;
-    top: 1vh;
+    top: 8.5vh;
     text-align: center;
     border-radius: 25px;
 }
@@ -40,12 +40,12 @@
     overflow-y: hidden;
     overflow-x: hidden;
     z-index: 901;
-    position: relative;
+    position: absolute;
     min-height: 85vh;
     min-width: 90vw;
     background: #FFFFFF;
     left: 5vw;
-    top: 0.5vh;
+    top: 7.5vh;
     text-align: center;
     border-radius: 25px;
 }
@@ -58,10 +58,57 @@
     overflow: hidden;
     z-index: 900;
     position: absolute;
-    min-height: 86vh;
-    min-width: 100vw;
     background: rgba(100, 100, 100, 0.75);
 }
+
+#login_blanket{
+    z-index: 2002;
+}
+#schedule_blanket{
+    z-index: 2000;
+    height: 75vh;
+    width: 60vw;
+    top: 12.5vh;
+    left: 20vw;
+}
+
+#schedule_overlay{
+    display: none;
+    background-image: url(images/2.png);
+    height: 10vh;
+    width: 10vw;
+    top: 45vh;
+    left: 45vw;
+    position: absolute;
+    z-index: 2001;
+    border-radius: 10px;
+}
+#login_overlay{
+    z-index: 2003;
+    display: none;
+    background-image: url(images/2.png);
+    height: 20vh;
+    width: 15vw;
+    top: 40vh;
+    left: 42.5vw;
+    position: absolute;
+    border-radius: 10px;
+}
+
+#login_overlay_link, #login_overlay_link:visited, #schedule_overlay_link, #schedule_overlay_link:visited{
+    height: inherit;
+    width: inherit;
+    text-decoration: none;
+    display: table-cell;
+    background-image: url(images/2.png);
+    border-radius: 10px;
+    vertical-align: middle;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+}
+
+
 
 #profile_container{
     display: block;
@@ -99,7 +146,6 @@
     background-repeat: no-repeat;
     background-position: right;
 }
-
 
 
 

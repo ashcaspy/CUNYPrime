@@ -9,9 +9,13 @@ import com.gargoylesoftware.htmlunit.html.*;
 import search.cunyfirst.CunyFirstClient;
 import search.cunyfirst.ID;
 
-import search.parser.Parser;
 
 import java.sql.*;
+import java.util.Arrays;
+import search.cunyfirst.MatchValuePair;
+import search.cunyfirst.TimeRange;
+import search.parser.Course;
+import search.parser.Section;
 
 class ClassSearcher {
         public static void searchClasses(String[] args) {
@@ -37,41 +41,18 @@ class ClassSearcher {
             //String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
             try {
                 conn = DriverManager.getConnection(url, args[0], args[1]);
-                Statement st = conn.createStatement();
-                st.executeUpdate("CREATE TABLE IF NOT EXISTS courses(" +
-                        "dept varchar(6)," +
-                        "nbr varchar(7)," +
-                        "name varchar(90)," +
-                        "components varchar(40)," +
-                        "PRIMARY KEY(dept, nbr)" +
-                        ")");
-                st.executeUpdate("CREATE TABLE IF NOT EXISTS sections(" +
-                        "cdept varchar(6)," +
-                        "cnbr varchar(7)," +
-                        "sec varchar(20)," +
-                        "starttime varchar(22)," +
-                        "endtime varchar(22)," +
-                        "days varchar(21)," +
-                        "room varchar(40)," +
-                        "instructor varchar(200)" +
-                        ")");
+                Course.createTable(conn);
+                Section.createTable(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
                 return;
             }
 
-            //the first option is blank
-            for (HtmlOption o : depts.subList(1, depts.size())) {
-                try {
-                String deptCode = o.getValueAttribute();
-                if(ID.skippedDepts.contains(deptCode)) {
-                    continue;
-                }
-                new Parser(wc, wc.getResults(deptCode)).addToTable(conn);
-                } catch (IOException | SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            wc.retrieve("Hunter College", "Fall", 2015,
+                    new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12), new TimeRange(11, 14), null, null,
+                    new int[] {3},
+                    Arrays.asList(new String[]{"CSCI", "ANTHC"}), conn);
+
             try {
                 conn.close();
             } catch (SQLException e) {

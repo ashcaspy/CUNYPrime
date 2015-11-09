@@ -459,6 +459,41 @@ function createTools() {
     $clear.click(function(e){
         e.preventDefault();
         var teststring = "";
+        //change
+        
+        
+        
+        
+        
+        
+        for(var i = 0; i < numDivsX; i++){
+            for (var k = 0; k < numDivsY; k++){
+                if ($("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).data("data-selected") == "true"){
+                    if ((i % 2 == 0 && k % 2 == 0) || (i % 2 == 1 && k % 2 == 1))
+                        $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "lightgrey",});
+                    else
+                        $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "inherit",});
+
+                    $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).data("data-selected", "false");  
+                    
+                    if ($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes) != -1){
+                        openTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes), 1);
+                        scheduleTabs[currentScheduleTab].openTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes), 1);
+                    }
+                    if ($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes) != -1){
+                        closedTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes), 1);
+                        scheduleTabs[currentScheduleTab].closedTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes), 1);
+                    }
+                    if ($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs) != -1){
+                        selectedDivs.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs), 1);
+                        scheduleTabs[currentScheduleTab].selectedDivs.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs), 1);
+                    }                 
+                }
+            }
+        }
+        
+        /*
+        
         openTimes.splice(0, openTimes.length);
         closedTimes.splice(0, closedTimes.length);
         selectedDivs.splice(0, selectedDivs.length);
@@ -477,6 +512,7 @@ function createTools() {
                 
             }
         }
+        */
     });
     
     
@@ -1068,7 +1104,7 @@ function loadScheduleTab(num){
         //alert(num);
         $("#day-list").html("");
         $("#hour-list").html("");
-        $("#timeslot-list").html("Press 'New' to create a schedule.");
+        $("#timeslot-list").html("");
     }
     else{
         $("#schedule-tab-" + num).css({"background-image" :"url(images/2.png)"});
@@ -1180,6 +1216,7 @@ function createScheduleFooterTools(){
             selectedDivs: new Array(),
             valid: true,
         };
+        
         scheduleTabs.push(tempTab);
         var $tabDiv = $("<div>").addClass("schedule-tab-selector");
         $tabDiv.attr("id", "schedule-tab-" + (scheduleTabs.length - 1));
@@ -1205,6 +1242,8 @@ function createScheduleFooterTools(){
             loadScheduleTab(index);
         });
         loadScheduleTab(scheduleTabs.length - 1);
+        fadeScheduleOverlay();
+        
         
     });
     
@@ -1243,13 +1282,56 @@ function createScheduleFooterTools(){
             }
         }
         if (index == -1){
-            //add blanket covering schedule prompting for "new"
             loadScheduleTab(-1);
+            loadScheduleOverlay();
         }
         
         
     });
 }
 
+function setupScheduleOverlay(){
+    $("#schedule_overlay_link").click(function(e){
+        e.preventDefault();
+        var tempTab = {
+            dayStart: 0,
+            dayEnd: 6,
+            hourStart: 0,
+            hourEnd: 23,
+            openTimes: new Array(),
+            closedTimes: new Array(),
+            selectedDivs: new Array(),
+            valid: true,
+        };
+        
+        scheduleTabs.push(tempTab);
+        var $tabDiv = $("<div>").addClass("schedule-tab-selector");
+        $tabDiv.attr("id", "schedule-tab-" + (scheduleTabs.length - 1));
+        $tabDiv.css({
+            "width" : "7vw",
+            "height" : "3vh",
+            "position" : "relative",
+            "left" : 1 + "vw",
+            "top" : "0.5vh",
+            "background-image" : "url(images/schedule-tab.png)",
+            "float" : "left",
+            "border-bottom-left-radius" : "10px",
+            "border-bottom-right-radius" : "10px",
+        });
+        var schedName = "Schedule" + (scheduleTabs.length);
+        $tabDiv.html("<a href = '#' class = 'tab-links'>" + schedName + "</a>");
+        
+        $("#schedule_footer").append($tabDiv);    
+        $tabDiv.click(function(e){
+            
+            e.preventDefault();
+            var index = $(e.target).parent().attr("id").substring(13, $(e.target).parent().attr("id").length);
+            loadScheduleTab(index);
+        });
+        loadScheduleTab(scheduleTabs.length - 1);
+        fadeScheduleOverlay();
+        createSched("test_user");
+    });
+}
 
 

@@ -11,6 +11,7 @@ var coursesInProgress = [];
 var coursesWithdrew = [];
 var coursesNotCompleted = [];
 var coursesTransfer =[];
+var major = "";
 
 function loadInfo(){
     
@@ -96,6 +97,9 @@ function populateMajors(){
             for (var i = 0; i < lines.length; i++){
                 if(lines[i].indexOf("College") > -1){
                     collegeOfStudent = lines[i];
+                } else if(lines[i].indexOf("Major") > -1){
+                    var temp = lines[i].replace("Catalog Year:", "");
+                    majors = temp;
                 } else if(lines[i].indexOf("in:") >-1) {
                     if(courses.length > 0){
                   
@@ -237,7 +241,7 @@ function globalDbErrorHandler(event){
 }
 
 function createDbObject(evt){
-    var options = {keyPath: "id", autoIncrement: true};
+    var options = {keyPath: "username"};
     var storage = evt.createObjectStore("gracefulTable", options);
     //var indexOptions = {unique: false};
     //storage.createIndex("username", "ciUsername", indexOptions);
@@ -256,6 +260,8 @@ function store(){
 
 
     var input = {
+        college: collegeOfStudent, 
+        major: major, 
         courses: requirements
     }
 
@@ -267,44 +273,40 @@ function store(){
     request.onsuccess = function(){
         window.alert("done adding");
     }
-}
-
-function update(id){
-    var myArr = {};
-    var transaction = db.transaction(["gracefulTable"], "readwrite");
-    var items = transaction.objectStore("gracefulTable");
-    var request = items.get(id);
-    request.onsuccess = function(){
-        var info = request.result;
-        info.courses = myArr;
-        items.put(info);
-    }
-
-}
-
-function deleteACourse(id, courseId){
-    var updatedCourses = {};
-    var transaction = db.transaction(["gracefulTable"], "readwrite");
-    var items = transaction.objectStore("gracefulTable");
-    var request = items.get(id);
-    request.onsuccess = function(){
-        var info = request.result;
-        updatedCourses = info.courses;
-        delete updatedCourses[courseId];
-        info.courses = updatedCourses;
-        items.put(info);
+    request.onerror = function(){
+        var transaction = db.transaction(["gracefulTable"], "readwrite");
+        var store = transaction.objectStore("gracefulTable");
+        var request2 = store.get(username);
+        request2.onsuccess = function(){
+            alert("Username " + username + " is already taken. Please choose another one.");
+        }
     }
 }
 
+function getIndexForReq(username, index, arr){
+    var transaction = db.transaction(["gracefulTable"], "readwrite");
+    var store = transaction.objectStore("gracefulTable");
+    var req = store.get(username);
+    req.onsuccess  = function(){
+        var data = req.result;
+        if(index < 0 || index > data.courses.length){
+            console.log("out of bound");
+        } else {
+            for (var i = 0; i < data.courses[index].length; i++){
+                arr.push(data.courses[index][i]);
+            }
+        }
 
-
+        console.log(arr);
+    }
+}
 
 
 var db;
 window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
 if (window.indexedDB){
-    var request = window.indexedDB.open("GracefulDb", 6);
+    var request = window.indexedDB.open("GracefulDb", 7);
     request.onerror = function(event){
         window.alert("Error creating database");
     };
@@ -314,9 +316,14 @@ if (window.indexedDB){
     };
     //runs only when version is upgraded
     request.onupgradeneeded = function(event){
-        createDbObject(event.target.result);
-        //var db = event.target.result;
-        //db.deleteObjectStore("myTable");
+        thisdb = event.target.result;
+
+                //createDbObject(thisdb);
+        if(thisdb.objectStoreNames.contains("gracefulTable")){
+            thisdb.deleteObjectStore("gracefulTable");
+        }
+        createDbObject(thisdb);
+
     };
 
 } else {
@@ -399,9 +406,301 @@ function uploadPDF() {
 }
 
 
+/*****************************************************/
+// SCHEDULE GETS AND SETS
+/*****************************************************/
+
+	
+		function Schedule(dayStart, dayEnd, hoursStart, hoursEnd, openTimes, closeTimes, selectedDiv){
+				this.dayStart = dayStart;
+				this.dayEnd = dayEnd;
+				this.hoursStart = hoursStart;
+				this.hoursEnd = hoursEnd;
+				this.openTimes = openTimes;
+				this.closeTimes = closeTimes;
+				this.selectedDiv = selectedDiv;
+			}
+	
+
+		//FUNCTIONS FOR SCHEDULES 
+		//IT SHOULD GO INTO THE PROFILEFUNCTIONS.JS SO THE VARIABLE DB IS KNOWN!
+
+		function createSched(username){
+			var open = [];
+			var closedTime = [];
+			var selectedDiv = [];
+			var testSched = new Schedule(0,6,0,23,open, closedTime, selectedDiv);
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var request = store.get(username);
+			request.onsuccess = function(){
+				var data = request.result;
+				 data.sched = testSched;
+				 var update = store.put(data);
+
+			}
+		}
+
+		function setDayStart(username, dayStart){
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store= transaction.objectStore("gracefulTable");
+			var request = store.get(username);
+			request.onsuccess = function(){
+				var data = request.result;
+				data.sched.dayStart = dayStart;
+				var update = store.put(data);
+			}
+		}
+
+		function setDayEnd(username, dayEnd){
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				data.sched.dayEnd = dayEnd;
+				var update = store.put(data);
+			}
+		}
+
+		function setHoursStart(username, hoursStart) {
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				data.sched.hoursStart = hoursStart;
+				var update = store.put(data);
+			}
+		}
+
+		function setHoursEnd(username, hoursEnd) {
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				data.sched.hoursEnd = hoursEnd;
+				var update = store.put(data);
+			}
+		}
+
+
+		/*
+			This function will set the open time values in indexeddb to the param, openTimes.
+			@ param openTimes, An array containing user selected openTime.
+
+		*/
+		function setOpenTimes(username, openTimes){
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				data.sched.openTimes = openTimes;
+				var update = store.put(data);
+			}
+		}
+
+		function setClosedTimes(username, closeTimes){
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				data.sched.closeTimes = closeTimes; 
+				var update = store.put(data);
+			}
+		}
+
+		function setSelectedDiv(username, selectedDiv){
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				data.sched.selectedDiv = selectedDiv;
+				var update = store.put(data);
+			}
+		}
+
+
+		/*
+			This function will take an array, arr, by reference populate it with dayStart.
+
+			@ param arr, An empty array to be filled with the dayStart
+			@ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
+
+		*/
+		function getDayStart(username, arr, boolArr){
+			boolArr[0] = false;
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				arr.push(data.sched.dayStart);
+				boolArr[0] = true;	
+			}
+		}
+	
+
+		/*
+			This function will take an array by reference populate it with dayEnd.
+
+			@ param arr, An empty array to be filled with the dayEnd.
+			@ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
+
+		*/
+		function getDayEnd(username, arr, boolArr){
+			boolArr[0] = false;
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				arr.push(data.sched.dayEnd);
+				boolArr[0] = true;	
+			}
+		}
+
+
+		/*
+			This function will take an array by reference populate it with hoursStart.
+
+			@ param arr, An empty array to be filled with the hoursStart.
+			@ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
+
+		*/
+		function getHoursStart(username, arr, boolArr){
+			boolArr[0] = false;
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				arr.push(data.sched.hoursStart);
+				boolArr[0] = true;	
+			}
+		}
+
+
+		/*
+			This function will take an array by reference populate it with hoursEnd.
+
+			@ param arr, An empty array to be filled with the hoursEnd.
+			@ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
+
+		*/
+		function getHoursEnd(username, arr, boolArr){
+			boolArr[0] = false;
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				arr.push(data.sched.hoursEnd);
+				boolArr[0] = true;	
+			}
+		}
+
+
+
+		/*
+			This function will take an array by reference populate it with openTimes.
+			
+			@ param arr, An empty array to be filled with the openTimes values,
+			@ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
+
+		*/
+		function getOpenTimes(username, myArr, boolArr) {
+			boolArr[0] = false;
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+
+				for(var i = 0; i < data.sched.openTimes.length; i++){
+					myArr.push(data.sched.openTimes[i]);
+				}
+				
+				boolArr[0] = true;	
+			}
+		}
+	
+
+
+		/*
+			This function will take an array by reference populate it with closeTimes.
+			
+			@ param arr, An empty array to be filled with the closeTimes values.
+			@ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
+
+		*/
+		function getClosedTimes(username, myArr, boolArr) {
+			boolArr[0] = false;
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+
+				for(var i = 0; i < data.sched.closeTimes.length; i++){
+					myArr.push(data.sched.openTimes[i]);
+				}
+				
+				boolArr[0] = true;	
+			}
+		}	
+
+		/*
+			This function will take an array by reference populate it with selectedDiv.
+			
+			@ param arr, An empty array to be filled with the selectedDiv values.
+			@ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
+
+		*/
+		function getSelectedDiv(username, myArr, boolArr) {
+			boolArr[0] = false;
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+
+				for(var i = 0; i < data.sched.selectedDiv.length; i++){
+					myArr.push(data.sched.openTimes[i]);
+				}
+				
+				boolArr[0] = true;	
+			}
+		}
+
+
+
+
+
+
+
+
+
 /********************************************/
 // Retrieving profile information for display
 /********************************************/
 //Currently test data:
+var userName = "";
+
+function selectUser(){
+    loadLoginOverlay();
+    
+    $("#login_overlay_link").click(function(e){
+        e.preventDefault();
+        userName = "user";
+        fadeLoginOverlay();
+    });
+}
+
+
 
 

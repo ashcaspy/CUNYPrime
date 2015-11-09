@@ -84,17 +84,37 @@ function loadScheduler(){
         loadTab(currentSearchTab);
     else
         loadTab(1);
-    
+    if (currentScheduleTab == -1)
+        loadScheduleOverlay();
 }
 
 function fadeScheduler(needBlanket){
     $("#scheduler").fadeOut("fast");
     if (needBlanket == false) fadeBlanket();
     scheduler_loaded = false;
+    fadeScheduleOverlay();
 }
 
 function fadeBlanket(){
     $("#profile_blanket").fadeOut("fast");   
 }
 
+function loadLoginOverlay(){
+    $("#login_overlay").fadeIn("fast");
+    $("#login_blanket").fadeIn("fast");
+}
 
+function fadeLoginOverlay(){
+    $("#login_overlay").fadeOut("fast");
+    $("#login_blanket").fadeOut("fast");
+}
+
+function loadScheduleOverlay(){
+    $("#schedule_overlay").fadeIn("fast");
+    $("#schedule_blanket").fadeIn("fast");
+}
+
+function fadeScheduleOverlay(){
+    $("#schedule_overlay").fadeOut("fast");
+    $("#schedule_blanket").fadeOut("fast");
+}

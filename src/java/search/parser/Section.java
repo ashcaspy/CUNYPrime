@@ -4,6 +4,7 @@ import search.cunyfirst.ID;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Selector;
 
+import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -61,6 +62,9 @@ public class Section {
         //I don't know what it does and have yet to see a section that doesn't have it
         Element number = Selector.select(ID.sectionNbr, elem).get(0);
         nbr = number.ownText().split(" ")[0];
+
+        open = isOpen(elem);
+
         id = number.id();
     }
 
@@ -87,9 +91,15 @@ public class Section {
         }
     }
 
+    private boolean isOpen(Element e) {
+        //just check the alt attribute because this is easier
+        return Selector.select(ID.openClosed, e).get(0).getElementsByTag("img").get(0)
+                .attr("alt").equalsIgnoreCase("open");
+    }
+
     //the caller adds course info
     PreparedStatement prepareStatement(Connection conn) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO sections VALUES (?,?,?,?,?,?,?,?)");
+        PreparedStatement st = conn.prepareStatement("INSERT INTO sections VALUES (?,?,?,?,?,?,?,?,?)");
         st.setString(3, nbr);
 
         if(start[0].equals(ID.TBA)) {
@@ -122,6 +132,7 @@ public class Section {
             st.setString(7, room);
         }
         st.setString(8, instructor);
+        st.setBoolean(9, open);
         return st;
     }
 
@@ -136,5 +147,26 @@ public class Section {
     public final String room;
     public final String instructor;
 
+    // there are three possible open/closed/waitlist values for each section,
+    // this distinguishes between open and not-open
+    public final boolean open;
+
     public final String id;
+
+    private final static String tablename = "sections";
+
+    public static void createTable(Connection conn) throws SQLException {
+        Statement st = conn.createStatement();
+        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + "(" +
+                        "cdept varchar(6)," +
+                        "cnbr varchar(7)," +
+                        "sec varchar(20)," +
+                        "starttime varchar(22)," +
+                        "endtime varchar(22)," +
+                        "days varchar(21)," +
+                        "room varchar(40)," +
+                        "instructor varchar(200)," +
+                        "open boolean" +
+                        ")");
+    }
 }
