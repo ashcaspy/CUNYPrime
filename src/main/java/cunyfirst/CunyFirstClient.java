@@ -97,7 +97,8 @@ public class CunyFirstClient {
     public void setSearchTerms(MatchValuePair courseNumber, TimeRange start, TimeRange end,
                                String keyword, String professor, int[] days) {
         if(null != courseNumber) {
-            setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
+            searchParameters.put(ID.matchNbrId, courseNumber.comparison);
+            searchParameters.put(ID.courseNbrId, courseNumber.value);
         }
 
         //set times
