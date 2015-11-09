@@ -1330,7 +1330,7 @@ function setupScheduleOverlay(){
         });
         loadScheduleTab(scheduleTabs.length - 1);
         fadeScheduleOverlay();
-        createSched("test_user");
+        createSched(userName);
     });
 }
 

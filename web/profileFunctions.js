@@ -13,6 +13,7 @@ var coursesNotCompleted = [];
 var coursesTransfer =[];
 var major = "";
 
+
 function loadInfo(){
     
     for (i = 0; i < numColleges; i++)
@@ -71,11 +72,12 @@ function populateMajors(){
         }
 
         function putIntoArrays(lines){
-            if(lines.indexOf("Taken") > -1 || lines.indexOf("In-Progress") > -1 || lines.indexOf("Withdrawal") > -1 || lines.indexOf("Not-Completed") > -1 || lines.indexOf("Transfer") > -1 ){
+            if(lines.indexOf("Courses") > -1 ){
                     return false;
             } 
            return true;
         }
+
 
         function populateCourseRequirements(inputString){
 
@@ -99,7 +101,7 @@ function populateMajors(){
                     collegeOfStudent = lines[i];
                 } else if(lines[i].indexOf("Major") > -1){
                     var temp = lines[i].replace("Catalog Year:", "");
-                    majors = temp;
+                    major = temp;
                 } else if(lines[i].indexOf("in:") >-1) {
                     if(courses.length > 0){
                   
@@ -188,7 +190,7 @@ function populateMajors(){
                     //}
                 } 
 
-                if(lines[i].indexOf("Taken") > -1){
+                if(lines[i].indexOf("Taken:") > -1){
                     isCoursesTaken = true;
                 } else if(lines[i].indexOf("In-Progress") > -1){
                     isCoursesTaken = false;
@@ -202,7 +204,7 @@ function populateMajors(){
                     isCoursesTaken = false;
                     isCoursesWithdrawal = false;
                     isCoursesNotCompleted = true;
-                } else if(lines[i].indexOf("Transfer") > -1){
+                } else if(lines[i].indexOf("Courses Transfer") > -1){
                     isCoursesInProgress = false;
                     isCoursesTaken = false;
                     isCoursesWithdrawal = false;
@@ -248,7 +250,26 @@ function createDbObject(evt){
 
 }
 
+function storeReq(username) {
+    var transaction = db.transaction(["gracefulTable"], "readwrite");
+    var store = transaction.objectStore("gracefulTable");
+    var request = store.get(username);
+    request.onsuccess = function(){
+        var data = request.result;
+        data.req = requirements;
+        data.coursesInProgress = coursesInProgress;
+        data.coursesTaken = coursesTaken;
+        data.coursesTransfer = coursesTransfer;
+        data.coursesWithdrew = coursesWithdrew;
+        data.coursesNC = coursesNotCompleted;
+        data.college = collegeOfStudent;
+        data.major = major;
+        var update = store.put(data);
+    }
+    
+}
 
+var schedArr = [];
 function store(){
     /*var getColleges = document.getElementById("colleges");
     var theCollege = getColleges.options[getColleges.selectedIndex].text;*/
@@ -260,9 +281,16 @@ function store(){
 
 
     var input = {
+        username: userName,
         college: collegeOfStudent, 
         major: major, 
-        courses: requirements
+        //courses: requirements, 
+        coursesInProgress: coursesInProgress,
+        coursesTaken: coursesTaken,
+        coursesTransfer: coursesTransfer,
+        coursesWithdrew: coursesWithdrew,
+        coursesNC: coursesNotCompleted,
+        sched: schedArr
     }
 
     var transaction = db.transaction(["gracefulTable"], "readwrite");
@@ -289,11 +317,11 @@ function getIndexForReq(username, index, arr){
     var req = store.get(username);
     req.onsuccess  = function(){
         var data = req.result;
-        if(index < 0 || index > data.courses.length){
+        if(index < 0 || index > data.req.length){
             console.log("out of bound");
         } else {
-            for (var i = 0; i < data.courses[index].length; i++){
-                arr.push(data.courses[index][i]);
+            for (var i = 0; i < data.req[index].length; i++){
+                arr.push(data.req[index][i]);
             }
         }
 
@@ -393,13 +421,12 @@ function uploadPDF() {
             
             populateCourseRequirements(outputString);
             $("#footer").html("helllooo");
-            store();
             
             var outputString = data.replace(/(\r\n|\n|\r)/gm, "<br>");
             $("#testsubmission").html(outputString);
+            storeReq(userName);
+            alert(coursesTaken);
             
-            //store(outputString);
-            //store(outputString);
         }
             
     });
@@ -434,9 +461,11 @@ function uploadPDF() {
 			var store = transaction.objectStore("gracefulTable");
 			var request = store.get(username);
 			request.onsuccess = function(){
-				var data = request.result;
-				 data.sched = testSched;
+                var data = request.result;
+                $("#footer").html(data.username);
+				 data.sched.push(testSched);
 				 var update = store.put(data);
+                
 
 			}
 		}
@@ -697,7 +726,10 @@ function selectUser(){
     $("#login_overlay_link").click(function(e){
         e.preventDefault();
         userName = "user";
+        console.log("username set");
         fadeLoginOverlay();
+        store();
+
     });
 }
 

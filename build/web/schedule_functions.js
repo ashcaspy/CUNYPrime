@@ -459,6 +459,41 @@ function createTools() {
     $clear.click(function(e){
         e.preventDefault();
         var teststring = "";
+        //change
+        
+        
+        
+        
+        
+        
+        for(var i = 0; i < numDivsX; i++){
+            for (var k = 0; k < numDivsY; k++){
+                if ($("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).data("data-selected") == "true"){
+                    if ((i % 2 == 0 && k % 2 == 0) || (i % 2 == 1 && k % 2 == 1))
+                        $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "lightgrey",});
+                    else
+                        $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "inherit",});
+
+                    $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).data("data-selected", "false");  
+                    
+                    if ($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes) != -1){
+                        openTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes), 1);
+                        scheduleTabs[currentScheduleTab].openTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes), 1);
+                    }
+                    if ($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes) != -1){
+                        closedTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes), 1);
+                        scheduleTabs[currentScheduleTab].closedTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes), 1);
+                    }
+                    if ($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs) != -1){
+                        selectedDivs.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs), 1);
+                        scheduleTabs[currentScheduleTab].selectedDivs.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs), 1);
+                    }                 
+                }
+            }
+        }
+        
+        /*
+        
         openTimes.splice(0, openTimes.length);
         closedTimes.splice(0, closedTimes.length);
         selectedDivs.splice(0, selectedDivs.length);
@@ -477,6 +512,7 @@ function createTools() {
                 
             }
         }
+        */
     });
     
     
@@ -1294,6 +1330,7 @@ function setupScheduleOverlay(){
         });
         loadScheduleTab(scheduleTabs.length - 1);
         fadeScheduleOverlay();
+        createSched(userName);
     });
 }
 
