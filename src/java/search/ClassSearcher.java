@@ -1,62 +1,52 @@
 package search;
 
 
-import java.io.IOException;
 import java.sql.DriverManager;
-import java.util.List;
+import java.util.Arrays;
 
-import com.gargoylesoftware.htmlunit.html.*;
-import search.cunyfirst.CunyFirstClient;
-import search.cunyfirst.ID;
-
+import cunyfirst.*;
 
 import java.sql.*;
-import java.util.Arrays;
+import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import search.cunyfirst.TimeRange;
-import search.parser.Course;
-import search.parser.Section;
 
-class ClassSearcher {
-        public static void searchClasses(String[] args) {
-            if(args.length != 2) {
-                return;
-            }
+public class ClassSearcher {
+        public static Connection classSearch() {
+            
 
-            CunyFirstClient wc = new CunyFirstClient();
-            wc.setup("Hunter College", ID.semester("Fall", 2015));
-
-            List<HtmlOption> depts = wc.getSelect(search.cunyfirst.ID.selectDept).getOptions();
             Connection conn;
-            
-            String url = "postgres://dohlisjkikwpju:P8E-Lh7jMSEUfyQb5RrR4m-fEJ@ec2-107-21-219-235.compute-1.amazonaws.com:5432/dejqt9ki5rgaao";
-
-            
-            //String serverName = "ec2-107-21-219-235.compute-1.amazonaws.com";
-            //String mydatabase = "cunyfirst";
-            //String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
-            
             //String serverName = "localhost:3306";
             //String mydatabase = "cunyfirst";
             //String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
+            String url = "postgres://dohlisjkikwpju:P8E-Lh7jMSEUfyQb5RrR4m-fEJ@ec2-107-21-219-235.compute-1.amazonaws.com:5432/dejqt9ki5rgaao";
+
+
             try {
-                conn = DriverManager.getConnection(url, args[0], args[1]);
-                Course.createTable(conn);
-                Section.createTable(conn);
+                conn = DriverManager.getConnection(url); // <--- *******
             } catch (SQLException e) {
                 e.printStackTrace();
-                return;
+                System.out.println("BAD");
+                return null;
             }
-
-            wc.retrieve("Hunter College", "Fall", 2015,
+            /*
+            Search searcher = new Search(conn);
+            searcher.selectTerm("Hunter College", ID.semester("Fall", 2015));
+            searcher.find(
                     new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12), new TimeRange(11, 14), null, null,
                     new int[] {3},
-                    Arrays.asList(new String[]{"CSCI", "ANTHC"}), conn);
-
+                    Arrays.asList(new String[]{"CSCI", "ANTHC"}));
+            searcher.find(
+                    null, new TimeRange(12, 13), new TimeRange(13,15), null, null, new int[]{1},
+                    Arrays.asList(new String[]{"CSCI", "ENGL", "CHIN"})
+            );
+            */
             try {
                 conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            
+            return conn;
         }
 }

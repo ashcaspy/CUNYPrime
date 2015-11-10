@@ -12,6 +12,8 @@ var coursesWithdrew = [];
 var coursesNotCompleted = [];
 var coursesTransfer =[];
 var major = "";
+var boolArr = [];
+boolArr[0] = false;
 
 
 function loadInfo(){
@@ -270,7 +272,7 @@ function storeReq(username) {
 }
 
 var schedArr = [];
-function store(){
+function store(userName){
     /*var getColleges = document.getElementById("colleges");
     var theCollege = getColleges.options[getColleges.selectedIndex].text;*/
     //var username = document.getElementById("username").value;
@@ -462,13 +464,25 @@ function uploadPDF() {
 			var request = store.get(username);
 			request.onsuccess = function(){
                 var data = request.result;
-                $("#footer").html(data.username);
-				 data.sched.push(testSched);
+                 data.sched.push(testSched);
 				 var update = store.put(data);
-                
-
 			}
 		}
+/*
+        function setClosedTimes(username, closeTimes){
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+            req.onsuccess = function(){
+				var data = req.result;
+				data.sched.closeTimes = closeTimes;
+                //data.sched.closeTimes.splice(0, data.sched.closeTimes.length);
+                $("#footer").html(data.sched.closeTimes);
+				var update = store.put(data);
+			}
+		}
+*/
+
 
 		function setDayStart(username, dayStart){
 			var transaction = db.transaction(["gracefulTable"], "readwrite");
@@ -476,7 +490,7 @@ function uploadPDF() {
 			var request = store.get(username);
 			request.onsuccess = function(){
 				var data = request.result;
-				data.sched.dayStart = dayStart;
+				data.sched[currentScheduleTab].dayStart = dayStart;
 				var update = store.put(data);
 			}
 		}
@@ -487,7 +501,7 @@ function uploadPDF() {
 			var req = store.get(username);
 			req.onsuccess = function(){
 				var data = req.result;
-				data.sched.dayEnd = dayEnd;
+				data.sched[currentScheduleTab].dayEnd = dayEnd;
 				var update = store.put(data);
 			}
 		}
@@ -498,7 +512,7 @@ function uploadPDF() {
 			var req = store.get(username);
 			req.onsuccess = function(){
 				var data = req.result;
-				data.sched.hoursStart = hoursStart;
+				data.sched[currentScheduleTab].hoursStart = hoursStart;
 				var update = store.put(data);
 			}
 		}
@@ -509,7 +523,7 @@ function uploadPDF() {
 			var req = store.get(username);
 			req.onsuccess = function(){
 				var data = req.result;
-				data.sched.hoursEnd = hoursEnd;
+				data.sched[currentScheduleTab].hoursEnd = hoursEnd;
 				var update = store.put(data);
 			}
 		}
@@ -526,7 +540,7 @@ function uploadPDF() {
 			var req = store.get(username);
 			req.onsuccess = function(){
 				var data = req.result;
-				data.sched.openTimes = openTimes;
+				data.sched[currentScheduleTab].openTimes = openTimes;
 				var update = store.put(data);
 			}
 		}
@@ -535,9 +549,9 @@ function uploadPDF() {
 			var transaction = db.transaction(["gracefulTable"], "readwrite");
 			var store = transaction.objectStore("gracefulTable");
 			var req = store.get(username);
-			req.onsuccess = function(){
+            req.onsuccess = function(){
 				var data = req.result;
-				data.sched.closeTimes = closeTimes; 
+				data.sched[currentScheduleTab].closeTimes = closeTimes;
 				var update = store.put(data);
 			}
 		}
@@ -548,7 +562,7 @@ function uploadPDF() {
 			var req = store.get(username);
 			req.onsuccess = function(){
 				var data = req.result;
-				data.sched.selectedDiv = selectedDiv;
+				data.sched[currentScheduleTab].selectedDiv = selectedDiv;
 				var update = store.put(data);
 			}
 		}
@@ -568,7 +582,7 @@ function uploadPDF() {
 			var req = store.get(username);
 			req.onsuccess = function(){
 				var data = req.result;
-				arr.push(data.sched.dayStart);
+				arr.push(data.sched[currentScheduleTab].dayStart);
 				boolArr[0] = true;	
 			}
 		}
@@ -588,7 +602,7 @@ function uploadPDF() {
 			var req = store.get(username);
 			req.onsuccess = function(){
 				var data = req.result;
-				arr.push(data.sched.dayEnd);
+				arr.push(data.sched[currentScheduleTab].dayEnd);
 				boolArr[0] = true;	
 			}
 		}
@@ -608,7 +622,7 @@ function uploadPDF() {
 			var req = store.get(username);
 			req.onsuccess = function(){
 				var data = req.result;
-				arr.push(data.sched.hoursStart);
+				arr.push(data.sched[currentScheduleTab].hoursStart);
 				boolArr[0] = true;	
 			}
 		}
@@ -628,7 +642,7 @@ function uploadPDF() {
 			var req = store.get(username);
 			req.onsuccess = function(){
 				var data = req.result;
-				arr.push(data.sched.hoursEnd);
+				arr.push(data.sched[currentScheduleTab].hoursEnd);
 				boolArr[0] = true;	
 			}
 		}
@@ -650,8 +664,8 @@ function uploadPDF() {
 			req.onsuccess = function(){
 				var data = req.result;
 
-				for(var i = 0; i < data.sched.openTimes.length; i++){
-					myArr.push(data.sched.openTimes[i]);
+				for(var i = 0; i < data.sched[currentScheduleTab].openTimes.length; i++){
+					myArr.push(data.sched[currentScheduleTab].openTimes[i]);
 				}
 				
 				boolArr[0] = true;	
@@ -675,8 +689,8 @@ function uploadPDF() {
 			req.onsuccess = function(){
 				var data = req.result;
 
-				for(var i = 0; i < data.sched.closeTimes.length; i++){
-					myArr.push(data.sched.openTimes[i]);
+				for(var i = 0; i < data.sched[currentScheduleTab].closeTimes.length; i++){
+					myArr.push(data.sched[currentScheduleTab].openTimes[i]);
 				}
 				
 				boolArr[0] = true;	
@@ -698,8 +712,8 @@ function uploadPDF() {
 			req.onsuccess = function(){
 				var data = req.result;
 
-				for(var i = 0; i < data.sched.selectedDiv.length; i++){
-					myArr.push(data.sched.openTimes[i]);
+				for(var i = 0; i < data.sched[currentScheduleTab].selectedDiv.length; i++){
+					myArr.push(data.sched[currentScheduleTab].openTimes[i]);
 				}
 				
 				boolArr[0] = true;	
@@ -728,7 +742,7 @@ function selectUser(){
         userName = "user";
         console.log("username set");
         fadeLoginOverlay();
-        store();
+        store(userName);
 
     });
 }

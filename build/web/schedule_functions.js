@@ -373,6 +373,9 @@ function createTools() {
                 }
             }
         }
+        setClosedTimes(userName, closedTimes);
+        setOpenTimes(userName, openTimes);
+        setSelectedDiv(userName, selectedDivs);
     });
     
 //OPEN TOOL
@@ -427,6 +430,11 @@ function createTools() {
                 }
             }
         }
+        
+        
+        setClosedTimes(userName, closedTimes);
+        setOpenTimes(userName, openTimes);
+        setSelectedDiv(userName, selectedDivs);
     });
     
 // CLEAR TOOL
@@ -459,13 +467,6 @@ function createTools() {
     $clear.click(function(e){
         e.preventDefault();
         var teststring = "";
-        //change
-        
-        
-        
-        
-        
-        
         for(var i = 0; i < numDivsX; i++){
             for (var k = 0; k < numDivsY; k++){
                 if ($("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).data("data-selected") == "true"){
@@ -491,6 +492,10 @@ function createTools() {
                 }
             }
         }
+        
+        setClosedTimes(userName, closedTimes);
+        setOpenTimes(userName, openTimes);
+        setSelectedDiv(userName, selectedDivs);
         
         /*
         
@@ -578,6 +583,8 @@ function createTools() {
             numDivsX = dayEnd - dayStart + 1;
             scheduleTabs[currentScheduleTab].dayStart = dayStart;
             scheduleTabs[currentScheduleTab].dayEnd = dayEnd;
+            setDayStart(userName, dayStart);
+            setDayEnd(userName, dayEnd);
             
             
             $days = $("<ul>");
@@ -669,6 +676,9 @@ function createTools() {
             scheduleTabs[currentScheduleTab].dayStart = dayStart;
             scheduleTabs[currentScheduleTab].dayEnd = dayEnd;
             
+            setDayStart(userName, dayStart);
+            setDayEnd(userName, dayEnd);
+            
             numDivsX = dayEnd - dayStart + 1;
             
             document.getElementById("day-list").innerHTML = "";
@@ -745,6 +755,8 @@ function createTools() {
             
             scheduleTabs[currentScheduleTab].hourStart = hourStart;
             scheduleTabs[currentScheduleTab].hourEnd = hourEnd;
+            setHoursStart(userName, hourStart);
+            setHoursEnd(userName, hourEnd);
             
             numDivsY = hourEnd - hourStart + 1;
             $hours = $("<ul>");
@@ -831,6 +843,8 @@ function createTools() {
             
             scheduleTabs[currentScheduleTab].hourStart = hourStart;
             scheduleTabs[currentScheduleTab].hourEnd = hourEnd;
+            setHoursStart(userName, hourStart);
+            setHoursEnd(userName, hourEnd);
             
             numDivsY = hourEnd - hourStart + 1;
             
@@ -923,7 +937,8 @@ function createTools() {
             }
             scheduleTabs[currentScheduleTab].hourStart = hourStart;
             scheduleTabs[currentScheduleTab].hourEnd = hourEnd;
-            
+            setHoursStart(userName, hourStart);
+            setHoursEnd(userName, hourEnd);
             numDivsY = hourEnd - hourStart + 1;
             
             document.getElementById("day-list").innerHTML = "";
@@ -1000,7 +1015,8 @@ function createTools() {
             
             scheduleTabs[currentScheduleTab].hourStart = hourStart;
             scheduleTabs[currentScheduleTab].hourEnd = hourEnd;
-            
+            setHoursStart(userName, hourStart);
+            setHoursEnd(userName, hourEnd);
             numDivsY = hourEnd - hourStart + 1;
             
             document.getElementById("day-list").innerHTML = "";

@@ -12,11 +12,8 @@ import java.net.URL;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
-
-import java.sql.Connection;
 import java.util.Map;
 
-import search.parser.Parser;
 
 
 public class CunyFirstClient {
@@ -45,23 +42,6 @@ public class CunyFirstClient {
     HashMap<String, String> sectionRequestParams = null;
 
     private HashMap<String, String> resetParameters = null;
-
-    public void retrieve(String college, String season, int year,
-                         MatchValuePair courseNumber,
-                         TimeRange start, TimeRange end,
-                         String keyword, String professor,
-                         int[] days,
-                         Iterable<String> departments, Connection db) {
-        setup(college, ID.semester(season, year));
-        setSearchTerms(courseNumber, start, end, keyword, professor, days);
-        for(String dept: departments) {
-            try {
-                new Parser(this, getResults(dept)).addToTable(db);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public HtmlSelect getSelect(String id) {
         return (HtmlSelect) searchPage.getElementById(id);
@@ -117,7 +97,8 @@ public class CunyFirstClient {
     public void setSearchTerms(MatchValuePair courseNumber, TimeRange start, TimeRange end,
                                String keyword, String professor, int[] days) {
         if(null != courseNumber) {
-            setMatch(ID.matchNbrId, ID.courseNbrId, courseNumber);
+            searchParameters.put(ID.matchNbrId, courseNumber.comparison);
+            searchParameters.put(ID.courseNbrId, courseNumber.value);
         }
 
         //set times
@@ -158,7 +139,11 @@ public class CunyFirstClient {
 
     public HtmlPage getResults(String dept) throws IOException {
         searchParameters.put(ID.deptCode, dept);
+        return getResults();
+    }
 
+    //assumes setup and setSearchTerms have been already called
+    public HtmlPage getResults() throws IOException {
         request.setRequestParameters(paramsToList(searchParameters));
         HtmlPage results = client.getPage(request);
 
@@ -170,8 +155,6 @@ public class CunyFirstClient {
                 sectionRequestParams.put(p.getName(), p.getValue());
             }
         }
-        //System.out.println("'"+searchParameters.get(ID.endVal1)+"'");
-        //System.out.println("'"+searchParameters.get(ID.startVal1)+"'");
         return results;
     }
 

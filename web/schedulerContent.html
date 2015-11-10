@@ -93,6 +93,7 @@
     //loadScheduleTabObjs();
     //loadScheduleTab(0);
     createScheduleFooterTools();
-    loadScheduleTab(-1);
+    if (scheduleTabs.length == 0)
+        loadScheduleTab(-1);
     setupScheduleOverlay();
 </script>
