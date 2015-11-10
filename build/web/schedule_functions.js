@@ -12,6 +12,7 @@ var selectedDivs = new Array();
 var numDivsY = hourEnd - hourStart + 1;
 
 function createDivs(){
+    
     var $container = $("#timeslot-list");
     var $dayContainer = $("#day-list");
     var $hourContainer = $("#hour-list");
@@ -71,7 +72,7 @@ function createDivs(){
         $temp.html("<p class = 'aligned-labels'>" + (days[i + dayStart]) +"</p>");
         $temp.appendTo($dayContainer);
     }
-    
+    //alert(numDivsY);
     for (var i = 0; i < numDivsY; i++){
         
         $temp = $("<div>").addClass("hour-divs");
@@ -94,8 +95,8 @@ function createDivs(){
             ampm = "pm";
         $temp.html("<p class = 'aligned-labels'>" + (hours[i + hourStart]) + "</p>");
         $temp.appendTo($hourContainer);
+        
     }
-    
     
      for (var i = 0; i < numDivsX; i++){
         for (var k = 0; k < numDivsY; k++){
@@ -151,8 +152,6 @@ function createDivs(){
                 $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "#333333",});
         }
     }
-    
-    
 }
 
 
@@ -759,6 +758,7 @@ function createTools() {
             setHoursEnd(userName, hourEnd);
             
             numDivsY = hourEnd - hourStart + 1;
+            
             $hours = $("<ul>");
             for (var i = 0; i < 12; i++){
                 $indivHour = $("<li>");
@@ -1117,7 +1117,6 @@ function loadScheduleTab(num){
     if (currentScheduleTab == num && num != -1)
         return;
     else if (num == -1){
-        //alert(num);
         $("#day-list").html("");
         $("#hour-list").html("");
         $("#timeslot-list").html("");
@@ -1127,11 +1126,12 @@ function loadScheduleTab(num){
         $("#schedule-tab-" + currentScheduleTab).css({"background-image" : "url(images/schedule-tab.png)"});
 
         currentScheduleTab = num;
-
+        
         dayStart = scheduleTabs[num].dayStart;
         dayEnd = scheduleTabs[num].dayEnd;
         hourStart = scheduleTabs[num].hourStart;
         hourEnd = scheduleTabs[num].hourEnd;
+        //alert(hourEnd);
 
 
         openTimes.splice(0, openTimes.length);
@@ -1150,7 +1150,7 @@ function loadScheduleTab(num){
 
         numDivsX = dayEnd - dayStart + 1;
         numDivsY = hourEnd - hourStart + 1;
-
+        //alert(numDivsY);
         $("#day-selection-dropdown-from-label-link").html(days[dayStart]);
         $("#day-selection-dropdown-to-label-link").html(days[dayEnd]);
         $("#hour-selection-dropdown-from-label-link").html(hours[hourStart]);
@@ -1181,7 +1181,6 @@ function loadScheduleTab(num){
         $("#hour-list").html("");
         $("#timeslot-list").html("");
         createDivs();
-
     }
 }
 
@@ -1259,6 +1258,7 @@ function createScheduleFooterTools(){
         });
         loadScheduleTab(scheduleTabs.length - 1);
         fadeScheduleOverlay();
+        createSched(userName);
         
         
     });
@@ -1287,6 +1287,7 @@ function createScheduleFooterTools(){
     $button.click(function(e){
         $("#schedule-tab-" + (currentScheduleTab)).remove();
         scheduleTabs[currentScheduleTab].valid = false;
+        setValid(userName, false);
         //scheduleTabs.splice(currentScheduleTab, 1);
         
         var index = -1;

@@ -23,44 +23,55 @@ function loadUserSchedules(loaded){
             var tempTab = {
                 dayStart: scheduleObjArray[i].dayStart,
                 dayEnd: scheduleObjArray[i].dayEnd,
-                hourStart: scheduleObjArray[i].hourStart,
-                hourEnd: scheduleObjArray[i].hourEnd,
+                hourStart: scheduleObjArray[i].hoursStart,
+                hourEnd: scheduleObjArray[i].hoursEnd,
                 openTimes: scheduleObjArray[i].openTimes,
                 closedTimes: scheduleObjArray[i].closeTimes,
                 selectedDivs: scheduleObjArray[i].selectedDiv,
-                valid: true,
+                valid: scheduleObjArray[i].valid,
             };
             scheduleTabs.push(tempTab);
         }
-        $("#footer").html(scheduleTabs[0].openTimes);
-
         //create divs in schedule footer
         for (var i = 0; i < scheduleTabs.length; i++){
-            var $tabDiv = $("<div>").addClass("schedule-tab-selector");
-            $tabDiv.attr("id", "schedule-tab-" + i);
-            $tabDiv.css({
-                "width" : "7vw",
-                "height" : "3vh",
-                "position" : "relative",
-                "left" : 1 + "vw",
-                "top" : "0.5vh",
-                "background-image" : "url(images/schedule-tab.png)",
-                "float" : "left",
-                "border-bottom-left-radius" : "10px",
-                "border-bottom-right-radius" : "10px",
-            });
-            var schedName = "Schedule" + (i+1);
-            $tabDiv.html("<a href = '#' class = 'tab-links'>" + schedName + "</a>");
+            if(scheduleTabs[i].valid == true){
+                var $tabDiv = $("<div>").addClass("schedule-tab-selector");
+                $tabDiv.attr("id", "schedule-tab-" + i);
+                $tabDiv.css({
+                    "width" : "7vw",
+                    "height" : "3vh",
+                    "position" : "relative",
+                    "left" : 1 + "vw",
+                    "top" : "0.5vh",
+                    "background-image" : "url(images/schedule-tab.png)",
+                    "float" : "left",
+                    "border-bottom-left-radius" : "10px",
+                    "border-bottom-right-radius" : "10px",
+                });
+                var schedName = "Schedule" + (i+1);
+                $tabDiv.html("<a href = '#' class = 'tab-links'>" + schedName + "</a>");
 
-            $("#schedule_footer").append($tabDiv);    
-            $tabDiv.click(function(e){
+                $("#schedule_footer").append($tabDiv);    
+                $tabDiv.click(function(e){
 
-                e.preventDefault();
-                var index = $(e.target).parent().attr("id").substring(13, $(e.target).parent().attr("id").length);
-                loadScheduleTab(index);
+                    e.preventDefault();
+                    var index = $(e.target).parent().attr("id").substring(13, $(e.target).parent().attr("id").length);
+                    loadScheduleTab(index);
 
-            });
+                });
+            }
         }
-        loadScheduleTab(0);
+        var index = -1;
+        for (i = 0; i < scheduleTabs.length; i++){
+            if (scheduleTabs[i].valid == true){
+                loadScheduleTab(i);
+                index = i;
+                break;
+            }
+        }
+        if (index == -1){
+            loadScheduleTab(-1);
+            //loadScheduleOverlay();
+        }
     }
 }

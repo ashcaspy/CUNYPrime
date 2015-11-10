@@ -3,7 +3,7 @@ package search;
 import search.cunyfirst.CunyFirstClient;
 import search.cunyfirst.MatchValuePair;
 import search.cunyfirst.TimeRange;
-import parser.*;
+import search.parser.*;
 
 import java.io.IOException;
 import java.sql.Connection;

@@ -4,7 +4,7 @@ package search;
 import java.sql.DriverManager;
 import java.util.Arrays;
 
-import cunyfirst.*;
+import search.cunyfirst.*;
 
 import java.sql.*;
 import search.cunyfirst.ID;

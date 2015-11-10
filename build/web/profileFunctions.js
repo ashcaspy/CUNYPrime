@@ -273,14 +273,7 @@ function storeReq(username) {
 
 var schedArr = [];
 function store(userName){
-    /*var getColleges = document.getElementById("colleges");
-    var theCollege = getColleges.options[getColleges.selectedIndex].text;*/
-    //var username = document.getElementById("username").value;
-    //var email = document.getElementById("email").value;
-    /*var major = document.getElementById(theCollege).value;
-    var college = document.getElementById("colleges").value;
-    var uncheck = storeClassesNeeded();*/
-
+    
 
     var input = {
         username: userName,
@@ -301,7 +294,7 @@ function store(userName){
     var request = store.add(input);
 
     request.onsuccess = function(){
-        window.alert("done adding");
+        //window.alert("done adding");
     }
     request.onerror = function(){
         var transaction = db.transaction(["gracefulTable"], "readwrite");
@@ -312,7 +305,7 @@ function store(userName){
         }
     }
 }
-
+var testArr = new Array();
 function getIndexForReq(username, index, arr){
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
@@ -324,6 +317,7 @@ function getIndexForReq(username, index, arr){
         } else {
             for (var i = 0; i < data.req[index].length; i++){
                 arr.push(data.req[index][i]);
+                
             }
         }
 
@@ -375,7 +369,6 @@ function testClick(){
     xhr.open("GET", "parseprofilepdf?fname=" + $("#fileName").val(), true);
     xhr.onreadystatechange = callback;
     xhr.send();
-    $("#footer").html($("#fileName").val());
     
     
 }
@@ -418,11 +411,11 @@ function uploadPDF() {
         processData: false,
         contentType: false,
         success: function(data){
-            $("#testsubmission").html(outputString);
+            var array1 = new Array();
+            getIndexForReq(userName, 0, array1); $("#testsubmission").html(array1);
             var outputString = data.replace(/(\r\n|\n|\r)/gm, "\n");
             
             populateCourseRequirements(outputString);
-            $("#footer").html("helllooo");
             
             var outputString = data.replace(/(\r\n|\n|\r)/gm, "<br>");
             $("#testsubmission").html(outputString);
@@ -440,7 +433,7 @@ function uploadPDF() {
 /*****************************************************/
 
 	
-		function Schedule(dayStart, dayEnd, hoursStart, hoursEnd, openTimes, closeTimes, selectedDiv){
+		function Schedule(dayStart, dayEnd, hoursStart, hoursEnd, openTimes, closeTimes, selectedDiv, valid){
 				this.dayStart = dayStart;
 				this.dayEnd = dayEnd;
 				this.hoursStart = hoursStart;
@@ -448,6 +441,7 @@ function uploadPDF() {
 				this.openTimes = openTimes;
 				this.closeTimes = closeTimes;
 				this.selectedDiv = selectedDiv;
+                this.valid = valid;
 			}
 	
 
@@ -458,7 +452,7 @@ function uploadPDF() {
 			var open = [];
 			var closedTime = [];
 			var selectedDiv = [];
-			var testSched = new Schedule(0,6,0,23,open, closedTime, selectedDiv);
+			var testSched = new Schedule(0,6,0,23,open, closedTime, selectedDiv, true);
 			var transaction = db.transaction(["gracefulTable"], "readwrite");
 			var store = transaction.objectStore("gracefulTable");
 			var request = store.get(username);
@@ -567,6 +561,19 @@ function uploadPDF() {
 			}
 		}
 
+
+
+        function setValid(username, valid){
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+            var prevSchedTab = currentScheduleTab;
+			req.onsuccess = function(){
+				var data = req.result;
+                data.sched[prevSchedTab].valid = valid;
+				var update = store.put(data);
+			}
+		}
 
 		/*
 			This function will take an array, arr, by reference populate it with dayStart.
@@ -720,9 +727,35 @@ function uploadPDF() {
 			}
 		}
 
+    
+        function getSchedules(username, myArr, boolArr) {
+			boolArr[0] = false;
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
 
+				for(var i = 0; i < data.sched.length; i++){
+					myArr.push(data.sched[i]);
+				}
+				
+				boolArr[0] = true;
+                loadUserSchedules(true);
+			}
+		}
 
-
+        function getValid(username, arr, boolArr){
+			boolArr[0] = false;
+			var transaction = db.transaction(["gracefulTable"], "readwrite");
+			var store = transaction.objectStore("gracefulTable");
+			var req = store.get(username);
+			req.onsuccess = function(){
+				var data = req.result;
+				arr.push(data.sched[currentScheduleTab].valid);
+				boolArr[0] = true;	
+			}
+		}
 
 
 
@@ -743,6 +776,9 @@ function selectUser(){
         console.log("username set");
         fadeLoginOverlay();
         store(userName);
+        
+        // load user schedule info
+        loadUserSchedules(false);
 
     });
 }
