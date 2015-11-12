@@ -4,6 +4,8 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import cunyfirst.ID;
 
+import java.sql.*;
+
 // holds info for courses table (prereqs, description, etc.)
 // I'm assuming none of it will change very often
 public class CourseData {
@@ -22,7 +24,7 @@ public class CourseData {
 
         DomElement required = page.getElementById(ID.prereqs);
         if(null == required) {
-            requirements = null;
+            requirements = "";
         }
         else {
             requirements = required.getTextContent().trim();
@@ -30,7 +32,7 @@ public class CourseData {
 
         DomElement desc = page.getElementById(ID.courseDescription);
         if(null == desc) {
-            description = null;
+            description = "";
         }
         else {
             description = desc.getTextContent().trim();
@@ -38,6 +40,37 @@ public class CourseData {
 
         credits = Float.parseFloat(page.getElementById(ID.units).getTextContent().split(" ")[0]);
     }
+
+    public void createTable(Connection conn) throws SQLException {
+        Statement st = conn.createStatement();
+        st.executeUpdate("CREATE TABLE IF NOT EXISTS courses(" +
+                        "dept varchar(6)," +
+                        "nbr varchar(7)," +
+                        "name varchar(90)," +
+                        "components varchar(60)," +
+                        "requirements varchar(300)," +
+                        "description varchar(1300)," +
+                        "credits float," +
+                        "PRIMARY KEY(dept, nbr)" +
+                        ")");
+    }
+
+    public void addToTable(Connection conn) throws SQLException {
+        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?,?,?,?,?)");
+
+        st.setString(1, dept);
+        st.setString(2, number);
+        st.setString(3, name);
+        st.setString(4, components);
+        st.setString(5, requirements);
+        st.setString(5, requirements);
+        st.setString(6, description);
+        st.setFloat(7, credits);
+
+        st.executeUpdate();
+
+    }
+
 
     public final String dept;
     public final String number;
