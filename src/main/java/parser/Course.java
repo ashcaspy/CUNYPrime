@@ -1,9 +1,6 @@
 package parser;
 
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import cunyfirst.ID;
-
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -19,7 +16,7 @@ import java.util.ArrayList;
 
 
 public class Course {
-    public Course(Element elem, HtmlPage firstSection) {
+    public Course(Element elem) {
         String fullTitle = Selector.select(ID.courseName, elem).get(0).ownText();
         String title = fullTitle.substring(1,fullTitle.length()-1);
         String[] temp = title.split(" - ");
@@ -27,26 +24,6 @@ public class Course {
         temp = temp[0].split(" ");
         dept = temp[0];
         number = temp[1];
-
-        components = firstSection.getElementById(ID.courseComponents).getTextContent()
-                .trim().replaceAll(" Required", "");
-        DomElement required = firstSection.getElementById(ID.prereqs);
-        if(null == required) {
-            requirements = null;
-        }
-        else {
-            requirements = required.getTextContent().trim();
-        }
-
-        DomElement desc = firstSection.getElementById(ID.courseDescription);
-        if(null == desc) {
-            description = "";
-        }
-        else {
-            description = desc.getTextContent().trim();
-        }
-
-        credits = Float.parseFloat(firstSection.getElementById(ID.units).getTextContent().split(" ")[0]);
 
         Elements secs = Selector.select(ID.section, elem);
         sections = new ArrayList<>(secs.size());
@@ -60,6 +37,9 @@ public class Course {
         st.setString(1, dept);
         st.setString(2, number);
         st.setString(3, name);
+
+        //relocate creating course rows later
+        /*
         if(components.split(",").length > 1) {
             st.setString(4, components);
         } else {
@@ -73,7 +53,11 @@ public class Course {
         st.setString(5, requirements);
         st.setString(6, description);
         st.setFloat(7, credits);
-
+        */
+        st.setNull(4, Types.VARCHAR);
+        st.setNull(5, Types.VARCHAR);
+        st.setNull(6, Types.VARCHAR);
+        st.setNull(7, Types.FLOAT);
         st.executeUpdate();
 
         for(Section sec: sections) {
@@ -89,10 +73,7 @@ public class Course {
     public final String dept;
     public final String number;
     public final String name;
-    public final String components;
-    public final String requirements;
-    public final String description;
-    public final float credits;
+
     public final ArrayList<Section> sections;
 
     private static final String tablename = "courses";

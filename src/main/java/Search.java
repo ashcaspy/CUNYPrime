@@ -49,17 +49,19 @@ public class Search {
         if(null != departments) {
             for (String dept : departments) {
                 try {
-                    new Parser(client, client.getResults(dept)).addToTable(conn, offset);
+                    new Parser(client.getResults(dept)).addToTable(conn, offset);
                 } catch (IOException e) {
                 }
             }
         }
         else {
             try {
-                new Parser(client, client.getResults()).addToTable(conn, offset);
+                new Parser(client.getResults()).addToTable(conn, offset);
             } catch (IOException e) { }
         }
 
         ++counter;
     }
+
+
 }
