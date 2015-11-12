@@ -1,4 +1,6 @@
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import cunyfirst.CunyFirstClient;
+import cunyfirst.ID;
 import cunyfirst.MatchValuePair;
 import cunyfirst.TimeRange;
 import parser.*;
@@ -6,6 +8,8 @@ import parser.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Search {
     private CunyFirstClient client = new CunyFirstClient();
@@ -21,6 +25,10 @@ public class Search {
     public Search(Connection c, String college, String semester) {
         conn = c;
         selectTerm(college, semester);
+    }
+
+    public List<String> getSchools() {
+        return client.getSelect(ID.selectSchool).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
     }
 
     public void selectTerm(String school, String semester) {
