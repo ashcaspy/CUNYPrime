@@ -8,8 +8,14 @@ package servlets;
 import search.cunyfirst.TimeRange;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -69,25 +75,79 @@ public class SearchServlet extends HttpServlet {
         //processRequest(request, response);
         
         // CALL KAT'S FUNCTION HERE
-        Connection conn = ClassSearcher.classSearch();
+        Connection conn = null;
+        try {
+            conn = ClassSearcher.classSearch();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Search searcher = new Search(conn);
         searcher.selectTerm("Hunter College", ID.semester("Fall", 2015));
         searcher.find(
                 new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12), new TimeRange(11, 14), null, null,
                 new int[] {3},
                 Arrays.asList(new String[]{"CSCI", "ANTHC"}));
-        searcher.find(
+       /* searcher.find(
                 null, new TimeRange(12, 13), new TimeRange(13,15), null, null, new int[]{1},
                 Arrays.asList(new String[]{"CSCI", "ENGL", "CHIN"})
         );
-        
-        
-        
-        
+        */
         response.setContentType("text/html");
         response.setHeader("Cache-Control", "no-cache");
-        response.getWriter().write("ok");
+        response.getWriter().write("ok<br />");
         
+        
+        String query1 = "select * from courses1";
+        String query2 = "select * from sections1";
+        PreparedStatement preparedStatement;
+        ResultSet resultSet;
+        try {
+         preparedStatement = conn.prepareStatement(query1);
+         resultSet = preparedStatement.executeQuery();
+
+         response.getWriter().write("<table cellspacing='0' cellpadding='5' border='1'>");
+         response.getWriter().write("<tr>");
+         response.getWriter().write("<td><b>Department</b></td>");
+         response.getWriter().write("<td><b>Course Number</b></td>");
+         response.getWriter().write("<td><b>Name</b></td>");
+         response.getWriter().write("<td><b>Components</b></td>");
+         response.getWriter().write("<td><b>Requirements</b></td>");
+         response.getWriter().write("<td><b>Description</b></td>");
+         response.getWriter().write("<td><b>Credits</b></td>");
+         
+         response.getWriter().write("</tr>");
+
+         while(resultSet.next()) {
+          response.getWriter().write("<tr>");
+          response.getWriter().write("<td>"+resultSet.getString(1) + "</td>");
+          response.getWriter().write("<td>"+resultSet.getString(2) + "</td>");
+          response.getWriter().write("<td>"+resultSet.getString(3) + "</td>");
+          response.getWriter().write("<td>"+resultSet.getString(4) + "</td>");
+          response.getWriter().write("<td>"+resultSet.getString(5) + "</td>");
+          response.getWriter().write("<td>"+resultSet.getString(6) + "</td>");
+          response.getWriter().write("<td>"+resultSet.getString(7) + "</td>");
+          response.getWriter().write("</tr>");
+
+         }
+
+         response.getWriter().write("</table><br />");
+        }
+        catch (SQLException e) {
+
+         e.printStackTrace();
+        }
+        
+        
+        
+        
+        
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

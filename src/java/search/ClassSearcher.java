@@ -1,6 +1,8 @@
 package search;
 
 
+import connections.MainConfig;
+import java.net.URISyntaxException;
 import java.sql.DriverManager;
 import java.util.Arrays;
 
@@ -12,18 +14,19 @@ import search.cunyfirst.MatchValuePair;
 import search.cunyfirst.TimeRange;
 
 public class ClassSearcher {
-        public static Connection classSearch() {
+        public static Connection classSearch() throws URISyntaxException, ClassNotFoundException {
             
 
             Connection conn;
             //String serverName = "localhost:3306";
             //String mydatabase = "cunyfirst";
             //String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
-            String url = "postgres://dohlisjkikwpju:P8E-Lh7jMSEUfyQb5RrR4m-fEJ@ec2-107-21-219-235.compute-1.amazonaws.com:5432/dejqt9ki5rgaao";
+            //String url = "postgres://dohlisjkikwpju:P8E-Lh7jMSEUfyQb5RrR4m-fEJ@ec2-107-21-219-235.compute-1.amazonaws.com:5432/dejqt9ki5rgaao";
 
 
             try {
-                conn = DriverManager.getConnection(url); // <--- *******
+                conn = MainConfig.getConnection(); // <--- *******
+                System.out.println("GOOD");
             } catch (SQLException e) {
                 e.printStackTrace();
                 System.out.println("BAD");
@@ -41,12 +44,13 @@ public class ClassSearcher {
                     Arrays.asList(new String[]{"CSCI", "ENGL", "CHIN"})
             );
             */
+            /*
             try {
                 conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            
+            */
             return conn;
         }
 }

@@ -5,7 +5,7 @@ function searchCourses(){
         type: "GET",
         url: "performclasssearch",
         success: function(data){
-            $("#footer").html(data);
+            $("#testsubmission").html("ok" + data);
         }
     });  
 }
