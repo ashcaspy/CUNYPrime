@@ -31,6 +31,11 @@ public class Search {
         return client.getSelect(ID.selectSchool).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
     }
 
+    //assume setup was called, otherwise returns empty list
+    public List<String> getDepts() {
+        return client.getSelect(ID.selectDept).getOptions().stream().map(HtmlOption::getValueAttribute).collect(Collectors.toList());
+    }
+
     public void selectTerm(String school, String semester) {
         client.setup(school, semester);
     }
