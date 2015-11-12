@@ -41,7 +41,7 @@ public class CourseData {
         credits = Float.parseFloat(page.getElementById(ID.units).getTextContent().split(" ")[0]);
     }
 
-    public void createTable(Connection conn) throws SQLException {
+    public static void createTable(Connection conn) throws SQLException {
         Statement st = conn.createStatement();
         st.executeUpdate("CREATE TABLE IF NOT EXISTS courses(" +
                         "dept varchar(6)," +
