@@ -105,10 +105,10 @@ public class Search {
 
                     //result set is empty
                     if(!rs.isBeforeFirst()) {
-                    String key = Selector.select(ID.sectionNbr, c).get(0).id();
-                    CourseData cd = new CourseData(client.getSection(key));
+                        String key = Selector.select(ID.sectionNbr, c).get(0).id();
+                        CourseData cd = new CourseData(client.getSection(key));
                         try {
-                    cd.addToTable(conn);
+                            cd.addToTable(conn);
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
@@ -120,6 +120,5 @@ public class Search {
             }
         }
     }
-
 
 }
