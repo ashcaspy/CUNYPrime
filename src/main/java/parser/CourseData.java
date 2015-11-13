@@ -11,11 +11,13 @@ import java.sql.*;
 public class CourseData {
     //page - any section page for the course
     public CourseData(HtmlPage page) {
-        //"dept nbr - sec&nbsp;&nbsp; name"
+        //"dept(&nbsp;)* nbr - sec&nbsp;&nbsp; name"
         String title = page.getElementById(ID.secCourseName).getTextContent();
-        String[] temp = title.split("\u00a0\u00a0 ");
-        name = temp[1];
-        temp = temp[0].split(" - ")[0].split(" ");
+
+        final String space = "[ \u00a0]";
+        String[] temp = title.split(" - ");
+        name = temp[1].split(space+"{3}")[1];
+        temp = temp[0].split(space+"+");
         dept = temp[0];
         number = temp[1];
 
