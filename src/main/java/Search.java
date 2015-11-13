@@ -40,6 +40,10 @@ public class Search {
         return client.getSelect(ID.selectDept).getOptions().stream().map(HtmlOption::getValueAttribute).collect(Collectors.toList());
     }
 
+    public List<String> getSemesters() {
+        return client.getSelect(ID.selectTerm).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
+    }
+
     public void selectTerm(String school, String semester) {
         client.setup(school, semester);
     }
