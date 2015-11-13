@@ -11,6 +11,8 @@ import parser.*;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,17 +87,32 @@ public class Search {
 
     public void addCourses() throws SQLException {
         CourseData.createTable(conn);
-        for(String dept: getDepts()) {
-            if(ID.skippedDepts.contains(dept)) {
+        PreparedStatement st = conn.prepareStatement("SELECT * FROM COURSES WHERE dept=? and nbr=?;");
+        ResultSet rs;
+        for (String dept : getDepts()) {
+            if (ID.skippedDepts.contains(dept)) {
                 continue;
             }
             try {
                 Element results = Jsoup.parse(client.getResults(dept).asXml());
                 Elements courses = Selector.select(ID.course, results);
-                for(Element c : courses) {
+                for (Element c : courses) {
+                    //check for primary key before loading next page
+                    String temp[] = Selector.select(ID.courseName, c).get(0).ownText().split(" - ")[0].split(" ");
+                    st.setString(1, temp[0].substring(1));
+                    st.setString(2, temp[1]);
+                    rs = st.executeQuery();
+
+                    //result set is empty
+                    if(!rs.isBeforeFirst()) {
                     String key = Selector.select(ID.sectionNbr, c).get(0).id();
                     CourseData cd = new CourseData(client.getSection(key));
+                        try {
                     cd.addToTable(conn);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
             } catch (IOException e) {
