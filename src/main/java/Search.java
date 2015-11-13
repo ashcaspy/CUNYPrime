@@ -3,6 +3,10 @@ import cunyfirst.CunyFirstClient;
 import cunyfirst.ID;
 import cunyfirst.MatchValuePair;
 import cunyfirst.TimeRange;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.jsoup.select.Selector;
 import parser.*;
 
 import java.io.IOException;
@@ -52,7 +56,6 @@ public class Search {
 
         String offset = Integer.toString(counter);
         try {
-            Course.createTable(conn, offset);
             Section.createTable(conn, offset);
         } catch(SQLException e) {
             e.printStackTrace();
@@ -74,6 +77,27 @@ public class Search {
         }
 
         ++counter;
+    }
+
+    public void addCourses() throws SQLException {
+        CourseData.createTable(conn);
+        for(String dept: getDepts()) {
+            if(ID.skippedDepts.contains(dept)) {
+                continue;
+            }
+            try {
+                Element results = Jsoup.parse(client.getResults(dept).asXml());
+                Elements courses = Selector.select(ID.course, results);
+                for(Element c : courses) {
+                    String key = Selector.select(ID.sectionNbr, c).get(0).id();
+                    CourseData cd = new CourseData(client.getSection(key));
+                    cd.addToTable(conn);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
