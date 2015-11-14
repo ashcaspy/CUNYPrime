@@ -43,9 +43,9 @@ public class CourseData {
         credits = Float.parseFloat(page.getElementById(ID.units).getTextContent().split(" ")[0]);
     }
 
-    public static void createTable(Connection conn) throws SQLException {
+    public static void createTable(Connection conn, String tablename) throws SQLException {
         Statement st = conn.createStatement();
-        st.executeUpdate("CREATE TABLE IF NOT EXISTS courses(" +
+        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + "(" +
                         "dept varchar(6)," +
                         "nbr varchar(7)," +
                         "name varchar(90)," +
@@ -57,8 +57,8 @@ public class CourseData {
                         ")");
     }
 
-    public void addToTable(Connection conn) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO courses VALUES (?,?,?,?,?,?,?)");
+    public void addToTable(Connection conn, String tablename) throws SQLException {
+        PreparedStatement st = conn.prepareStatement("INSERT INTO " + tablename + " VALUES (?,?,?,?,?,?,?)");
 
         st.setString(1, dept);
         st.setString(2, number);

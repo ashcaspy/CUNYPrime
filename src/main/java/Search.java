@@ -85,9 +85,10 @@ public class Search {
         ++counter;
     }
 
-    public void addCourses() throws SQLException {
-        CourseData.createTable(conn);
-        PreparedStatement st = conn.prepareStatement("SELECT * FROM COURSES WHERE dept=? and nbr=?;");
+    public void addCourses(String school) throws SQLException {
+        final String table = school.replace(" ","_");
+        CourseData.createTable(conn, table);
+        PreparedStatement st = conn.prepareStatement("SELECT * FROM "+table+" WHERE dept=? and nbr=?;");
         ResultSet rs;
         for (String dept : getDepts()) {
             if (ID.skippedDepts.contains(dept)) {
@@ -108,7 +109,7 @@ public class Search {
                         String key = Selector.select(ID.sectionNbr, c).get(0).id();
                         CourseData cd = new CourseData(client.getSection(key));
                         try {
-                            cd.addToTable(conn);
+                            cd.addToTable(conn, table);
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
