@@ -5,11 +5,11 @@ function searchCourses(){
         type: "GET",
         url: "performclasssearch",
         success: function(data){
-            $("#testsubmission").html("ok" + data);
+            parseCourseResultset(data);
+            //alert("ok");
         }
     });  
 }
-
 
 var scheduleObjArray = new Array();
 function loadUserSchedules(loaded){
@@ -74,4 +74,8 @@ function loadUserSchedules(loaded){
             //loadScheduleOverlay();
         }
     }
+}
+
+function addCourseToSchedule(course){
+    alert(course.name);
 }

@@ -80,17 +80,30 @@ $.fn.popbox = function(options){
         methods.close();
         
     });
-
+    
     $(settings['course_info']).bind('mouseenter', function(event){
         clearTimeout(timeoutId1);
         clearTimeout(timeoutId2);
-        document.getElementById("footer").innerHTML = popOpened + "in C";
+        
     });
 
     $(settings['course_info']).bind('mouseout', function(event){
+        var e = event.toElement || event.relatedTarget;
+
+        //check for all children levels (checking from bottom up)
+        while(e && e.parentNode && e.parentNode != window) {
+            if (e.parentNode == this||  e == this) {
+                if(e.preventDefault) e.preventDefault();
+                return false;
+            }
+            e = e.parentNode;
+        }
         methods.close();
     });
-
+   
+   
+    
+    
 
     return this.each(function(){
         $(this).css({'width': $(settings['box']).width()}); // Width needs to be set otherwise popbox will not move when window resized.

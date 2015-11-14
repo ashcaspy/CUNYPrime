@@ -161,6 +161,7 @@ function populateMajors(){
                     temp = temp.replace(")", "");
                     temp = temp.replace("and", "");
                     courses.push(temp);
+                    allCourseReq.push(temp);
                 } else if(lines[i].indexOf("~") > -1){
                     index++; 
                 } else if(isCoursesTaken && putIntoArrays(lines[i])) {
@@ -269,6 +270,8 @@ function storeReq(username) {
     
 }
 
+var allCourseReq = new Array();
+
 var schedArr = [];
 function store(userName){
     
@@ -283,7 +286,8 @@ function store(userName){
         coursesTransfer: coursesTransfer,
         coursesWithdrew: coursesWithdrew,
         coursesNC: coursesNotCompleted,
-        sched: schedArr
+        sched: schedArr,
+        allCourseReq: allCourseReq
     }
 
     var transaction = db.transaction(["gracefulTable"], "readwrite");
@@ -305,25 +309,35 @@ function store(userName){
 }
 
 
-function getIndexForReq(username, index, arr){
+function getIndexForReq(username, arr){
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
     var req = store.get(username);
     req.onsuccess  = function(){
         var data = req.result;
         
-        if(index < 0 || index > data.req.length){
-            console.log("out of bound");
-        } else {
+        //if(index < 0 || index > data.req.length){
+        //    console.log("out of bound");
+        //} else {
             /*for (var i = 0; i < data.req[index].length; i++){
                 arr.push(data.req[index][i]);
                 
             }*/
-            arr = data.req[index][0];
-            displayReq(arr, index, true);
-        }
+            arr = data.req;
+            displayReq(arr, true);
+        //}
 
         console.log(arr);
+    }
+}
+
+function getReqLength(){
+    var transaction = db.transaction(["gracefulTable"], "readwrite");
+    var store = transaction.objectStore("gracefulTable");
+    var req = store.get(username);
+    req.onsuccess  = function(){
+        var data = req.result;
+        return req.result.length;
     }
 }
 
@@ -332,7 +346,7 @@ var db;
 window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
 if (window.indexedDB){
-    var request = window.indexedDB.open("GracefulDb", 7);
+    var request = window.indexedDB.open("GracefulDb", 8);
     request.onerror = function(event){
         window.alert("Error creating database");
     };
@@ -422,24 +436,11 @@ function uploadPDF() {
             $("#testsubmission").html(outputString);
             storeReq(userName);
             //getIndexForReq(userName, 0, array1); 
-            //displayReq(array1, 0, false);
+            displayReq(array1, 0, false);
             //alert(array1[0].name);
         }
             
     });
-}
-
-function displayReq(arr, index, done){
-    if (done == false){
-        getIndexForReq(userName, index, arr);
-    }
-    else if (done == true){
-        console.log("test");
-        console.log(arr);
-        console.log(arr.name);
-        $("#testsubmission").html(arr.name + "<br />" + arr.credReq + "<br />" + arr.credApp);
-    }
-    
 }
 
 

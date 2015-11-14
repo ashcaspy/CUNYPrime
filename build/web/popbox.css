@@ -77,9 +77,40 @@
     width: 25vw;
     height: 30vh;
     overflow-x: none;
-    overflow-y: scroll;
+    overflow-y: none;
     border-radius: 10px;
     background-clip: content;
+    background: white;
+    display: table;
+    font-weight: normal;
+    padding: 0;
+    margin: 0;
 
 }
 
+.course_wrapper{
+    width: inherit;
+    height: inherit;
+    overflow-x: inherit;
+    overflow-y: inherit;
+    border-radius: 10px;
+    padding: 1vh;
+}
+
+.course_basic-info{
+    font-weight: bold;
+    width: 24vw;
+}
+.course_desc{
+    overflow-y: scroll;
+    height: 20vh;
+}
+
+.course_flag{
+    position: absolute;
+    top: 1vh;
+    right: 0;
+    height: 1vw;
+    width: 1vw;
+    background: red;
+}

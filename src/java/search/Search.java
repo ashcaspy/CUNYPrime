@@ -1,13 +1,17 @@
 package search;
 
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import search.cunyfirst.CunyFirstClient;
+import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import search.cunyfirst.TimeRange;
-import search.parser.*;
+import parser.*;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 import search.parser.Course;
 import search.parser.Parser;
 import search.parser.Section;
@@ -26,6 +30,15 @@ public class Search {
     public Search(Connection c, String college, String semester) {
         conn = c;
         selectTerm(college, semester);
+    }
+
+    public List<String> getSchools() {
+        return client.getSelect(ID.selectSchool).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
+    }
+
+    //assume setup was called, otherwise returns empty list
+    public List<String> getDepts() {
+        return client.getSelect(ID.selectDept).getOptions().stream().map(HtmlOption::getValueAttribute).collect(Collectors.toList());
     }
 
     public void selectTerm(String school, String semester) {
@@ -54,17 +67,19 @@ public class Search {
         if(null != departments) {
             for (String dept : departments) {
                 try {
-                    new Parser(client, client.getResults(dept)).addToTable(conn, offset);
+                    new Parser(client.getResults(dept)).addToTable(conn, offset);
                 } catch (IOException e) {
                 }
             }
         }
         else {
             try {
-                new Parser(client, client.getResults()).addToTable(conn, offset);
+                new Parser(client.getResults()).addToTable(conn, offset);
             } catch (IOException e) { }
         }
 
         ++counter;
     }
+
+
 }

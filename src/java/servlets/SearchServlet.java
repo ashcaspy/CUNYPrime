@@ -89,50 +89,50 @@ public class SearchServlet extends HttpServlet {
                 new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12), new TimeRange(11, 14), null, null,
                 new int[] {3},
                 Arrays.asList(new String[]{"CSCI", "ANTHC"}));
-       /* searcher.find(
-                null, new TimeRange(12, 13), new TimeRange(13,15), null, null, new int[]{1},
-                Arrays.asList(new String[]{"CSCI", "ENGL", "CHIN"})
-        );
-        */
+              
+        
         response.setContentType("text/html");
         response.setHeader("Cache-Control", "no-cache");
-        response.getWriter().write("ok<br />");
         
         
-        String query1 = "select * from courses1";
-        String query2 = "select * from sections1";
+        String query1 = "select * into combined_section_table1 from sections1 left join courses1 \n" +
+"on sections1.cdept = courses1.dept and sections1.cnbr = courses1.nbr;";
+        String query2 = "alter table combined_section_table1 drop column dept";
+        String query3 = "alter table combined_section_table1 drop column nbr;";
+        String query4 = "select * from combined_section_table1;\n" +
+"";
+        String query5 = "drop table combined_section_table1;";
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
          preparedStatement = conn.prepareStatement(query1);
+         preparedStatement.execute();
+         preparedStatement = conn.prepareStatement(query2);
+         preparedStatement.execute();
+         preparedStatement = conn.prepareStatement(query3);
+         preparedStatement.execute();
+         preparedStatement = conn.prepareStatement(query4);
          resultSet = preparedStatement.executeQuery();
 
-         response.getWriter().write("<table cellspacing='0' cellpadding='5' border='1'>");
-         response.getWriter().write("<tr>");
-         response.getWriter().write("<td><b>Department</b></td>");
-         response.getWriter().write("<td><b>Course Number</b></td>");
-         response.getWriter().write("<td><b>Name</b></td>");
-         response.getWriter().write("<td><b>Components</b></td>");
-         response.getWriter().write("<td><b>Requirements</b></td>");
-         response.getWriter().write("<td><b>Description</b></td>");
-         response.getWriter().write("<td><b>Credits</b></td>");
-         
-         response.getWriter().write("</tr>");
-
          while(resultSet.next()) {
-          response.getWriter().write("<tr>");
-          response.getWriter().write("<td>"+resultSet.getString(1) + "</td>");
-          response.getWriter().write("<td>"+resultSet.getString(2) + "</td>");
-          response.getWriter().write("<td>"+resultSet.getString(3) + "</td>");
-          response.getWriter().write("<td>"+resultSet.getString(4) + "</td>");
-          response.getWriter().write("<td>"+resultSet.getString(5) + "</td>");
-          response.getWriter().write("<td>"+resultSet.getString(6) + "</td>");
-          response.getWriter().write("<td>"+resultSet.getString(7) + "</td>");
-          response.getWriter().write("</tr>");
-
+          response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
+          response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
+          response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
+          response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
+          response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
+          response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
+          response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
+          response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
+          response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
+          response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
+          response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
+          response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
+          response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
+          response.getWriter().write("Cr:~"+resultSet.getString("credits") + "ENTRY_END");
          }
-
-         response.getWriter().write("</table><br />");
+         
+         preparedStatement = conn.prepareStatement(query5);
+         preparedStatement.execute();
         }
         catch (SQLException e) {
 

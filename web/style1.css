@@ -207,7 +207,11 @@ h3{
 /*RESULT COLUMN*/
 #right_column{
 	background: #FFFFFF;
-	width: 15vw;
+    /*
+    background-image: url(images/2.png);
+    background-size: contain;
+	*/
+    width: 15vw;
     height: 85vh;
 	padding: 0 0px;
     left: 0;
