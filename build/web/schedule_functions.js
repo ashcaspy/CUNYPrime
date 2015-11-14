@@ -11,6 +11,10 @@ var selectedDivs = new Array();
 //var numDivsX = 7;
 var numDivsY = hourEnd - hourStart + 1;
 
+var scheduleTabs = new Array();
+var currentScheduleTab = -1;
+
+
 function createDivs(){
     
     var $container = $("#timeslot-list");
@@ -110,6 +114,8 @@ function createDivs(){
                     $(e.target).css({"background" : "green",});
                 else if ($.inArray(e.target.id, closedTimes) != -1)
                    $(e.target).css({"background" : "#111111",});
+                else if ($.inArray(e.target.id, classTimes) != -1)
+                    $(e.target).css({"background" : "#0B3692",});
                 
             });
             $temp.on("mouseleave", function(e){
@@ -129,16 +135,9 @@ function createDivs(){
                         $(e.target).css({"background" : "lightgreen",});
                     else if ($.inArray(e.target.id, closedTimes) != -1)
                         $(e.target).css({"background" : "#333333",});
+                    else if ($.inArray(e.target.id, classTimes) != -1)
+                        $(e.target).css({"background" : "#0B3692",});
                 }
-                /*
-                else{
-                    if ($.inArray(e.target.id, openTimes) != -1)
-                        $(e.target).css({"background" : "green",});
-                    else if ($.inArray(e.target.id, closedTimes) != -1)
-                        $(e.target).css({"background" : "#111111",});
-                    
-                }
-                */
             });
         }
     }
@@ -150,6 +149,9 @@ function createDivs(){
             }
             else if ($.inArray("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart), closedTimes) != -1)
                 $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "#333333",});
+            else if ($.inArray("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart), classTimes) != -1)
+                $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "#0B3692",});
+            
         }
     }
 }
@@ -315,7 +317,9 @@ $(function() {
 // arrays containing open, closed, iffy, and reserved timeslots -- retrieved and stored in THIS schedule info (schedule specific, not profile, specific. one profile can  have multiple sets of available time)
 var openTimes = new Array();
 var closedTimes = new Array();
-var reservedTimes = new Array();
+var classTimes = new Array();
+var selectedCourses = new Array();
+
 
 function createTools() {    
     var $toolContainer = $("#schedule_header");
@@ -1031,8 +1035,6 @@ function createTools() {
 
 // temporary test values
 // will load from user profile
-var scheduleTabs = new Array();
-var currentScheduleTab = -1;
 function loadScheduleTabObjs(){
     
     var tempTab = {
@@ -1137,6 +1139,8 @@ function loadScheduleTab(num){
         openTimes.splice(0, openTimes.length);
         closedTimes.splice(0, closedTimes.length);
         selectedDivs.splice(0, selectedDivs.length);
+        classTimes.splice(0, classTimes.length);
+        selectedCourses.splice(0, selectedCourses.length);
 
         for(var i = 0; i < scheduleTabs[num].openTimes.length; i++){
             openTimes.push(scheduleTabs[num].openTimes[i]);
@@ -1146,6 +1150,15 @@ function loadScheduleTab(num){
         for(var i = 0; i < scheduleTabs[num].closedTimes.length; i++){
             closedTimes.push(scheduleTabs[num].closedTimes[i]);
             selectedDivs.push(scheduleTabs[num].closedTimes[i]);
+        }
+        
+        for(var i = 0; i < scheduleTabs[num].classTimes.length; i++){
+            classTimes.push(scheduleTabs[num].classTimes[i]);
+            selectedDivs.push(scheduleTabs[num].classTimes[i]);
+        }
+        
+        for(var i = 0; i < scheduleTabs[num].selectedCourses.length; i++){
+            selectedCourses.push(scheduleTabs[num].selectedCourses[i]);
         }
 
         numDivsX = dayEnd - dayStart + 1;
@@ -1319,6 +1332,8 @@ function setupScheduleOverlay(){
             closedTimes: new Array(),
             selectedDivs: new Array(),
             valid: true,
+            classTimes: new Array(),
+            selectedCourses: new Array(),
         };
         
         scheduleTabs.push(tempTab);

@@ -86,9 +86,16 @@ public class SearchServlet extends HttpServlet {
         Search searcher = new Search(conn);
         searcher.selectTerm("Hunter College", ID.semester("Fall", 2015));
         searcher.find(
-                new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12), new TimeRange(11, 14), null, null,
-                new int[] {3},
-                Arrays.asList(new String[]{"CSCI", "ANTHC"}));
+                new MatchValuePair(ID.greaterThan, "0"), 
+                //new TimeRange(10, 12), 
+                //new TimeRange(11, 14), 
+                null,
+                null,
+                null, 
+                null,
+                new int[] {1},
+                Arrays.asList(new String[]{"CSCI"})
+        );
               
         
         response.setContentType("text/html");

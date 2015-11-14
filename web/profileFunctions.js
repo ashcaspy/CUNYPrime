@@ -31,216 +31,6 @@ function loadInfo(){
     }
 }
 
-
-function populateColleges(){    
-    
-    var newOpt = "";
-    var defaultSelect = "<option value = \"--\"> -select- </option>";
-    
-    for (i = 0; i < numColleges; i++)
-    {
-        newOpt += "<option value = \"" + collegeCodeArray[i] + "\">" +
-                collegeNameArray[i] + "</option>";
-    }
-    document.getElementById("colleges").innerHTML = defaultSelect + newOpt;
-}
-
-
-function populateMajors(){
-    var newOpt = "";
-    var defaultSelect = "<option value = \"--\"> -select- </option>";
-    selectedCollegeCode = document.getElementById("colleges").options[document.getElementById("colleges").selectedIndex].value;
-    selectedCollegeIndex = collegeCodeArray.indexOf(selectedCollegeCode);
-    
-    for (i = 0; i < numMajors[selectedCollegeIndex]; i++)
-    {
-        newOpt += "<option value = \"" + majorArray[selectedCollegeIndex][i] + "\">" +
-                majorArray[selectedCollegeIndex][i] + "</option>";
-    }
-    document.getElementById("majors").innerHTML = defaultSelect + newOpt;
-    
-}
-    
-
-        function isAClass(input){
-            var inputSplit = input.split(" ");
-            if(inputSplit.length < 2  || input == "Sublist:"){
-                return false;
-            }
-            if(inputSplit[0] === inputSplit[0].toUpperCase()){
-                return true;
-            }
-            return false;
-        }
-
-        function putIntoArrays(lines){
-            if(lines.indexOf("Courses") > -1 ){
-                    return false;
-            } 
-           return true;
-        }
-
-
-        function populateCourseRequirements(inputString){
-
-            var creditsOrClassNeeded = "";
-            var courses = [];
-            var index = 0;
-            var name = "";
-            var credReq = "";
-            var credApp = "";
-            var isCoursesTaken = false;
-            var isCouresTransfer = false;
-            var isCoursesInProgress = false;
-            var isCoursesNotCompleted = false;
-            var isCoursesWithdrawal = false;
-            var counter = 0;
-
-
-            var lines = inputString.split("\n");
-            for (var i = 0; i < lines.length; i++){
-                if(lines[i].indexOf("College") > -1){
-                    collegeOfStudent = lines[i];
-                } else if(lines[i].indexOf("Major") > -1){
-                    var temp = lines[i].replace("Catalog Year:", "");
-                    major = temp;
-                } else if(lines[i].indexOf("in:") >-1) {
-                    if(courses.length > 0){
-                  
-                        var reqJson = {
-                            credOrClassNeeded: creditsOrClassNeeded,
-                            reqCourses: courses
-
-                        }
-                        
-                        requirements[index].push(reqJson);
-                        courses = [];
-                        creditsOrClassNeeded = "";
-
-                    }
-                    creditsOrClassNeeded = lines[i];
-                } else if(lines[i].indexOf("Choose") >-1){
-                    if(courses.length > 0){
-                        var reqJson = {
-                            credOrClassNeeded: creditsOrClassNeeded,
-                            reqCourses: courses
-                        }
-                       
-                        requirements[index].push(reqJson);
-                        creditsOrClassNeeded = "";
-                        
-                        courses = [];
-                    }
-
-                    if(i != 0 && lines[i -1] != "or"){
-                        requirements[index].push("[".concat(lines[i]));
-                        
-                    } else if(i != 0 && lines[i - 1] == "or"){
-                        requirements[index].push(lines[i]);
-
-                    }
-                } else if(lines[i] == "or" || lines[i] == "and"){
-                        var reqJson = {
-                            credOrClassNeeded: creditsOrClassNeeded,
-                            reqCourses: courses
-                        }
-
-                        requirements[index].push(reqJson);
-                        if(lines[i] == "and"){
-                            requirements[index].push("&");
-                        }
-                        courses = [];                
-                        creditsOrClassNeeded = "";
-                        counter = 0;
-
-                } else if(lines[i].indexOf("*") >-1){
-                    counter++;
-                } else if(isAClass(lines[i]) && !isCoursesTaken && !isCoursesInProgress && !isCoursesNotCompleted && !isCouresTransfer && !isCoursesWithdrawal){
-                    var temp = lines[i].replace("or", "");
-                    temp = temp.replace("OR", "");
-                    temp = temp.replace(")", "");
-                    temp = temp.replace("and", "");
-                    courses.push(temp);
-                    allCourseReq.push(temp);
-                } else if(lines[i].indexOf("~") > -1){
-                    index++; 
-                } else if(isCoursesTaken && putIntoArrays(lines[i])) {
-
-                    coursesTaken.push(lines[i]);
-                } else if(isCoursesInProgress && putIntoArrays(lines[i])){
-                    coursesInProgress.push(lines[i]);
-                } else if(isCoursesWithdrawal && putIntoArrays(lines[i])){
-                    coursesWithdrew.push(lines[i]);
-                } else if(isCoursesNotCompleted && putIntoArrays(lines[i])){
-                    coursesNotCompleted.push(lines[i]);
-                } else if(isCouresTransfer && putIntoArrays(lines[i])){
-                    coursesTransfer.push(lines[i]);
-                }
-
-                if(counter >= 2){
-                    //if(i != 0 && lines[i - 1].indexOf("*") > -1){
-
-                    var reqJson = {
-                    credOrClassNeeded: creditsOrClassNeeded, 
-                    reqCourses: courses
-
-                    }
-                    requirements[index].push(reqJson);
-                    requirements[index].push("]");
-                    creditsOrClassNeeded = "";
-                    courses = [];
-                    counter = 0;
-                    //}
-                } 
-
-                if(lines[i].indexOf("Taken:") > -1){
-                    isCoursesTaken = true;
-                } else if(lines[i].indexOf("In-Progress") > -1){
-                    isCoursesTaken = false;
-                    isCoursesInProgress = true;
-                } else if(lines[i].indexOf("Withdrawal") > -1){ 
-                    isCoursesInProgress = false;
-                    isCoursesTaken = false;
-                    isCoursesWithdrawal = true;
-                } else if(lines[i].indexOf("Not-Completed") > -1){
-                    isCoursesInProgress = false;
-                    isCoursesTaken = false;
-                    isCoursesWithdrawal = false;
-                    isCoursesNotCompleted = true;
-                } else if(lines[i].indexOf("Courses Transfer") > -1){
-                    isCoursesInProgress = false;
-                    isCoursesTaken = false;
-                    isCoursesWithdrawal = false;
-                    isCoursesNotCompleted = false;
-                    isCouresTransfer = true;
-                } else {
-
-                    if(lines[i].indexOf("Required") > -1){
-                        credReq = lines[i];
-                    } else if(lines[i].indexOf("Applied") > -1){
-                        credApp = lines[i];
-                        var reqCat = {
-                            name: name, 
-                            credReq: credReq, 
-                            credApp: credApp
-                        }
-                        requirements.push([reqCat]);
-
-                    } else {
-
-                        name = lines[i];
-
-                    }
-                }
-            }
-        }
-
-
-function collegeSelected(){
-    document.getElementById("major_wrapper").style.display = "block";
-    populateMajors();
-}
-
 function globalDbErrorHandler(event){
     window.alert("Error has occurred " + event.target.errorCode);
 }
@@ -450,7 +240,7 @@ function uploadPDF() {
 /*****************************************************/
 
 	
-function Schedule(dayStart, dayEnd, hoursStart, hoursEnd, openTimes, closeTimes, selectedDiv, valid){
+function Schedule(dayStart, dayEnd, hoursStart, hoursEnd, openTimes, closeTimes, selectedDiv, valid, classTimes, selectedCourses){
     this.dayStart = dayStart;
     this.dayEnd = dayEnd;
     this.hoursStart = hoursStart;
@@ -459,6 +249,8 @@ function Schedule(dayStart, dayEnd, hoursStart, hoursEnd, openTimes, closeTimes,
     this.closeTimes = closeTimes;
     this.selectedDiv = selectedDiv;
     this.valid = valid;
+    this.classTimes = classTimes;
+    this.selectedCourses = selectedCourses;
 }
 
 
@@ -469,7 +261,9 @@ function createSched(username){
     var open = [];
     var closedTime = [];
     var selectedDiv = [];
-    var testSched = new Schedule(0,6,0,23,open, closedTime, selectedDiv, true);
+    var classTime = [];
+    var selectedCourse = [];
+    var testSched = new Schedule(0,6,0,23,open, closedTime, selectedDiv, true, classTime, selectedCourse);
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
     var request = store.get(username);
@@ -479,20 +273,6 @@ function createSched(username){
          var update = store.put(data);
     }
 }
-/*
-function setClosedTimes(username, closeTimes){
-    var transaction = db.transaction(["gracefulTable"], "readwrite");
-    var store = transaction.objectStore("gracefulTable");
-    var req = store.get(username);
-    req.onsuccess = function(){
-        var data = req.result;
-        data.sched.closeTimes = closeTimes;
-        //data.sched.closeTimes.splice(0, data.sched.closeTimes.length);
-        $("#footer").html(data.sched.closeTimes);
-        var update = store.put(data);
-    }
-}
-*/
 
 
 function setDayStart(username, dayStart){
@@ -578,7 +358,27 @@ function setSelectedDiv(username, selectedDiv){
     }
 }
 
+function setSelectedCourses(username, selectedDiv){
+    var transaction = db.transaction(["gracefulTable"], "readwrite");
+    var store = transaction.objectStore("gracefulTable");
+    var req = store.get(username);
+    req.onsuccess = function(){
+        var data = req.result;
+        data.sched[currentScheduleTab].selectedCourses = selectedCourses;
+        var update = store.put(data);
+    }
+}
 
+function setClassTimes(username, selectedDiv){
+    var transaction = db.transaction(["gracefulTable"], "readwrite");
+    var store = transaction.objectStore("gracefulTable");
+    var req = store.get(username);
+    req.onsuccess = function(){
+        var data = req.result;
+        data.sched[currentScheduleTab].classTimes = classTimes;
+        var update = store.put(data);
+    }
+}
 
 function setValid(username, valid){
     var transaction = db.transaction(["gracefulTable"], "readwrite");

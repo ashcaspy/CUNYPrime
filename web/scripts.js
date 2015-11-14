@@ -138,19 +138,17 @@ function loadList(num) {
                 "<li><div class='popbox'><a class='open' href='#' id = 'list" + num + "res" + (i+1) + "'>" +     
                 courseInfoArray[num][i].dept + ": " + courseInfoArray[num][i].courseNum + "</a>" +
                 "</div></li>";
-
-            $("#list" + num + "res" + (i+1)).click(function(event){
-                alert($(event.target).attr("id"));
-                //parse ID
-                var num1 = parseInt($(event.target).attr("id").substring(4, $(event.target).attr("id").indexOf("res")));
-                var num2 = parseInt($(event.target).attr("id").substring($(event.target).attr("id").indexOf("res") + 2, $(event.target).attr("id").length - 1));
-                
-                addCourseToSchedule(courseInfoArray[num1][num2]);
-            });
         }
         listContents += "</ul>";
         document.getElementById("list_section_" + num).innerHTML = listContents;
         //document.getElementById("list_section_" + num).style.z_index = "999";
+        for (var i = 0; i < numCoursesPerList[num] - 1; i++){
+            $("#list" + num + "res" + (i+1)).click(function(event){
+                var num1 = parseInt($(event.target).attr("id").substring(4, $(event.target).attr("id").indexOf("res")));
+                var num2 = parseInt($(event.target).attr("id").substring($(event.target).attr("id").indexOf("res") + 3, $(event.target).attr("id").length));
+                addCourseToSchedule(courseInfoArray[num1][num2 - 1]);
+            });
+        }
         
             /*
             "<li><a href='#'>Result 2</a></li>" +

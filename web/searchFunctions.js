@@ -29,6 +29,8 @@ function loadUserSchedules(loaded){
                 closedTimes: scheduleObjArray[i].closeTimes,
                 selectedDivs: scheduleObjArray[i].selectedDiv,
                 valid: scheduleObjArray[i].valid,
+                classTimes: scheduleObjArray[i].classTimes,
+                selectedCourses: scheduleObjArray[i].selectedCourses,
             };
             scheduleTabs.push(tempTab);
         }
@@ -75,7 +77,40 @@ function loadUserSchedules(loaded){
         }
     }
 }
-
 function addCourseToSchedule(course){
-    alert(course.name);
+    
+    alert(course.days);
+    // place course in schedule timeslots:
+    // parse out days:
+    var courseDays = [];
+    for (var i = 0; i < course.days.length; i = i + 2){
+        var tempDay = course.days.substr(i, 2);
+        for (var k = 0; k < days.length; k++){
+            if (tempDay == days[k].substr(0, 2))
+                courseDays.push(k);
+        }
+    }
+    
+    // parse out hours:
+    var courseStartTime = Math.floor(parseInt(course.startTime) / 100);
+    var courseEndTime = Math.floor(parseInt(course.endTime) / 100);
+    alert(courseStartTime + " " + courseEndTime);
+    // find timeslot divs that match the days and times
+    for (var i = 0; i < courseDays.length; i++){
+        for (var k = courseStartTime; k < courseEndTime + 1; k++){
+            classTimes.push("timeslot-div-" + courseDays[i] + "-" + k);
+            selectedDivs.push("timeslot-div-" + courseDays[i] + "-" + k);
+            //$("#timeslot-div-" + courseDays[i] + "-" + k).addClass("timeslot-class-div");
+        }
+    }
+    selectedCourses.push(course);
+    setSelectedCourses(userName, selectedCourses);
+    setClassTimes(userName, classTimes);
+    setSelectedDiv(userName, selectedDivs);
+    
+    $("#timeslot-list").html("");
+    $("#hour-list").html("");
+    $("#day-list").html("");
+    createDivs();
+    alert("ok");
 }
