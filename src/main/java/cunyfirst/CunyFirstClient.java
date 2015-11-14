@@ -47,13 +47,16 @@ public class CunyFirstClient {
         return (HtmlSelect) searchPage.getElementById(id);
     }
 
+    public void setSchool(String school) {
+        HtmlSelect inst = getSelect(ID.selectSchool);
+        inst.setSelectedAttribute(inst.getOptionByText(school), true);
+        client.waitForBackgroundJavaScript(10000);
+    }
 
     //set institution, term
     //has the effect of resetting all other search terms
     public void setup(String school, String semester) {
-        HtmlSelect inst = getSelect(ID.selectSchool);
-        inst.setSelectedAttribute(inst.getOptionByText(school), true);
-        client.waitForBackgroundJavaScript(10000);
+        setSchool(school);
 
         HtmlSelect term = getSelect(ID.selectTerm);
         term.setSelectedAttribute(term.getOptionByText(semester), true);
