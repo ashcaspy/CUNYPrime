@@ -90,6 +90,9 @@ public class Search {
         CourseData.createTable(conn, table);
         PreparedStatement st = conn.prepareStatement("SELECT * FROM "+table+" WHERE dept=? and nbr=?;");
         ResultSet rs;
+        client.setSchool(school);
+        for(String sem: getSemesters()) {
+            client.setup(school, sem);
         for (String dept : getDepts()) {
             if (ID.skippedDepts.contains(dept)) {
                 continue;
@@ -118,6 +121,7 @@ public class Search {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                }
             }
         }
     }
