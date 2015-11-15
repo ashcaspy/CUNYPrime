@@ -1065,7 +1065,7 @@ public class ProfileParser {
         }
         for(int j = 0; j < myReqCat.size(); j++){
             myReqCat.get(j).print();
-            parsedOutput = parsedOutput + myReqCat.get(j).print() + "\r\n";
+            //parsedOutput = parsedOutput + myReqCat.get(j).print() + "\r\n";
 
         }
 
@@ -1132,6 +1132,6 @@ public class ProfileParser {
         String finalOutput = required.toString();
         System.out.println(finalOutput);
 
-        return parsedOutput;
+        return finalOutput;
     }
 }

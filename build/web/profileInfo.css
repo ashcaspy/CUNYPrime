@@ -1,5 +1,5 @@
 /* BOXES TO HOLD PROFILE INFO*/
-
+/*
 this.courseNum = "";
     this.dept = "";
     this.name = "";
@@ -16,3 +16,92 @@ this.courseNum = "";
     this.room = "";
     this.days = "";
     this.instructor = "";
+*/
+
+#major-div{
+    position: absolute;
+    width: 20vw;
+    height: 15vh;
+    top: 2vh;
+    border: 2px solid #0b3692;
+    padding: 1vh;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+.req-div{
+    position: absolute;
+    width: 32.5vw;
+    height: 25vh;
+    overflow: hidden;
+}
+
+.req-title{
+    font-weight: bold;
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 0;
+    width: 27vw;
+    max-height: 5vh;
+    background-image: url(images/1.png);
+    padding: .5vh;
+    color: white;
+}
+
+.req-credits{
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0.5vh;
+    width: 5.5vw;
+    height: 5vh;
+    background-image: url(images/1.png);
+    text-align: center;
+    color: white;
+}
+
+.req-content{
+    position: relative;
+    width: inherit;
+    height: 20vh;
+    padding: 1vh;
+    margin: 0;
+    overflow-y: auto;
+    background: lightgrey;
+}
+
+#profile_container{
+    display: block;
+    text-align: left;
+    position: relative;
+    width: 70vw;
+    height: inherit;
+    margin: 0 auto;
+    overflow-y: auto;
+}
+#file-form{
+    position: absolute;
+    width: 20vw; 
+    height: 10vh;
+    top: 2vh;
+    right: 0;
+    border: 2px solid #0b3692;
+    text-align: center;
+}
+
+#file-form p{
+    margin: 0;
+    padding: 0;
+    font-weight: bolder;
+    font-size: 1em;
+}
+
+#file-select, #upload-button{
+    width: 20vw;
+}
+#file-select.upload{
+    width: 5vw;
+}

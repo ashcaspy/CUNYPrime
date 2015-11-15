@@ -20,7 +20,7 @@
     display: none;
     height: 83vh;
     width: 75vw;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     z-index: 901;
     position: absolute;
@@ -106,24 +106,6 @@
     text-align: center;
     color: black;
     font-weight: bold;
-}
-
-
-
-#profile_container{
-    display: block;
-    text-align: left;
-    position: relative;
-    width: 65vw;
-    height: 83vh;
-    margin: 0 auto;
-}
-#profile_container form{
-    margin: 0 auto;
-    position: relative;
-    width: 25vw; 
-    height: 50vh;
-    top: 15vh;
 }
     
 #username, #email, #colleges, #majors, #academic_standing{
