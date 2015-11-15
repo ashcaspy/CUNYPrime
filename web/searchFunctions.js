@@ -108,6 +108,7 @@ function addCourseToSchedule(course){
     setClassTimes(userName, classTimes);
     setSelectedDiv(userName, selectedDivs);
     
+    
     $("#timeslot-list").html("");
     $("#hour-list").html("");
     $("#day-list").html("");

@@ -107,15 +107,15 @@ function createDivs(){
             var $temp = $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart));
             
             $temp.on("mouseenter", function(e){
-                if ($.inArray(e.target.id, selectedDivs) == -1){
+                if ($.inArray(e.target.id, selectedDivs) == -1 || $.inArray(e.target.id, classTimes) != -1){
                     $(e.target).css({"background" : "rgba(100, 100, 100, 0.5)",});
                 }
                 else if ($.inArray(e.target.id, openTimes) != -1)
                     $(e.target).css({"background" : "green",});
                 else if ($.inArray(e.target.id, closedTimes) != -1)
                    $(e.target).css({"background" : "#111111",});
-                else if ($.inArray(e.target.id, classTimes) != -1)
-                    $(e.target).css({"background" : "#0B3692",});
+                //else if ($.inArray(e.target.id, classTimes) != -1)
+                //    $(e.target).css({"background" : "#0B3692",});
                 
             });
             $temp.on("mouseleave", function(e){
@@ -124,7 +124,7 @@ function createDivs(){
                 var i = parseInt(idName.substring(13, idName.indexOf("-", 13))) + dayStart;
                 var k = parseInt(idName.substring(idName.indexOf("-", 13) + 1)) + hourStart;
                 if ($(e.target).data("data-selected") == "false"){
-                    if($.inArray(e.target.id, selectedDivs) == -1){
+                    if($.inArray(e.target.id, selectedDivs) == -1 || $.inArray(e.target.id, classTimes) != -1){
                         if ((i % 2 == 0 && k % 2 == 0) || (i % 2 == 1 && k % 2 == 1)){
                             $(e.target).css({"background" : "lightgrey",});
                         }
@@ -135,8 +135,8 @@ function createDivs(){
                         $(e.target).css({"background" : "lightgreen",});
                     else if ($.inArray(e.target.id, closedTimes) != -1)
                         $(e.target).css({"background" : "#333333",});
-                    else if ($.inArray(e.target.id, classTimes) != -1)
-                        $(e.target).css({"background" : "#0B3692",});
+                    //else if ($.inArray(e.target.id, classTimes) != -1)
+                    //    $(e.target).css({"background" : "#0B3692",});
                 }
             });
         }
@@ -149,11 +149,51 @@ function createDivs(){
             }
             else if ($.inArray("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart), closedTimes) != -1)
                 $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "#333333",});
-            else if ($.inArray("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart), classTimes) != -1)
-                $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "#0B3692",});
+            //else if ($.inArray("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart), classTimes) != -1)
+            //    $("#timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)).css({"background" : "#0B3692",});
             
         }
     }
+    
+    
+    for (var i = 0; i < selectedCourses.length; i++){
+        //for each day of that course
+        var courseDays = [];
+        for (var k = 0; k < selectedCourses[i].days.length; k = k + 2){
+            var tempDay = selectedCourses[i].days.substr(k, 2);
+            for (var j = 0; j < days.length; j++){
+                if (tempDay == days[j].substr(0, 2))
+                    courseDays.push(j);
+            }
+        }
+        for (k = 0; k < courseDays.length; k++){
+            // create div
+            var $tempCourseDiv = $("<div>").addClass("course_div_overlay");
+            $tempCourseDiv.attr("id", "course-div-" + i + "-" + courseDays[k]);
+            var courseStartTime = parseInt(selectedCourses[i].startTime) / 100;
+            var courseEndTime = parseInt(selectedCourses[i].endTime) / 100;
+            var offsetStart = Math.ceil((courseStartTime - Math.floor(courseStartTime)) * 100);
+            var offsetEnd = Math.ceil((courseEndTime - Math.floor(courseEndTime)) * 100);
+            courseStartTime = Math.floor(courseStartTime);
+            courseEndTime = Math.floor(courseEndTime);
+            
+            
+            // set size/pos
+            $tempCourseDiv.css({
+                "width" : $("#timeslot-div-0-0").width(),
+                "height" : ($("#timeslot-div-0-0").height() * (courseEndTime - courseStartTime + 1)) - ((offsetStart/60) * $("#timeslot-div-0-0").height()) + ((offsetEnd/60) * $("#timeslot-div-0-0").height()) + "px",
+                
+                "top" : parseFloat($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("top")) + ((offsetStart/60) * $("#timeslot-div-0-0").height()) + "px",
+                
+                "left" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("left"),
+            });
+            $tempCourseDiv.appendTo($("#timeslot-list"));
+            $tempCourseDiv.html("<p>" + selectedCourses[i].dept + " " + selectedCourses[i].courseNum + "</p>");
+        }
+        
+    }
+    
+    
 }
 
 
@@ -227,7 +267,7 @@ $(function() {
                     ($timeslot.offset().left >= $selection.offset().left - $container.width() / numDivsX)
                     )){
                     $timeslot.data("data-selected", "true");
-                    if($.inArray($timeslot.attr("id"), selectedDivs) == -1)
+                    if($.inArray($timeslot.attr("id"), selectedDivs) == -1 || $.inArray($timeslot.attr("id"), classTimes) != -1)
                         $timeslot.css({"background" : "rgba(100, 100, 100, 0.5)",});
                     else if ($.inArray($timeslot.attr("id"), openTimes) > -1)
                         $timeslot.css({"background" : "green",});
@@ -236,7 +276,7 @@ $(function() {
                 }
                 else if (ctrlOn == false){
                     $timeslot.data("data-selected", "false");
-                    if ($.inArray($timeslot.attr("id"), selectedDivs) == -1){
+                    if ($.inArray($timeslot.attr("id"), selectedDivs) == -1 || $.inArray($timeslot.attr("id"), classTimes) != -1){
                         if ((i % 2 == 0 && k % 2 == 0) || (i % 2 == 1 && k % 2 == 1))
                             $timeslot.css({"background" : "lightgrey",}); //removeClass("timeslot-hover");
                         else
@@ -277,7 +317,7 @@ $(function() {
                         ($timeslot.offset().left > $selection.offset().left - $container.width() / numDivsX)
                         ){
                         $timeslot.data("data-selected", "true");
-                        if ($.inArray($timeslot.attr("id"), selectedDivs) == -1)
+                        if ($.inArray($timeslot.attr("id"), selectedDivs) == -1 || $.inArray($timeslot.attr("id"), classTimes) != -1)
                             $timeslot.css({"background" : "rgba(100, 100, 100, 0.5)",});
                         else if ($.inArray($timeslot.attr("id"), openTimes) > -1)
                             $timeslot.css({"background" : "green",});
@@ -288,7 +328,7 @@ $(function() {
                     }
                     else if (ctrlOn == false){
                         $timeslot.data("data-selected", "false");
-                        if ($.inArray($timeslot.attr("id"), selectedDivs) == -1){
+                        if ($.inArray($timeslot.attr("id"), selectedDivs) == -1 || $.inArray($timeslot.attr("id"), classTimes) != -1){
                             if ((i % 2 == 0 && k % 2 == 0) || (i % 2 == 1 && k % 2 == 1))
                                 $timeslot.css({"background" : "lightgrey",}); //removeClass("timeslot-hover");
                             else
