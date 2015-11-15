@@ -93,34 +93,34 @@ public class Search {
         client.setSchool(school);
         for(String sem: getSemesters()) {
             client.setup(school, sem);
-        for (String dept : getDepts()) {
-            if (ID.skippedDepts.contains(dept)) {
-                continue;
-            }
-            try {
-                Element results = Jsoup.parse(client.getResults(dept).asXml());
-                Elements courses = Selector.select(ID.course, results);
-                for (Element c : courses) {
-                    //check for primary key before loading next page
-                    String temp[] = Selector.select(ID.courseName, c).get(0).ownText().split(" - ")[0].split(" ");
-                    st.setString(1, temp[0].substring(1));
-                    st.setString(2, temp[1]);
-                    rs = st.executeQuery();
+            for (String dept : getDepts()) {
+                if (ID.skippedDepts.contains(dept)) {
+                    continue;
+                }
+                try {
+                    Element results = Jsoup.parse(client.getResults(dept).asXml());
+                    Elements courses = Selector.select(ID.course, results);
+                    for (Element c : courses) {
+                        //check for primary key before loading next page
+                        String temp[] = Selector.select(ID.courseName, c).get(0).ownText().split(" - ")[0].split(" ");
+                        st.setString(1, temp[0].substring(1));
+                        st.setString(2, temp[1]);
+                        rs = st.executeQuery();
 
-                    //result set is empty
-                    if(!rs.isBeforeFirst()) {
-                        String key = Selector.select(ID.sectionNbr, c).get(0).id();
-                        CourseData cd = new CourseData(client.getSection(key));
-                        try {
-                            cd.addToTable(conn, table);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        //result set is empty
+                        if(!rs.isBeforeFirst()) {
+                            String key = Selector.select(ID.sectionNbr, c).get(0).id();
+                            CourseData cd = new CourseData(client.getSection(key));
+                            try {
+                                cd.addToTable(conn, table);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                }
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
