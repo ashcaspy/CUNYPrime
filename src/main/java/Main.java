@@ -22,7 +22,7 @@ class Main {
                 e.printStackTrace();
                 return;
             }
-            Search searcher = new Search(conn);
+            Search searcher = new Search(conn, 1);
             searcher.selectTerm("Hunter College", ID.semester("Fall", 2015));
             searcher.find(
                     new MatchValuePair(ID.greaterThan, "0"), new TimeRange(10, 12), new TimeRange(11, 14), null, null,

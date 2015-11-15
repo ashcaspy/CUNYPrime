@@ -20,16 +20,18 @@ import java.util.stream.Collectors;
 public class Search {
     private CunyFirstClient client = new CunyFirstClient();
     private final Connection conn;
+    private final String id;
 
     //create separate tables for each search run
     private int counter = 1;
 
-    public Search(Connection c) {
+    public Search(Connection c, int id) {
         conn = c;
+        this.id = Integer.toString(id);
     }
 
-    public Search(Connection c, String college, String semester) {
-        conn = c;
+    public Search(Connection c, int id, String college, String semester) {
+        this(c, id);
         selectTerm(college, semester);
     }
 
@@ -60,7 +62,7 @@ public class Search {
 
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
-        String offset = Integer.toString(counter);
+        String offset = Integer.toString(counter) + "_" + id;
         try {
             Section.createTable(conn, offset);
         } catch(SQLException e) {
