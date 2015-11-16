@@ -99,40 +99,40 @@ public class Section {
 
     //the caller adds course info
     PreparedStatement prepareStatement(Connection conn, String offset) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO sections" + offset + " VALUES (?,?,?,?,?,?,?,?,?)");
-        st.setString(3, nbr);
+        PreparedStatement st = conn.prepareStatement("INSERT INTO sections" + offset + " VALUES (?,?,?,?,?,?,?,?,?,?)");
+        st.setString(4, nbr);
 
         if(start[0].equals(ID.TBA)) {
-            st.setNull(4, Types.VARCHAR);
             st.setNull(5, Types.VARCHAR);
-        }
-        else if(condense) {
-            st.setString(4, start[0]);
-            st.setString(5, end[0]);
-        }
-        else {
-            st.setString(4, String.join(delimiter, start));
-            st.setString(5, String.join(delimiter, end));
-        }
-
-        if(days[0].equals(ID.TBA)) {
             st.setNull(6, Types.VARCHAR);
         }
         else if(condense) {
-            st.setString(6, String.join("",days));
+            st.setString(5, start[0]);
+            st.setString(6, end[0]);
         }
         else {
-            st.setString(6, String.join(delimiter, days));
+            st.setString(5, String.join(delimiter, start));
+            st.setString(6, String.join(delimiter, end));
+        }
+
+        if(days[0].equals(ID.TBA)) {
+            st.setNull(7, Types.VARCHAR);
+        }
+        else if(condense) {
+            st.setString(7, String.join("",days));
+        }
+        else {
+            st.setString(7, String.join(delimiter, days));
         }
 
         if(room.equals(ID.TBA)) {
-            st.setNull(7, Types.VARCHAR);
+            st.setNull(8, Types.VARCHAR);
         }
         else {
-            st.setString(7, room);
+            st.setString(8, room);
         }
-        st.setString(8, instructor);
-        st.setBoolean(9, open);
+        st.setString(9, instructor);
+        st.setBoolean(10, open);
         return st;
     }
 
@@ -160,6 +160,7 @@ public class Section {
         st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + offset + "(" +
                         "cdept varchar(6)," +
                         "cnbr varchar(7)," +
+                        "cname varchar(100)," +
                         "sec varchar(20)," +
                         "starttime varchar(22)," +
                         "endtime varchar(22)," +

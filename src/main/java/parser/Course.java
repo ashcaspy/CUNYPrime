@@ -35,8 +35,11 @@ public class Course {
                 insertSection = sec.prepareStatement(conn, offset);
                 insertSection.setString(1, dept);
                 insertSection.setString(2, number);
+                insertSection.setString(3, name);
                 insertSection.executeUpdate();
-            } catch (SQLException e) {}
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
