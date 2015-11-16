@@ -8,13 +8,12 @@ import org.jsoup.select.Selector;
 import parser.CourseData;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+//retrieves and stores data that will never change
 public class Data {
     CunyFirstClient client = new CunyFirstClient();
     Connection conn;
@@ -23,8 +22,8 @@ public class Data {
         conn = c;
     }
 
-    public List<String> getSchools() {
-        return client.getSelect(ID.selectSchool).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
+    public List<HtmlOption> getSchools() {
+        return client.getSelect(ID.selectSchool).getOptions();
     }
 
     //assume setup was called, otherwise returns empty list
@@ -34,6 +33,28 @@ public class Data {
 
     public List<String> getSemesters() {
         return client.getSelect(ID.selectTerm).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
+    }
+
+    private final String schoolTable = "schools";
+
+    public void createSelectionTables() throws SQLException {
+        Statement sch = conn.createStatement();
+        sch.executeUpdate("CREATE TABLE IF NOT EXISTS "+schoolTable+"(" +
+                "name varchar(30)," +
+                "id varchar(10)," +
+                "PRIMARY KEY(id)" +
+                ");");
+        PreparedStatement st = conn.prepareStatement("insert into "+schoolTable+" values(?,?);");
+        for(HtmlOption op: getSchools()) {
+            String school = op.getText();
+            if(school.isEmpty()) {
+                continue;
+            }
+            String id = op.getValueAttribute();
+            st.setString(1, school);
+            st.setString(2, id);
+            st.executeUpdate();
+        }
     }
 
     public void addCourses(String school) throws SQLException {
