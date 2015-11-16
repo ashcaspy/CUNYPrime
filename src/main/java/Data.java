@@ -54,6 +54,24 @@ public class Data {
             st.setString(1, school);
             st.setString(2, id);
             st.executeUpdate();
+
+            client.setSchool(school);
+
+            String college_terms = "terms_"+id;
+            sch.executeUpdate("create table if not exists "+college_terms+"(" +
+                    "college varchar(6)," +
+                    "term varchar(20)," +
+                    "primary key(college, term)" +
+                    ");");
+            PreparedStatement insertTerm = conn.prepareStatement("insert into "+college_terms+" values(?,?);");
+            for(String term: getSemesters()) {
+                if(term.isEmpty()) {
+                    continue;
+                }
+                insertTerm.setString(1, id);
+                insertTerm.setString(2, term);
+                insertTerm.executeUpdate();
+            }
         }
     }
 
