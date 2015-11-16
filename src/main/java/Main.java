@@ -33,7 +33,6 @@ class Main {
                     Arrays.asList(new String[]{"CSCI", "ENGL", "CHIN"})
             );
             try {
-                searcher.addCourses("Hunter College");
                 conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
