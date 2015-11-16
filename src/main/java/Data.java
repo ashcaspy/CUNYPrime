@@ -57,6 +57,13 @@ public class Data {
 
             client.setSchool(school);
 
+            String depts_table = "depts_"+id;
+            sch.executeUpdate("create table if not exists "+depts_table+"("+
+                    "college varchar(6)," +
+                    "dept varchar(6)," +
+                    "primary key(college, dept)" +
+                    ");");
+
             String college_terms = "terms_"+id;
             sch.executeUpdate("create table if not exists "+college_terms+"(" +
                     "college varchar(6)," +
@@ -64,6 +71,7 @@ public class Data {
                     "primary key(college, term)" +
                     ");");
             PreparedStatement insertTerm = conn.prepareStatement("insert into "+college_terms+" values(?,?);");
+            PreparedStatement insertDept = conn.prepareStatement("insert into "+depts_table+" values(?,?);");
             for(String term: getSemesters()) {
                 if(term.isEmpty()) {
                     continue;
@@ -71,6 +79,19 @@ public class Data {
                 insertTerm.setString(1, id);
                 insertTerm.setString(2, term);
                 insertTerm.executeUpdate();
+
+                client.setup(school, term);
+
+                for(String dept: getDepts()) {
+                    if(dept.isEmpty()) {
+                        continue;
+                    }
+                    insertDept.setString(1,id);
+                    insertDept.setString(2,dept);
+                    try {
+                        insertDept.executeUpdate();
+                    } catch (SQLException e) {}
+                }
             }
         }
     }

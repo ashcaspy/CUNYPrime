@@ -62,13 +62,6 @@ public class CunyFirstClient {
         term.setSelectedAttribute(term.getOptionByText(semester), true);
         client.waitForBackgroundJavaScript(10000);
 
-
-        //has to be done after school and term are set
-
-        //only find undergrad courses
-        HtmlSelect career = getSelect(ID.selectCareer);
-        career.setSelectedAttribute(career.getOptionByText("Undergraduate"), true);
-
         List<NameValuePair> list = getFormParams(searchPage);
         searchParameters = new HashMap<>(list.size());
         for(NameValuePair p: list) {
