@@ -1,6 +1,7 @@
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import cunyfirst.CunyFirstClient;
 import cunyfirst.ID;
+import cunyfirst.MatchValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -109,6 +110,8 @@ public class Data {
                     continue;
                 }
                 try {
+                    //get all courses for each department
+                    client.setSearchTerms(new MatchValuePair(ID.greaterThan, "0"), null, null, null, null, null);
                     Element results = Jsoup.parse(client.getResults(dept).asXml());
                     Elements courses = Selector.select(ID.course, results);
                     for (Element c : courses) {
