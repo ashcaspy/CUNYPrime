@@ -98,9 +98,15 @@ public class Data {
     }
 
     public void addCourses(String school) throws SQLException {
-        final String table = school.replace(" ","_");
+        PreparedStatement st = conn.prepareStatement("select id from "+schoolTable+" where name=?;");
+        st.setString(1, school);
+        ResultSet r = st.executeQuery();
+        r.next();
+        String id = r.getString(1);
+        final String table = "college_courses"+id;
         CourseData.createTable(conn, table);
-        PreparedStatement st = conn.prepareStatement("SELECT * FROM "+table+" WHERE dept=? and nbr=?;");
+        st = conn.prepareStatement("SELECT * FROM "+table+" WHERE dept=? and nbr=?;");
+        CourseData.createTable(conn, table);
         ResultSet rs;
         client.setSchool(school);
         for(String sem: getSemesters()) {
