@@ -62,6 +62,9 @@ public class Search {
         }
 
         ++counter;
+        if(counter > 2) {
+            counter = 1;
+        }
     }
 
 }
