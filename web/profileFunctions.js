@@ -81,8 +81,9 @@ function putIntoArrays(lines){
 }
 
 
+
 function populateCourseRequirements(inputString){
-    requirements = [];
+    var exceptions = [];
     var creditsOrClassNeeded = "";
     var courses = [];
     var index = 0;
@@ -95,54 +96,76 @@ function populateCourseRequirements(inputString){
     var isCoursesNotCompleted = false;
     var isCoursesWithdrawal = false;
     var counter = 0;
-
+    var containsExceptions = false;
 
     var lines = inputString.split("\n");
     for (var i = 0; i < lines.length; i++){
-        if(lines[i].indexOf("College") > -1 && i == 0){
-            collegeOfStudent = lines[i];
-        } else if(lines[i].indexOf("Major") > -1){
-            var temp = lines[i].replace("Catalog Year:", "");
-            major = temp;
-        } else if(lines[i].indexOf("in:") >-1) {
-            if(courses.length > 0){
 
+        if(lines[i].indexOf("College") > -1 && i ==0) {
+            collegeOfStudent = lines[i];
+
+        } else if(lines[i].indexOf("Major") > -1 && i ==1){
+            var temp = lines[i].replace("Catalog Year:", "");
+            majors = temp;
+
+        } else if(lines[i].indexOf("in:") >-1) {
+            
+            if(courses.length > 0){
+          		
                 var reqJson = {
                     credOrClassNeeded: creditsOrClassNeeded,
-                    reqCourses: courses
+                    reqCourses: courses,
+                    exceptionClasses: exceptions
 
                 }
-
+                
                 requirements[index].push(reqJson);
                 courses = [];
+                containsExceptions = false;
+                exceptions = [];
                 creditsOrClassNeeded = "";
 
             }
             creditsOrClassNeeded = lines[i];
         } else if(lines[i].indexOf("Choose") >-1){
             if(courses.length > 0){
+      		
                 var reqJson = {
                     credOrClassNeeded: creditsOrClassNeeded,
-                    reqCourses: courses
-                }
+                    reqCourses: courses,
+                    exceptionClasses: exceptions
 
+                }
+                
                 requirements[index].push(reqJson);
+                courses = [];
+                containsExceptions = false;
+                exceptions = [];
                 creditsOrClassNeeded = "";
 
-                courses = [];
             }
 
             if(i != 0 && lines[i -1] != "or"){
-                requirements[index].push("[".concat(lines[i]));
+                if(lines[i-1].indexOf("Choose") > -1){
+                    requirements[index].push(lines[i]);
 
+                } else {
+                    requirements[index].push("[".concat(lines[i]));
+                }
+                
             } else if(i != 0 && lines[i - 1] == "or"){
                 requirements[index].push(lines[i]);
 
             }
+        } else if(containsExceptions){
+            exceptions.push(lines[i]);
+        } else if(lines[i].indexOf("won't count") > -1){
+            containsExceptions = true;
         } else if(lines[i] == "or" || lines[i] == "and"){
                 var reqJson = {
                     credOrClassNeeded: creditsOrClassNeeded,
-                    reqCourses: courses
+                    reqCourses: courses, 
+                    exceptionClasses: exceptions
                 }
 
                 requirements[index].push(reqJson);
@@ -151,6 +174,8 @@ function populateCourseRequirements(inputString){
                 }
                 courses = [];                
                 creditsOrClassNeeded = "";
+                exceptions = [];
+                containsExceptions = false;
                 counter = 0;
 
         } else if(lines[i].indexOf("*") >-1){
@@ -161,8 +186,23 @@ function populateCourseRequirements(inputString){
             temp = temp.replace(")", "");
             temp = temp.replace("and", "");
             courses.push(temp);
-            allCourseReq.push(temp);
         } else if(lines[i].indexOf("~") > -1){
+            if(courses.length > 0){
+          		
+                var reqJson = {
+                    credOrClassNeeded: creditsOrClassNeeded,
+                    reqCourses: courses,
+                    exceptionClasses: exceptions
+
+                }
+                
+                requirements[index].push(reqJson);
+                courses = [];
+                containsExceptions = false;
+                exceptions = [];
+                creditsOrClassNeeded = "";
+
+            }
             index++; 
         } else if(isCoursesTaken && putIntoArrays(lines[i])) {
 
@@ -178,61 +218,49 @@ function populateCourseRequirements(inputString){
         }
 
         if(counter >= 2){
-            //if(i != 0 && lines[i - 1].indexOf("*") > -1){
 
             var reqJson = {
             credOrClassNeeded: creditsOrClassNeeded, 
-            reqCourses: courses
+            reqCourses: courses,
+            exceptionClasses: exceptions
+
 
             }
             requirements[index].push(reqJson);
             requirements[index].push("]");
             creditsOrClassNeeded = "";
             courses = [];
+            exceptions = [];
             counter = 0;
             //}
         } 
 
-        if(lines[i].indexOf("Taken:") > -1){
-            isCoursesInProgress = true;
-            isCoursesTaken = false;
-            isCoursesWithdrawal = false;
-            isCoursesNotCompleted = false;
-            isCouresTransfer = false;
-        } else if(lines[i].indexOf("In-Progress") > -1){
-            isCoursesInProgress = false;
+        if(lines[i].indexOf("Taken") > -1){
             isCoursesTaken = true;
-            isCoursesWithdrawal = false;
-            isCoursesNotCompleted = false;
-            isCouresTransfer = false;
+        } else if(lines[i].indexOf("In-Progress") > -1){
+            isCoursesTaken = false;
+            isCoursesInProgress = true;
         } else if(lines[i].indexOf("Withdrawal") > -1){ 
             isCoursesInProgress = false;
             isCoursesTaken = false;
             isCoursesWithdrawal = true;
-            isCoursesNotCompleted = false;
-            isCouresTransfer = false;
         } else if(lines[i].indexOf("Not-Completed") > -1){
             isCoursesInProgress = false;
             isCoursesTaken = false;
             isCoursesWithdrawal = false;
             isCoursesNotCompleted = true;
-            isCouresTransfer = false;
-        } else if(lines[i].indexOf("Courses Transfer") > -1){
+        } else if(lines[i].indexOf("Transfer") > -1){
             isCoursesInProgress = false;
             isCoursesTaken = false;
             isCoursesWithdrawal = false;
             isCoursesNotCompleted = false;
             isCouresTransfer = true;
         } else {
-            isCoursesInProgress = false;
-            isCoursesTaken = false;
-            isCoursesWithdrawal = false;
-            isCoursesNotCompleted = false;
-            isCouresTransfer = false;
-            
+
             if(lines[i].indexOf("Required") > -1){
                 credReq = lines[i];
-            } else if(lines[i].indexOf("Applied") > -1){
+            } else if(lines[i].indexOf("Credits Applied") > -1){
+
                 credApp = lines[i];
                 var reqCat = {
                     name: name, 
@@ -240,13 +268,18 @@ function populateCourseRequirements(inputString){
                     credApp: credApp
                 }
                 requirements.push([reqCat]);
+        
+
 
             } else {
+
                 name = lines[i];
+
             }
         }
     }
 }
+
 
 
 function collegeSelected(){
