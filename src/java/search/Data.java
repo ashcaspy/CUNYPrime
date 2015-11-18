@@ -1,12 +1,14 @@
+package search;
+
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import cunyfirst.CunyFirstClient;
-import cunyfirst.ID;
-import cunyfirst.MatchValuePair;
+import search.cunyfirst.CunyFirstClient;
+import search.cunyfirst.ID;
+import search.cunyfirst.MatchValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
-import parser.CourseData;
+import search.parser.CourseData;
 
 import java.io.IOException;
 import java.sql.*;

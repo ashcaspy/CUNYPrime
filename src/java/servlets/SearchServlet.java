@@ -83,7 +83,7 @@ public class SearchServlet extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Search searcher = new Search(conn);
+        Search searcher = new Search(conn, 1);
         searcher.selectTerm("Hunter College", ID.semester("Fall", 2015));
         searcher.find(
                 new MatchValuePair(ID.greaterThan, "0"), 

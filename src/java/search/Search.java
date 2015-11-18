@@ -10,7 +10,7 @@ import search.cunyfirst.TimeRange;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-<<<<<<< HEAD
+
 import java.util.List;
 import java.util.stream.Collectors;
 import search.parser.Course;

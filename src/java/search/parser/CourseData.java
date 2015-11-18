@@ -1,8 +1,8 @@
-package parser;
+package search.parser;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import cunyfirst.ID;
+import search.cunyfirst.ID;
 
 import java.sql.*;
 
