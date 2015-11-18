@@ -1,6 +1,5 @@
 package search.cunyfirst;
 
-
 public class TimeRange {
     public TimeRange(int min, int max) {
         this.min = min;

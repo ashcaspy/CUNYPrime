@@ -18,11 +18,6 @@ public class ClassSearcher {
             
 
             Connection conn;
-            //String serverName = "localhost:3306";
-            //String mydatabase = "cunyfirst";
-            //String url = "jdbc:mysql://" + serverName + "/" + mydatabase;
-            //String url = "postgres://dohlisjkikwpju:P8E-Lh7jMSEUfyQb5RrR4m-fEJ@ec2-107-21-219-235.compute-1.amazonaws.com:5432/dejqt9ki5rgaao";
-
 
             try {
                 conn = MainConfig.getConnection(); // <--- *******

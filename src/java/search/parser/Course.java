@@ -9,9 +9,7 @@ import org.jsoup.select.Selector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Types;
 
-import java.sql.Statement;
 import java.util.ArrayList;
 
 
@@ -37,8 +35,11 @@ public class Course {
                 insertSection = sec.prepareStatement(conn, offset);
                 insertSection.setString(1, dept);
                 insertSection.setString(2, number);
+                insertSection.setString(3, name);
                 insertSection.executeUpdate();
-            } catch (SQLException e) {}
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
