@@ -5,40 +5,38 @@ import search.cunyfirst.CunyFirstClient;
 import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import search.cunyfirst.TimeRange;
-import parser.*;
+
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+<<<<<<< HEAD
 import java.util.List;
 import java.util.stream.Collectors;
 import search.parser.Course;
 import search.parser.Parser;
 import search.parser.Section;
 
+
 public class Search {
     private CunyFirstClient client = new CunyFirstClient();
     private final Connection conn;
 
+    private final String id;
+
+
     //create separate tables for each search run
     private int counter = 1;
 
-    public Search(Connection c) {
+
+    public Search(Connection c, int id) {
         conn = c;
+        this.id = Integer.toString(id);
     }
 
-    public Search(Connection c, String college, String semester) {
-        conn = c;
+    public Search(Connection c, int id, String college, String semester) {
+        this(c, id);
         selectTerm(college, semester);
-    }
-
-    public List<String> getSchools() {
-        return client.getSelect(ID.selectSchool).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
-    }
-
-    //assume setup was called, otherwise returns empty list
-    public List<String> getDepts() {
-        return client.getSelect(ID.selectDept).getOptions().stream().map(HtmlOption::getValueAttribute).collect(Collectors.toList());
     }
 
     public void selectTerm(String school, String semester) {
@@ -55,9 +53,8 @@ public class Search {
 
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
-        String offset = Integer.toString(counter);
+        String offset = Integer.toString(counter) + "_" + id;
         try {
-            Course.createTable(conn, offset);
             Section.createTable(conn, offset);
         } catch(SQLException e) {
             e.printStackTrace();
@@ -79,7 +76,9 @@ public class Search {
         }
 
         ++counter;
+        if(counter > 2) {
+            counter = 1;
+        }
     }
-
 
 }

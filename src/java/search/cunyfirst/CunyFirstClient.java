@@ -47,24 +47,21 @@ public class CunyFirstClient {
         return (HtmlSelect) searchPage.getElementById(id);
     }
 
+    public void setSchool(String school) {
+        HtmlSelect inst = getSelect(ID.selectSchool);
+        inst.setSelectedAttribute(inst.getOptionByText(school), true);
+        client.waitForBackgroundJavaScript(10000);
+    }
+
 
     //set institution, term
     //has the effect of resetting all other search terms
     public void setup(String school, String semester) {
-        HtmlSelect inst = getSelect(ID.selectSchool);
-        inst.setSelectedAttribute(inst.getOptionByText(school), true);
-        client.waitForBackgroundJavaScript(10000);
+        setSchool(school);
 
         HtmlSelect term = getSelect(ID.selectTerm);
         term.setSelectedAttribute(term.getOptionByText(semester), true);
         client.waitForBackgroundJavaScript(10000);
-
-
-        //has to be done after school and term are set
-
-        //only find undergrad courses
-        HtmlSelect career = getSelect(ID.selectCareer);
-        career.setSelectedAttribute(career.getOptionByText("Undergraduate"), true);
 
         List<NameValuePair> list = getFormParams(searchPage);
         searchParameters = new HashMap<>(list.size());
