@@ -9,26 +9,35 @@ import parser.*;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.jsoup.select.Selector;
 import search.parser.Course;
+import search.parser.CourseData;
 import search.parser.Parser;
 import search.parser.Section;
 
 public class Search {
     private CunyFirstClient client = new CunyFirstClient();
     private final Connection conn;
+    private final String id;
 
     //create separate tables for each search run
     private int counter = 1;
 
-    public Search(Connection c) {
+    public Search(Connection c, int id) {
         conn = c;
+        this.id = Integer.toString(id);
     }
 
-    public Search(Connection c, String college, String semester) {
-        conn = c;
+    public Search(Connection c, int id, String college, String semester) {
+        this(c, id);
         selectTerm(college, semester);
     }
 
@@ -39,6 +48,10 @@ public class Search {
     //assume setup was called, otherwise returns empty list
     public List<String> getDepts() {
         return client.getSelect(ID.selectDept).getOptions().stream().map(HtmlOption::getValueAttribute).collect(Collectors.toList());
+    }
+
+    public List<String> getSemesters() {
+        return client.getSelect(ID.selectTerm).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
     }
 
     public void selectTerm(String school, String semester) {
@@ -55,9 +68,8 @@ public class Search {
 
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
-        String offset = Integer.toString(counter);
+        String offset = Integer.toString(counter) + "_" + id;
         try {
-            Course.createTable(conn, offset);
             Section.createTable(conn, offset);
         } catch(SQLException e) {
             e.printStackTrace();
@@ -81,5 +93,45 @@ public class Search {
         ++counter;
     }
 
+    public void addCourses(String school) throws SQLException {
+        final String table = school.replace(" ","_");
+        CourseData.createTable(conn, table);
+        PreparedStatement st = conn.prepareStatement("SELECT * FROM "+table+" WHERE dept=? and nbr=?;");
+        ResultSet rs;
+        client.setSchool(school);
+        for(String sem: getSemesters()) {
+            client.setup(school, sem);
+            for (String dept : getDepts()) {
+                if (ID.skippedDepts.contains(dept)) {
+                    continue;
+                }
+                try {
+                    Element results = Jsoup.parse(client.getResults(dept).asXml());
+                    Elements courses = Selector.select(ID.course, results);
+                    for (Element c : courses) {
+                        //check for primary key before loading next page
+                        String temp[] = Selector.select(ID.courseName, c).get(0).ownText().split(" - ")[0].split(" ");
+                        st.setString(1, temp[0].substring(1));
+                        st.setString(2, temp[1]);
+                        rs = st.executeQuery();
+
+                        //result set is empty
+                        if(!rs.isBeforeFirst()) {
+                            String key = Selector.select(ID.sectionNbr, c).get(0).id();
+                            CourseData cd = new CourseData(client.getSection(key));
+                            try {
+                                cd.addToTable(conn, table);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 }

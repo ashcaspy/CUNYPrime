@@ -21,7 +21,6 @@ this.courseNum = "";
 #major-div{
     position: absolute;
     width: 20vw;
-    height: 15vh;
     top: 2vh;
     border: 2px solid #0b3692;
     padding: 1vh;
@@ -81,11 +80,11 @@ this.courseNum = "";
     height: inherit;
     margin: 0 auto;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 #file-form{
     position: absolute;
     width: 20vw; 
-    height: 10vh;
     top: 2vh;
     right: 0;
     border: 2px solid #0b3692;

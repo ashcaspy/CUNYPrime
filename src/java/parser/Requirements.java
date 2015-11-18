@@ -83,16 +83,7 @@ public class Requirements {
 	 public void setShouldFulFillFirst(boolean param) { shouldFulFillFirst = param; }
 
     public String println(){
-    	  String output = "";    
-		  if(!classCountAsDone.isEmpty()){
-            System.out.println("Class(es) Counted: ");
-            output = output + "Class(es) Counted: " + "\r\n";
-            for (int i = 0; i < classCountAsDone.size(); i++){
-                System.out.println(classCountAsDone.get(i));
-            }
-            System.out.println("-------");
-				output = output + "-------" + "\r\n";
-        }
+    	  String output = "";
         
         if (num != 0) {
             System.out.println(num + " " + c + "in:");
@@ -133,8 +124,6 @@ public class Requirements {
         }
 
         if(!subList.isEmpty()){
-            System.out.println("SubList: ");
-            output = output + "Sublist: " + "\r\n";
             for(int i = 0; i < subList.size();i++){
                 subList.get(i).println();
                 if(i != subList.size() -1) {

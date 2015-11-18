@@ -31,35 +31,7 @@ public class Course {
     }
 
     public void addToTable(Connection conn, String offset) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO courses" + offset + " VALUES (?,?,?,?,?,?,?)");
         PreparedStatement insertSection;
-
-        st.setString(1, dept);
-        st.setString(2, number);
-        st.setString(3, name);
-
-        //relocate creating course rows later
-        /*
-        if(components.split(",").length > 1) {
-            st.setString(4, components);
-        } else {
-            st.setNull(4, Types.VARCHAR);
-        }
-        if(null != requirements) {
-            st.setString(5, requirements);
-        } else {
-            st.setNull(5, Types.VARCHAR);
-        }
-        st.setString(5, requirements);
-        st.setString(6, description);
-        st.setFloat(7, credits);
-        */
-        st.setNull(4, Types.VARCHAR);
-        st.setNull(5, Types.VARCHAR);
-        st.setNull(6, Types.VARCHAR);
-        st.setNull(7, Types.FLOAT);
-        st.executeUpdate();
-
         for(Section sec: sections) {
             try {
                 insertSection = sec.prepareStatement(conn, offset);
@@ -75,20 +47,4 @@ public class Course {
     public final String name;
 
     public final ArrayList<Section> sections;
-
-    private static final String tablename = "courses";
-
-    public static void createTable(Connection conn, String offset) throws SQLException {
-        Statement st = conn.createStatement();
-        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + offset + "(" +
-                        "dept varchar(6)," +
-                        "nbr varchar(7)," +
-                        "name varchar(90)," +
-                        "components varchar(60)," +
-                        "requirements varchar(300)," +
-                        "description varchar(1300)," +
-                        "credits float," +
-                        "PRIMARY KEY(dept, nbr)" +
-                        ")");
-    }
 }

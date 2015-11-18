@@ -22,8 +22,8 @@ function courseObj(){
 }
 
 var courseInfoArray = [];
-var numLists = 3;
-var numCoursesPerList = [0, 0, 0];
+var numLists = 4;
+var numCoursesPerList = [0, 0, 0, 0];
 
 
 function parseCourseResultset(data){    
@@ -32,6 +32,7 @@ function parseCourseResultset(data){
     courseInfoArray[0] = [];
     courseInfoArray[1] = [];
     courseInfoArray[2] = [];
+    courseInfoArray[3] = [];
     for (var i = 0; i < tempCourseArray.length; i++){ 
         var cObj = new courseObj();
         var tempCourseParts = tempCourseArray[i].split("FIELD_END");
@@ -90,7 +91,7 @@ function loadList(num) {
     if (document.getElementById("list_section_" + num).innerHTML == "") {
         var listContents = document.getElementById("list_section_" + num).innerHTML + "<ul id = \"listTest\">";
         var courseList = "";
-        for(i = 0; i < numCoursesPerList[num] - 1; i++)
+        for(i = 0; i < numCoursesPerList[num]; i++)
         {
             courseList +=
             "<div class='collapse' id = 'result" + (i+1) + "'>" +
@@ -106,13 +107,14 @@ function loadList(num) {
         }
         document.getElementById("course_info_" + num).innerHTML = courseList;
         
-        for (i = 0; i < numCoursesPerList[num] - 1; i++)
+        for (i = 0; i < numCoursesPerList[num]; i++)
         {
             //APPEND NEW DIVS FOR EACH PART
             var $wrapperDiv = $("<div>").addClass("course_wrapper");
             var $basicInfoDiv = $("<div>").addClass("course_basic-info");
             var $descDiv = $("<p>").addClass("course_desc");
             var $flagDiv = $("<div>").addClass("course_flag");
+            
             $("#course" + num + i).append($wrapperDiv);
             $wrapperDiv.append($basicInfoDiv);
             $wrapperDiv.append($descDiv);
@@ -124,7 +126,10 @@ function loadList(num) {
                 courseInfoArray[num][i].dept + 
                 courseInfoArray[num][i].courseNum + ": " + 
                 courseInfoArray[num][i].name + 
-                "<br />Section: " + courseInfoArray[num][i].sectionNum
+                "<br />Section: " + courseInfoArray[num][i].sectionNum +
+                "<br />" + courseInfoArray[num][i].days + "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                 courseInfoArray[num][i].startTime + " - " + courseInfoArray[num][i].endTime
+
             );
             $descDiv.html(courseInfoArray[num][i].desc);
             
@@ -132,7 +137,7 @@ function loadList(num) {
         }
         
         
-        for(i = 0; i < numCoursesPerList[num] - 1; i++){
+        for(i = 0; i < numCoursesPerList[num]; i++){
         
             listContents +=  
                 "<li><div class='popbox'><a class='open' href='#' id = 'list" + num + "res" + (i+1) + "'>" +     
@@ -142,12 +147,24 @@ function loadList(num) {
         listContents += "</ul>";
         document.getElementById("list_section_" + num).innerHTML = listContents;
         //document.getElementById("list_section_" + num).style.z_index = "999";
-        for (var i = 0; i < numCoursesPerList[num] - 1; i++){
-            $("#list" + num + "res" + (i+1)).click(function(event){
-                var num1 = parseInt($(event.target).attr("id").substring(4, $(event.target).attr("id").indexOf("res")));
-                var num2 = parseInt($(event.target).attr("id").substring($(event.target).attr("id").indexOf("res") + 3, $(event.target).attr("id").length));
-                addCourseToSchedule(courseInfoArray[num1][num2 - 1]);
-            });
+        
+        if (num != 3){
+            for (var i = 0; i < numCoursesPerList[num] - 1; i++){
+                $("#list" + num + "res" + (i+1)).click(function(event){
+                    var num1 = parseInt($(event.target).attr("id").substring(4, $(event.target).attr("id").indexOf("res")));
+                    var num2 = parseInt($(event.target).attr("id").substring($(event.target).attr("id").indexOf("res") + 3, $(event.target).attr("id").length));
+                    addCourseToSchedule(courseInfoArray[num1][num2 - 1]);
+                });
+            }
+        }
+        else{
+            for (var i = 0; i < numCoursesPerList[num] - 1; i++){
+                $("#list" + num + "res" + (i+1)).click(function(event){
+                    var num1 = parseInt($(event.target).attr("id").substring(4, $(event.target).attr("id").indexOf("res")));
+                    var num2 = parseInt($(event.target).attr("id").substring($(event.target).attr("id").indexOf("res") + 3, $(event.target).attr("id").length));
+                    removeCourseFromSchedule(courseInfoArray[num1][num2 - 1]);
+                });
+            }
         }
         
             /*

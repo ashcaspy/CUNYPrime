@@ -5,10 +5,22 @@ var majorDivInfo = {
     credApp: "",
     credReq: ""
 };
+var allReqCourses = [];
+var allCoursesTaken = [];
+
+
 function prepProfile(){
     // create divs and content
     var $container = $("#profile_container");
     $container.html("");
+    
+    majorDivInfo = {
+        collegeName: "",
+        majorName: "",
+        degreeName: "",
+        credApp: "",
+        credReq: ""
+    };
     
     var $fileForm = $("<div>");
     $fileForm.attr("id", "file-form");
@@ -24,11 +36,14 @@ function prepProfile(){
     $majorDiv.attr("id", "major-div");
     $majorDiv.appendTo($container);
     
+    array1 = [];
+    allReqCourses = [];
+    allCoursesTaken = [];
     
     // set content based on user info
     // get college, major
     getCollegeAndMajor("", 0);
-    displayReq(array1, false); 
+    displayReq(array1, false);
     
 }
 
@@ -56,7 +71,62 @@ function getCollegeAndMajor(value, done){
     
 }
 
+function getCoursesTaken(arr, done){
+    if (done == false){
+        getCompletedCourses();
+    }
+    else if (done == true){
+        allCoursesTaken = arr;
+        var $takenBox, $takenTitle, $takenContent = $("<div>"), $takenCredits, $takenFiller;
+        var $container = $("#profile_container");
+        
+        $takenFiller = $("<div>");
+        $takenFiller.css({
+            "height":"3vh",
+            "position" : "relative",                            
+        });
 
+        $takenContent.append($takenFiller);
+
+        $takenBox = $("<div>").addClass("req-div");
+        $container.append($takenBox);
+        $takenTitle = $("<div>").addClass("req-title");
+        $takenContent = $("<div>").addClass("req-content");
+        $takenCredits = $("<div>").addClass("req-credits");
+        $takenBox.append($takenTitle);
+        $takenBox.append($takenCredits);
+
+        $takenBox.append($takenContent);
+
+        $takenTitle.html("Courses Completed");
+        $takenCredits.html(allCoursesTaken.length);
+
+
+        $takenBox.css({
+            "top" : (25 + (Math.floor(counter/2) * 30)) + "vh",
+        });
+
+        if(counter%2 == 1)
+            $takenBox.css({"right" : "0vw"});
+        
+        for (var i = 0; i < allCoursesTaken.length; i++){
+            $takenContent.html($takenContent.html() + allCoursesTaken[i] + "<br />");
+        }
+        counter++;
+        var $profileEndFiller = $("<div>");
+        $profileEndFiller.css({
+            "height":"3vh",
+            "position" : "absolute",
+            "top" : (25 + (Math.ceil(counter/2) * 30)) + "vh",
+            "width" : "inherit"
+        });
+        $container.append($profileEndFiller);
+        
+    }
+}
+
+
+var counter = 0;
 function displayReq(req, done){
     if (done == false){
         getIndexForReq(userName, req);
@@ -76,6 +146,7 @@ function displayReq(req, done){
             });
             //remove major info div
             $majorDiv.remove();
+            $(".req-div").remove();
             return;
         }
         else{
@@ -88,7 +159,7 @@ function displayReq(req, done){
         
         var indent = "";
         var $reqBox, $reqTitle, $reqContent = $("<div>"), $reqCredits;
-        var counter = 0;
+        counter = 0;
         for (var i = 0; i < req.length; i++){
             for (var k = 0; k < req[i].length; k++){
                 if (k == 0){
@@ -141,17 +212,22 @@ function displayReq(req, done){
                         );
                         
                         
-                        
                         $reqBox.css({
                             "top" : (25 + (Math.floor(counter/2) * 30)) + "vh",
                         });
+                        
                         if(counter%2 == 1)
                             $reqBox.css({"right" : "0vw"});
-                        
                         
                         if (req[i].length == 1){
                             // big req has no add't'l info (output this)
                             $reqContent.html("Requirements unclear: refer to DIG report.");
+                        }
+                        else if (req[i].length == 2){
+                            if (req[i][1].reqCourses.length == 1){
+                                if (req[i][1].reqCourses[0].charAt(0) == " ")
+                                    $reqContent.html("Requirements unclear: refer to DIG report.");
+                            }
                         }
                         counter++;
                     }
@@ -178,7 +254,7 @@ function displayReq(req, done){
                                     req[i][k].reqCourses[j] + 
                                     "<br />"
                                 );
-                                
+                                allReqCourses.push(req[i][k].reqCourses[j]);
                             }
                         }
                     }
@@ -219,23 +295,43 @@ function displayReq(req, done){
                             indent += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                         }
                     }
-                }
-                
-            }
-            
+                }   
+            }   
+        } 
+        getCoursesTaken(allCoursesTaken, false);
+        parseAllReqs();
+    }
+}
+
+var courseReqObjs = [];
+function parseAllReqs(){
+    courseReqObjs = [];
+    
+    for (var i = 0; i < allReqCourses.length; i++){
+        var dept, cnum, hasAt;
+        if (allReqCourses[i].length < 3)
+            continue;
+        //if (allReqCourses[i].charAt(0) == " ")
+        //    allReqCourses[i] = allReqCourses[i].substring(1, allReqCourses[i].length - 1);
+        var values = allReqCourses[i].split(" ");
+        dept = values[0];
+        cnum = values[1];
+
+        if (cnum.indexOf("@") > -1){
+            cnum = cnum.replace("@", "");
+            hasAt = "true";
         }
-        /*
-        var $filler = $("<div>");
-        $filler.css({
-            "height":"2vh",
-            "border" : "1px solid purple", 
-            "position": "absolute", 
-            "top" : (27.5 + (Math.floor(counter/2) * 30)) + "vh",
-        });
-        $container.append($filler);
-        */
-        
+        else 
+            hasAt = "false";
+
+        cnum = parseFloat(cnum);
+
+        var req = {
+            dept: dept,
+            cnum: cnum,
+            hasAt: hasAt
+        };
+        courseReqObjs.push(req);
         
     }
-    
 }

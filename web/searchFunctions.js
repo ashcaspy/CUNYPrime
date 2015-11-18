@@ -1,12 +1,23 @@
-var xhrRequest
+var xhrRequest;
 function searchCourses(){
     // Set up the request.
+    var values = {
+        college_value: $("#search_school").val(),
+        term_value: $("#search_term").val(),
+        dept_value: $("#search_dept").val(),
+        course_num_value: $("#search_course_num").val(),
+        keyword_value: $("#search_keyword").val(),
+        prof_value: $("#search_prof").val(),
+        reqs: courseReqObjs,
+        sched: scheduleObjArray[currentScheduleTab],
+    };
+    
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "performclasssearch",
+        data: values,
         success: function(data){
             parseCourseResultset(data);
-            //alert("ok");
         }
     });  
 }
@@ -52,7 +63,10 @@ function loadUserSchedules(loaded){
                 });
                 var schedName = "Schedule" + (i+1);
                 $tabDiv.html("<a href = '#' class = 'tab-links'>" + schedName + "</a>");
-
+                courseInfoArray[3] = [];
+                courseInfoArray[3] = tempTab.selectedCourses;
+                console.log(courseInfoArray[3].length);
+                numCoursesPerList[3] = courseInfoArray[3].length;
                 $("#schedule_footer").append($tabDiv);    
                 $tabDiv.click(function(e){
 
@@ -61,6 +75,7 @@ function loadUserSchedules(loaded){
                     loadScheduleTab(index);
 
                 });
+                
             }
         }
         var index = -1;
@@ -77,9 +92,11 @@ function loadUserSchedules(loaded){
         }
     }
 }
+
+
+
 function addCourseToSchedule(course){
     
-    alert(course.days);
     // place course in schedule timeslots:
     // parse out days:
     var courseDays = [];
@@ -94,7 +111,6 @@ function addCourseToSchedule(course){
     // parse out hours:
     var courseStartTime = Math.floor(parseInt(course.startTime) / 100);
     var courseEndTime = Math.floor(parseInt(course.endTime) / 100);
-    alert(courseStartTime + " " + courseEndTime);
     // find timeslot divs that match the days and times
     for (var i = 0; i < courseDays.length; i++){
         for (var k = courseStartTime; k < courseEndTime + 1; k++){
@@ -107,11 +123,81 @@ function addCourseToSchedule(course){
     setSelectedCourses(userName, selectedCourses);
     setClassTimes(userName, classTimes);
     setSelectedDiv(userName, selectedDivs);
-    
+    courseInfoArray[3].push(course);
+    numCoursesPerList[3] = courseInfoArray[3].length;
     
     $("#timeslot-list").html("");
     $("#hour-list").html("");
     $("#day-list").html("");
     createDivs();
-    alert("ok");
+}
+
+
+function removeCourseFromSchedule(course){
+    if (confirm("OK")){
+        var courseDays = [];
+        for (var i = 0; i < course.days.length; i = i + 2){
+            var tempDay = course.days.substr(i, 2);
+            for (var k = 0; k < days.length; k++){
+                if (tempDay == days[k].substr(0, 2))
+                    courseDays.push(k);
+            }
+        }
+
+        // parse out hours:
+        var courseStartTime = Math.floor(parseInt(course.startTime) / 100);
+        var courseEndTime = Math.floor(parseInt(course.endTime) / 100);
+        // find timeslot divs that match the days and times
+        for (var i = 0; i < courseDays.length; i++){
+            for (var k = courseStartTime; k < courseEndTime + 1; k++){
+                classTimes.splice($.inArray("timeslot-div-" + courseDays[i] + "-" + k, classTimes), 1);
+                selectedDivs.splice($.inArray("timeslot-div-" + courseDays[i] + "-" + k, selectedDivs), 1);
+                //$("#timeslot-div-" + courseDays[i] + "-" + k).addClass("timeslot-class-div");
+            }
+        }
+
+        selectedCourses.splice($.inArray(course, selectedCourses), 1);
+        setSelectedCourses(userName, selectedCourses);
+        setClassTimes(userName, classTimes);
+        setSelectedDiv(userName, selectedDivs);
+        courseInfoArray[3].splice($.inArray(course, courseInfoArray[3]), 1);
+        numCoursesPerList[3] = courseInfoArray[3].length;
+
+        $("#timeslot-list").html("");
+        $("#hour-list").html("");
+        $("#day-list").html("");
+        createDivs();
+    }
+}
+
+
+var collegesLoaded = false;
+function getCollegeList(){
+    if (!collegesLoaded){
+        $.ajax({
+            type: "POST",
+            url: "getcollegelist",
+            success: function(data){
+                $("#search_school").html($("#search_school").html() + data);
+                collegesLoaded = true;
+            }
+        });
+    }
+}
+
+function getTermAndDepts(){
+    var value = $("#search_school").val();
+    
+    $.ajax({
+        type: "POST",
+        url: "gettermanddeptlist",
+        data: {"college_value": value},
+        success: function(data){
+            var results = data.split("SPLIT");
+            var defaultValue = "<option value = \"none\">-Select-</option>"
+            $("#search_term").html(defaultValue + results[1]);
+            $("#search_dept").html(defaultValue + results[0]);
+            collegesLoaded = true;
+        }
+    });
 }

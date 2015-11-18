@@ -76,8 +76,9 @@ public class ID {
 
     public final static String TBA = "TBA";
 
-    //they break database constraints and aren't relevant to scheduling anyway
-    public final static List<String> skippedDepts = Arrays.asList(new String[]{"PERM", "STABD"});
+    //they break database constraints and/or aren't relevant to scheduling anyway
+    public final static List<String> skippedDepts = Arrays.asList(
+            new String[]{"CUNBA", "PERM", "STABD"});
 
     private final static String dayFormat = "\\p{Upper}\\p{Lower}";
     private final static String timeFormat = "\\p{Digit}\\p{Digit}?:\\p{Digit}\\p{Digit}[AP]M";

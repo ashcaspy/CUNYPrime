@@ -1,17 +1,18 @@
+<script>getCollegeList();</script>
 <div id = "search_tab"><br />
     <form id = "search_form">
         <b>School</b>
-            <input id = "school" maxlength = "20"></input><br /><br />
+        <select id = "search_school" onchange = "javascript:getTermAndDepts();" ><option value = "none">-Select-</option></select><br /><br />
         <b>Term</b>
-            <select id = "term"></select><br /><br />
-        <b>Subject</b>
-            <input id = "subject" maxlength = "6"></input><br /><br />
+            <select id = "search_term"><option value = "none">-Select-</option></select><br /><br />
+        <b>Department</b>
+            <select id = "search_dept"><option value = "none">-Select-</option></select><br /><br />
         <b>Course Number</b>
-            <input id = "course_num" maxlength = "6"></input><br /><br />
+            <input id = "search_course_num" maxlength = "6"></input><br /><br />
         <b>Keyword</b>
-            <input id = "keyword" maxlength = "20"></input><br /><br />
+            <input id = "search_keyword" maxlength = "20"></input><br /><br />
         <b>Professor Name</b>
-            <input id = "prof" maxlength = "6"></input><br /><br />
-        <button id = "search" type = "button"  onclick = " javascript:searchCourses();">Search</button>
+            <input id = "search_prof" maxlength = "6"></input><br /><br />
+        <button id = "search_submit" type = "button" value = "disabled"  onclick = " javascript:searchCourses();">Search</button>
     </form>
 </div>

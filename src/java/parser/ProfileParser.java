@@ -245,6 +245,7 @@ public class ProfileParser {
         boolean isNew = true;
         boolean isLastCat = false;
         boolean containsAnd = false;
+        boolean tocontinue = false;
         List<String> coursesTaken = new ArrayList<>();
         List<String> withdrawnCourses = new ArrayList<>();
         List<String> npCourses = new ArrayList<>();
@@ -267,12 +268,16 @@ public class ProfileParser {
                 if(justOneClassInALine){
                     justOneClassInALine = false;
                     lastOne = false;
-                    requirements.addToSubList(mySubReq);
+                    if(!hasSub) {
+                        requirements.addToSubList(mySubReq);
+                    } else {
+                        hasSub = false;
+                    }
                     myRequirements.add(requirements);
+
                     mySubReq = new Requirements();
-
-
                     requirements = new Requirements();
+                    tocontinue = false;
 
                 }
 
@@ -281,8 +286,8 @@ public class ProfileParser {
                         isNew = true;
 
                         if(needToPutInCat && hasReq) {
-                            String temp [] = creditReq.split(": ");
-                            String temp2 [] = creditApp.split(": ");
+                            String temp [] = creditReq.split(":");
+                            String temp2 [] = creditApp.split(":");
                             if(!temp[indexOf1].equals(temp2[indexOf1])){
 
                                 reqCategory.setName(catName);
@@ -318,8 +323,8 @@ public class ProfileParser {
 
                         if(needToPutInCat && hasReq){
 
-                            String temp [] = creditReq.split(": ");
-                            String temp2 [] = creditApp.split(": ");
+                            String temp [] = creditReq.split(":");
+                            String temp2 [] = creditApp.split(":");
                             if(!temp[indexOf1].equals(temp2[indexOf1])){
                                 reqCategory.setName(catName);
                                 reqCategory.setCreditReq(creditReq);
@@ -459,11 +464,16 @@ public class ProfileParser {
                     if(justOneClassInALine){
                         justOneClassInALine = false;
                         lastOne = false;
-                        requirements.addToSubList(mySubReq);
+                        if(!hasSub) {
+                            requirements.addToSubList(mySubReq);
+                        } else {
+                            hasSub = false;
+                        }
                         myRequirements.add(requirements);
-                        mySubReq = new Requirements();
 
+                        mySubReq = new Requirements();
                         requirements = new Requirements();
+                        tocontinue = false;
 
                     }
                     if(easyStyle) {
@@ -519,6 +529,22 @@ public class ProfileParser {
                         }
                         myRequirements.add(requirements);
                         requirements = new Requirements();
+                    }
+
+                    if(justOneClassInALine){
+                        justOneClassInALine = false;
+                        lastOne = false;
+                        if(!hasSub) {
+                            requirements.addToSubList(mySubReq);
+                        } else {
+                            hasSub = false;
+                        }
+                        myRequirements.add(requirements);
+
+                        mySubReq = new Requirements();
+                        requirements = new Requirements();
+                        tocontinue = false;
+
                     }
 
                     if (data[i].contains("Still Needed: (")) {
@@ -649,12 +675,16 @@ public class ProfileParser {
                         if(justOneClassInALine){
                             justOneClassInALine = false;
                             lastOne = false;
-                            requirements.addToSubList(mySubReq);
+                            if(!hasSub) {
+                                requirements.addToSubList(mySubReq);
+                            } else {
+                                hasSub = false;
+                            }
                             myRequirements.add(requirements);
+
                             mySubReq = new Requirements();
-
-
                             requirements = new Requirements();
+                            tocontinue = false;
 
                         }
                         requirements = new Requirements();
@@ -938,11 +968,19 @@ public class ProfileParser {
                                     dept = putCourses(courses, mySubReq2, dept, false, mySubReq2.getIndex());
                                 }
                                 if(!hasSub && !hasSubSubby){
-                                    if(!data[i - 1].contains("or ") && !data[i].contains("Class") && !data[i].contains("Credit")){
-                                        //mySubReq.println();
+                                    if((!data[i - 1].contains("or ") && !data[i].contains("Class") && data[i-1].contains("Choose") && !data[i].contains("Credit")) || tocontinue){
+
                                         mySubReq.addToSubList(mySubReq2);
                                         mySubReq2 = new Requirements();
                                         justOneClassInALine = true;
+                                        tocontinue = true;
+
+                                    }
+                                } else if(hasSub){
+                                    if(!data[i - 1].contains("or ") && !data[i].contains("Class") && !data[i].contains("Credit") ){
+                                        requirements.getElementFromSublist(requirements.getIndexForSubList()).addToList(data[i]);
+                                        justOneClassInALine = true;
+
 
                                     }
                                 }
@@ -1023,12 +1061,16 @@ public class ProfileParser {
                 if(justOneClassInALine){
                     justOneClassInALine = false;
                     lastOne = false;
-                    requirements.addToSubList(mySubReq);
+                    if(!hasSub) {
+                        requirements.addToSubList(mySubReq);
+                    } else {
+                        hasSub = false;
+                    }
                     myRequirements.add(requirements);
+
                     mySubReq = new Requirements();
-
-
                     requirements = new Requirements();
+                    tocontinue = false;
 
                 }
                 if(!isLastCat) {

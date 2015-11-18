@@ -81,8 +81,17 @@ function putIntoArrays(lines){
 }
 
 
+
 function populateCourseRequirements(inputString){
     requirements = [];
+    coursesTaken = [];
+    coursesInProgress = [];
+    coursesWithdrew = [];
+    coursesNotCompleted = [];
+    coursesTransfer =[];
+    major = "";
+    
+    var exceptions = [];
     var creditsOrClassNeeded = "";
     var courses = [];
     var index = 0;
@@ -90,59 +99,99 @@ function populateCourseRequirements(inputString){
     var credReq = "";
     var credApp = "";
     var isCoursesTaken = false;
-    var isCouresTransfer = false;
+    var isCoursesTransfer = false;
     var isCoursesInProgress = false;
     var isCoursesNotCompleted = false;
     var isCoursesWithdrawal = false;
     var counter = 0;
-
+    var containsExceptions = false;
 
     var lines = inputString.split("\n");
+    
     for (var i = 0; i < lines.length; i++){
-        if(lines[i].indexOf("College") > -1 && i == 0){
+        if(lines[i].indexOf("College") > -1 && i ==0) {
             collegeOfStudent = lines[i];
-        } else if(lines[i].indexOf("Major") > -1){
+
+        } else if(lines[i].indexOf("Major") > -1 && i == 1){
             var temp = lines[i].replace("Catalog Year:", "");
             major = temp;
-        } else if(lines[i].indexOf("in:") >-1) {
-            if(courses.length > 0){
 
+        } else if(lines[i].indexOf("in:") >-1) {
+            
+            if(courses.length > 0){
+          		
                 var reqJson = {
                     credOrClassNeeded: creditsOrClassNeeded,
-                    reqCourses: courses
+                    reqCourses: courses,
+                    exceptionClasses: exceptions
 
                 }
-
+                
                 requirements[index].push(reqJson);
                 courses = [];
+                containsExceptions = false;
+                exceptions = [];
                 creditsOrClassNeeded = "";
 
             }
             creditsOrClassNeeded = lines[i];
         } else if(lines[i].indexOf("Choose") >-1){
             if(courses.length > 0){
+      		
                 var reqJson = {
                     credOrClassNeeded: creditsOrClassNeeded,
-                    reqCourses: courses
-                }
+                    reqCourses: courses,
+                    exceptionClasses: exceptions
 
+                }
+                
                 requirements[index].push(reqJson);
+                courses = [];
+                containsExceptions = false;
+                exceptions = [];
                 creditsOrClassNeeded = "";
 
-                courses = [];
             }
 
             if(i != 0 && lines[i -1] != "or"){
-                requirements[index].push("[".concat(lines[i]));
+                if(lines[i-1].indexOf("Choose") > -1){
+                    requirements[index].push(lines[i]);
 
+                } else {
+                    requirements[index].push("[".concat(lines[i]));
+                }
+                
             } else if(i != 0 && lines[i - 1] == "or"){
                 requirements[index].push(lines[i]);
 
             }
+        } else if(lines[i].indexOf("~") > -1){
+            if(courses.length > 0){
+          		
+                var reqJson = {
+                    credOrClassNeeded: creditsOrClassNeeded,
+                    reqCourses: courses,
+                    exceptionClasses: exceptions
+
+                }
+                
+                requirements[index].push(reqJson);
+                courses = [];
+                containsExceptions = false;
+                exceptions = [];
+                creditsOrClassNeeded = "";
+
+            }
+            index++; 
+        } else if(containsExceptions){
+            exceptions.push(lines[i]);
+        } else if(lines[i].indexOf("won't count") > -1){
+            containsExceptions = true;
         } else if(lines[i] == "or" || lines[i] == "and"){
                 var reqJson = {
                     credOrClassNeeded: creditsOrClassNeeded,
-                    reqCourses: courses
+                    reqCourses: courses, 
+                    exceptionClasses: exceptions
                 }
 
                 requirements[index].push(reqJson);
@@ -151,19 +200,18 @@ function populateCourseRequirements(inputString){
                 }
                 courses = [];                
                 creditsOrClassNeeded = "";
+                exceptions = [];
+                containsExceptions = false;
                 counter = 0;
 
         } else if(lines[i].indexOf("*") >-1){
             counter++;
-        } else if(isAClass(lines[i]) && !isCoursesTaken && !isCoursesInProgress && !isCoursesNotCompleted && !isCouresTransfer && !isCoursesWithdrawal){
+        } else if(isAClass(lines[i]) && !isCoursesTaken && !isCoursesInProgress && !isCoursesNotCompleted && !isCoursesTransfer && !isCoursesWithdrawal){
             var temp = lines[i].replace("or", "");
             temp = temp.replace("OR", "");
             temp = temp.replace(")", "");
             temp = temp.replace("and", "");
             courses.push(temp);
-            allCourseReq.push(temp);
-        } else if(lines[i].indexOf("~") > -1){
-            index++; 
         } else if(isCoursesTaken && putIntoArrays(lines[i])) {
 
             coursesTaken.push(lines[i]);
@@ -173,66 +221,54 @@ function populateCourseRequirements(inputString){
             coursesWithdrew.push(lines[i]);
         } else if(isCoursesNotCompleted && putIntoArrays(lines[i])){
             coursesNotCompleted.push(lines[i]);
-        } else if(isCouresTransfer && putIntoArrays(lines[i])){
+        } else if(isCoursesTransfer && putIntoArrays(lines[i])){
             coursesTransfer.push(lines[i]);
         }
 
         if(counter >= 2){
-            //if(i != 0 && lines[i - 1].indexOf("*") > -1){
 
             var reqJson = {
             credOrClassNeeded: creditsOrClassNeeded, 
-            reqCourses: courses
+            reqCourses: courses,
+            exceptionClasses: exceptions
+
 
             }
             requirements[index].push(reqJson);
             requirements[index].push("]");
             creditsOrClassNeeded = "";
             courses = [];
+            exceptions = [];
             counter = 0;
             //}
         } 
 
-        if(lines[i].indexOf("Taken:") > -1){
-            isCoursesInProgress = true;
-            isCoursesTaken = false;
-            isCoursesWithdrawal = false;
-            isCoursesNotCompleted = false;
-            isCouresTransfer = false;
-        } else if(lines[i].indexOf("In-Progress") > -1){
-            isCoursesInProgress = false;
+        if(lines[i].indexOf("Taken") > -1){
             isCoursesTaken = true;
-            isCoursesWithdrawal = false;
-            isCoursesNotCompleted = false;
-            isCouresTransfer = false;
+        } else if(lines[i].indexOf("In-Progress") > -1){
+            isCoursesTaken = false;
+            isCoursesInProgress = true;
         } else if(lines[i].indexOf("Withdrawal") > -1){ 
             isCoursesInProgress = false;
             isCoursesTaken = false;
             isCoursesWithdrawal = true;
-            isCoursesNotCompleted = false;
-            isCouresTransfer = false;
         } else if(lines[i].indexOf("Not-Completed") > -1){
             isCoursesInProgress = false;
             isCoursesTaken = false;
             isCoursesWithdrawal = false;
             isCoursesNotCompleted = true;
-            isCouresTransfer = false;
-        } else if(lines[i].indexOf("Courses Transfer") > -1){
+        } else if(lines[i].indexOf("Transfer") > -1){
             isCoursesInProgress = false;
             isCoursesTaken = false;
             isCoursesWithdrawal = false;
             isCoursesNotCompleted = false;
-            isCouresTransfer = true;
+            isCoursesTransfer = true;
         } else {
-            isCoursesInProgress = false;
-            isCoursesTaken = false;
-            isCoursesWithdrawal = false;
-            isCoursesNotCompleted = false;
-            isCouresTransfer = false;
-            
+
             if(lines[i].indexOf("Required") > -1){
                 credReq = lines[i];
-            } else if(lines[i].indexOf("Applied") > -1){
+            } else if(lines[i].indexOf("Credits Applied") > -1){
+
                 credApp = lines[i];
                 var reqCat = {
                     name: name, 
@@ -240,13 +276,18 @@ function populateCourseRequirements(inputString){
                     credApp: credApp
                 }
                 requirements.push([reqCat]);
+        
+
 
             } else {
+
                 name = lines[i];
+
             }
         }
     }
 }
+
 
 
 function collegeSelected(){
@@ -318,7 +359,7 @@ function store(username){
         var store = transaction.objectStore("gracefulTable");
         var request2 = store.get(username);
         request2.onsuccess = function(){
-            alert("Username " + username + " is already taken. Please choose another one.");
+            //alert("Username " + username + " is already taken. Please choose another one.");
         }
     }
 }
@@ -377,6 +418,21 @@ function getMajor(){
         
     }
 }
+
+function getCompletedCourses(){
+    var transaction = db.transaction(["gracefulTable"], "readwrite");
+    var store = transaction.objectStore("gracefulTable");
+    var req = store.get(userName);
+    req.onsuccess  = function(){
+        var data = [];
+        data = req.result.coursesInProgress.concat(req.result.coursesTaken);
+        data = data.concat(req.result.coursesTransfer);
+        
+        getCoursesTaken(data, true);
+    }
+}
+
+
 
 
 var db;
@@ -572,7 +628,6 @@ function setHoursEnd(username, hoursEnd) {
 /*
     This function will set the open time values in indexeddb to the param, openTimes.
     @ param openTimes, An array containing user selected openTime.
-
 */
 function setOpenTimes(username, openTimes){
     var transaction = db.transaction(["gracefulTable"], "readwrite");
@@ -643,10 +698,8 @@ function setValid(username, valid){
 
 /*
     This function will take an array, arr, by reference populate it with dayStart.
-
     @ param arr, An empty array to be filled with the dayStart
     @ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
-
 */
 function getDayStart(username, arr, boolArr){
     boolArr[0] = false;
@@ -663,10 +716,8 @@ function getDayStart(username, arr, boolArr){
 
 /*
     This function will take an array by reference populate it with dayEnd.
-
     @ param arr, An empty array to be filled with the dayEnd.
     @ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
-
 */
 function getDayEnd(username, arr, boolArr){
     boolArr[0] = false;
@@ -683,10 +734,8 @@ function getDayEnd(username, arr, boolArr){
 
 /*
     This function will take an array by reference populate it with hoursStart.
-
     @ param arr, An empty array to be filled with the hoursStart.
     @ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
-
 */
 function getHoursStart(username, arr, boolArr){
     boolArr[0] = false;
@@ -703,10 +752,8 @@ function getHoursStart(username, arr, boolArr){
 
 /*
     This function will take an array by reference populate it with hoursEnd.
-
     @ param arr, An empty array to be filled with the hoursEnd.
     @ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
-
 */
 function getHoursEnd(username, arr, boolArr){
     boolArr[0] = false;
@@ -724,10 +771,8 @@ function getHoursEnd(username, arr, boolArr){
 
 /*
     This function will take an array by reference populate it with openTimes.
-
     @ param arr, An empty array to be filled with the openTimes values,
     @ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
-
 */
 function getOpenTimes(username, myArr, boolArr) {
     boolArr[0] = false;
@@ -749,10 +794,8 @@ function getOpenTimes(username, myArr, boolArr) {
 
 /*
     This function will take an array by reference populate it with closeTimes.
-
     @ param arr, An empty array to be filled with the closeTimes values.
     @ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
-
 */
 function getClosedTimes(username, myArr, boolArr) {
     boolArr[0] = false;
@@ -772,10 +815,8 @@ function getClosedTimes(username, myArr, boolArr) {
 
 /*
     This function will take an array by reference populate it with selectedDiv.
-
     @ param arr, An empty array to be filled with the selectedDiv values.
     @ param boolArr, An array with one element set to either true or false. This will let you know when this function is done.
-
 */
 function getSelectedDiv(username, myArr, boolArr) {
     boolArr[0] = false;
@@ -871,7 +912,3 @@ function selectUser(){
 
     });
 }
-
-
-
-
