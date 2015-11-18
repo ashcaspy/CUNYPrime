@@ -83,6 +83,7 @@ function putIntoArrays(lines){
 
 
 function populateCourseRequirements(inputString){
+<<<<<<< HEAD
     requirements = [];
     coursesTaken = [];
     coursesInProgress = [];
@@ -91,6 +92,8 @@ function populateCourseRequirements(inputString){
     coursesTransfer =[];
     major = "";
     
+=======
+>>>>>>> origin/master
     var exceptions = [];
     var creditsOrClassNeeded = "";
     var courses = [];
@@ -109,12 +112,22 @@ function populateCourseRequirements(inputString){
     var lines = inputString.split("\n");
     
     for (var i = 0; i < lines.length; i++){
+<<<<<<< HEAD
         if(lines[i].indexOf("College") > -1 && i ==0) {
             collegeOfStudent = lines[i];
 
         } else if(lines[i].indexOf("Major") > -1 && i == 1){
             var temp = lines[i].replace("Catalog Year:", "");
             major = temp;
+=======
+
+        if(lines[i].indexOf("College") > -1 && i ==0) {
+            collegeOfStudent = lines[i];
+
+        } else if(lines[i].indexOf("Major") > -1 && i ==1){
+            var temp = lines[i].replace("Catalog Year:", "");
+            majors = temp;
+>>>>>>> origin/master
 
         } else if(lines[i].indexOf("in:") >-1) {
             
@@ -165,6 +178,7 @@ function populateCourseRequirements(inputString){
                 requirements[index].push(lines[i]);
 
             }
+<<<<<<< HEAD
         } else if(lines[i].indexOf("~") > -1){
             if(courses.length > 0){
           		
@@ -183,6 +197,8 @@ function populateCourseRequirements(inputString){
 
             }
             index++; 
+=======
+>>>>>>> origin/master
         } else if(containsExceptions){
             exceptions.push(lines[i]);
         } else if(lines[i].indexOf("won't count") > -1){
@@ -212,6 +228,27 @@ function populateCourseRequirements(inputString){
             temp = temp.replace(")", "");
             temp = temp.replace("and", "");
             courses.push(temp);
+<<<<<<< HEAD
+=======
+        } else if(lines[i].indexOf("~") > -1){
+            if(courses.length > 0){
+          		
+                var reqJson = {
+                    credOrClassNeeded: creditsOrClassNeeded,
+                    reqCourses: courses,
+                    exceptionClasses: exceptions
+
+                }
+                
+                requirements[index].push(reqJson);
+                courses = [];
+                containsExceptions = false;
+                exceptions = [];
+                creditsOrClassNeeded = "";
+
+            }
+            index++; 
+>>>>>>> origin/master
         } else if(isCoursesTaken && putIntoArrays(lines[i])) {
 
             coursesTaken.push(lines[i]);
