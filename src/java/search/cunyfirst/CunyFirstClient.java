@@ -53,7 +53,7 @@ public class CunyFirstClient {
     }
 
     public void setSchool(String school) {
-        HtmlSelect inst = getSelect(ID.selectSchool);d
+        HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(inst.getOptionByText(school), true);
         client.waitForBackgroundJavaScript(10000);
     }

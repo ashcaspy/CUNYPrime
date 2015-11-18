@@ -30,8 +30,6 @@ public class Search {
     private final Connection conn;
     private final String id;
 
-    private final String id;
-
 
     //create separate tables for each search run
     private int counter = 1;
@@ -48,11 +46,6 @@ public class Search {
 
     public List<String> getSchools() {
         return client.getSelect(ID.selectSchool).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
-    }
-
-    public Search(Connection c, int id, String college, String semester) {
-        this(c, id);
-        selectTerm(college, semester);
     }
 
     public List<String> getSemesters() {
