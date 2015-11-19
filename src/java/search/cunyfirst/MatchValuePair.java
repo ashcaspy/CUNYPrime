@@ -1,5 +1,5 @@
 package search.cunyfirst;
-import scala.actors.threadpool.Arrays;
+import java.util.Arrays;
 
 import java.lang.IllegalArgumentException;
 import java.util.List;
