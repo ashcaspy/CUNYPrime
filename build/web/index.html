@@ -1,0 +1,113 @@
+<!--TESTING WHICH ONE GETS -->
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+
+	<title>CUNYPrime</title>
+	<meta name="description" content="ScheduleMaker">
+	<meta name="author" content="Capstone">
+
+	<link rel="stylesheet" href="style1.css">
+	<link rel="stylesheet" href="popbox.css">
+    <link rel="stylesheet" href="profileOverlay.css">
+    <link rel="stylesheet" href="schedule.css">
+    <link rel="stylesheet" href="profileInfo.css">
+
+    <script src="jquery.js"></script>
+    <script src = "popbox.js"></script>
+    <script src = "courses.js"></script>
+	<script src = "scripts.js"></script>
+    <script src = "profileFunctions.js"></script>
+    <script src = "profileOverlay.js"></script>
+    <script src = "profileInfo.js"></script>
+    
+    
+    
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->	
+</head>
+
+<body>
+<div id = "page">
+
+    
+<!--Course Info list containers-->
+    <div id="course_info_0" style = "background: #000000; z-index: 998; position: absolute;">
+    </div>
+    <div id="course_info_1"> </div>
+    <div id="course_info_2"> </div>
+    <div id="course_info_3"> </div>
+
+<!--End course info list containers-->
+<!--Profile Container-->
+    <div class = "blanket" id = "profile_blanket"></div>
+    <div class = "blanket" id = "login_blanket"></div>
+    <div class = "blanket" id = "schedule_blanket"></div>
+    <div id = "login_overlay">
+        <a href = "#" id = "login_overlay_link">Select User</a>
+    </div>
+    <div id = "schedule_overlay">
+        <a href = "#" id = "schedule_overlay_link">CREATE NEW SCHEDULE</a>
+    </div>
+    
+    <div id = "profile">
+        <script>$("#profile").load("profileContent.html");</script>
+    </div>
+    <div id = "resume">
+        <script>$("#resume").load("resumeContent.html");</script>
+    </div>
+    <div id = "scheduler">
+        <script>$("#scheduler").load("schedulerContent.html");</script>
+
+    </div>
+<!--End profile container-->
+    
+<!--Header block-->
+	<header id = "header">
+        <h3>Header and Nav</h3>
+        <a href = "#" id = "profileLink" onclick = "javascript:selectProfileLoad();"><img src = "images/profile-icon.png" title = "Profile"/></a>
+        
+        <a href = "#" id = "resumeLink" onclick = "javascript:selectResumeLoad();"><img src = "images/resume-icon.png" title = "Resum&eacute;" /></a>
+        
+        <a href = "#" id = "schedulerLink" onclick = "javascript:selectSchedulerLoad();"><img src = "images/scheduler-icon.png" title = "Scheduler"/></a>
+
+	</header>
+    
+<div id = "base_page">
+    <div id = "large-navigation-links">
+        <div class = "navigation-link-containers">
+            <a onclick = "javascript:selectSchedulerLoad()"><img src = "images/scheduler-icon.png" /></a>
+            <div class = "navigation-link-labels">Schedule</div>
+        </div>
+        <div class = "navigation-link-containers">
+            <a onclick = "javascript:selectResumeLoad()"><img src = "images/resume-icon.png" /></a>
+            <div class = "navigation-link-labels">Resum&eacute</div>
+        </div>
+        <div class = "navigation-link-containers">
+            <a onclick = "javascript:selectProfileLoad()"><img src = "images/profile-icon.png" /></a>
+            <div class = "navigation-link-labels">Profile</div>
+        </div>
+    </div>
+</div>
+    
+
+<!--Footer begin-->
+	<div id = "footer_wrapper">
+	<footer id = "footer">
+		<h3>Footer</h3>
+	</footer>
+	</div>
+
+<!--Footer end-->
+
+</div>
+    
+    
+    <script src = "schedule_functions.js"></script>
+    <script src = "searchFunctions.js"></script>
+    <script>selectUser();</script>
+</body>
+</html>

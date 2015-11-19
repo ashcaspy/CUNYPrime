@@ -1,0 +1,362 @@
+.user_schedule{
+    display: table-cell;
+    background: #DDDDDD;
+    width: 60vw;
+    height: 75vh;
+}
+
+#test_tab{
+    position: relative;
+}
+
+
+.course_div_overlay{
+    position: absolute;
+    background: #FF8C13;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px #CCC;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    font-weight: bold;
+    padding: 0;
+    
+}
+
+.timeslot-divs{
+    position: absolute;
+    
+}
+
+.timeslot-divs:hover, .timeslot-divs:focus, .timeslot-divs:active{
+    background: rgba(100, 100, 100, 0.5);
+}
+
+.timeslot-hover{
+    background: rgba(100, 100, 100, 0.5);
+}
+
+.day-divs{
+    position: absolute;
+    height: inherit;
+    float: left;
+    text-align: center;
+}
+
+.hour-divs{
+    position: absolute;
+    float: left;
+    width: inherit;
+    text-align: center;
+}
+
+.aligned-labels{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    font-size: 0.85em;
+}
+
+#day-list{
+    width: 60vw;
+    height: 3vh;
+    position: relative;
+    
+}
+
+#hour-list{
+    width: 3vw;
+    height: 72vh;
+    position: relative;
+    float: left;
+}
+
+#timeslot-list{
+    position: relative;
+    width: 57vw;
+    height: 72vh;
+    float: right;
+}
+
+
+#day-selection-dropdown-from-label, #day-selection-dropdown-to-label{
+    width: inherit;
+    height: inherit;
+    border-radius: 10px;
+}
+
+#day-selection-dropdown-from-label-link:hover, #day-selection-dropdown-to-label-link:hover{
+    width: inherit;
+    height: inherit;
+    border-radius: 10px;
+    border: 1px solid white;
+}
+
+#day-selection-dropdown-from, #day-selection-dropdown-to{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    width: 7vw;
+    height: 4vh;
+    float: left;
+    z-index: 1500;
+    position: absolute;
+    top: 0.5vh;
+    left: 0.25vw;
+    background-image: url(images/2.png);
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 10px;
+}
+
+#day-selection-dropdown-to{
+    left: 9.25vw;
+}
+
+#day-selection-dropdown-from ul, #day-selection-dropdown-to ul{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    width: 7vw;
+    height: 5vh;
+    float: left;
+    z-index: 1500;
+    position: absolute;
+    top: 4.5vh;
+    left: 0;
+    display: none;
+    vertical-align: middle;
+    text-align: center;
+}
+
+#day-selection-dropdown-from ul li, #day-selection-dropdown-to ul li{
+    display: none;
+    list-style: none;
+    z-index: 1500;
+    background-image: url(images/2.png);
+    width: inherit;
+}
+
+
+#day-selection-dropdown-from a, #day-selection-dropdown-from a:visited, #day-selection-dropdown-from li a, #day-selection-dropdown-from li a:visited, #day-selection-dropdown-to a, #day-selection-dropdown-to a:visited, #day-selection-dropdown-to li a, #day-selection-dropdown-to li a:visited{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: inherit;
+    height: inherit;
+    text-decoration: none;
+    color: black;
+}
+
+#day-selection-dropdown-from a:hover, #day-selection-dropdown-to a:hover{
+    background-image: url("images/1.png");
+    color: white!important;
+    
+}
+
+
+
+#hour-selection-dropdown-from-label, #hour-selection-dropdown-to-label{
+    width: inherit;
+    height: inherit;
+    border-radius: 10px;
+}
+
+#hour-selection-dropdown-from-label-link:hover, #hour-selection-dropdown-to-label-link:hover{
+    width: inherit;
+    height: inherit;
+    border-radius: 10px;
+    border: 1px solid white;
+}
+
+#hour-selection-dropdown-from, #hour-selection-dropdown-to{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    width: 3vw;
+    height: 4vh;
+    float: left;
+    z-index: 1500;
+    position: absolute;
+    top: 0.5vh;
+    left: 18.25vw;
+    background-image: url(images/2.png);
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 10px;
+}
+
+#hour-selection-dropdown-to{
+    left: 25.50vw;
+}
+
+#hour-selection-dropdown-from ul, #hour-selection-dropdown-to ul{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    width: 3vw;
+    height: 5vh;
+    float: left;
+    z-index: 1500;
+    position: absolute;
+    top: 4.5vh;
+    left: 0;
+    display: none;
+    vertical-align: middle;
+    text-align: center;
+}
+
+#hour-selection-dropdown-from ul li, #hour-selection-dropdown-to ul li{
+    display: none;
+    list-style: none;
+    z-index: 1500;
+    background-image: url(images/2.png);
+    width: inherit;
+}
+
+
+#hour-selection-dropdown-from a, #hour-selection-dropdown-from a:visited, #hour-selection-dropdown-from li a, #hour-selection-dropdown-from li a:visited, #hour-selection-dropdown-to a, #hour-selection-dropdown-to a:visited, #hour-selection-dropdown-to li a, #hour-selection-dropdown-to li a:visited{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: inherit;
+    height: inherit;
+    text-decoration: none;
+    color: black;
+}
+
+#hour-selection-dropdown-from a:hover, #hour-selection-dropdown-to a:hover{
+    background-image: url(images/1.png);
+    color: white!important;
+}
+
+
+#ampm-selection-dropdown-from-label, #ampm-selection-dropdown-to-label{
+    width: inherit;
+    height: inherit;
+    border-radius: 10px;
+}
+
+#ampm-selection-dropdown-from-label-link:hover, #ampm-selection-dropdown-to-label-link:hover{
+    width: inherit;
+    height: inherit;
+    border-radius: 10px;
+    border: 1px solid white;
+}
+
+#ampm-selection-dropdown-from, #ampm-selection-dropdown-to{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    width: 2vw;
+    height: 4vh;
+    float: left;
+    z-index: 1500;
+    position: absolute;
+    top: 0.5vh;
+    left: 21.50vw;
+    background-image: url(images/2.png);
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 10px;
+}
+
+#ampm-selection-dropdown-to{
+    left: 28.75vw;
+}
+
+#ampm-selection-dropdown-from ul, #ampm-selection-dropdown-to ul{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    width: 2vw;
+    height: 4vh;
+    float: left;
+    z-index: 1500;
+    position: absolute;
+    top: 4.5vh;
+    left: 0;
+    display: none;
+    vertical-align: middle;
+    text-align: center;
+}
+
+#ampm-selection-dropdown-from ul li, #ampm-selection-dropdown-to ul li{
+    display: none;
+    list-style: none;
+    z-index: 1500;
+    background-image: url(images/2.png);
+    width: inherit;
+}
+
+
+#ampm-selection-dropdown-from a, #ampm-selection-dropdown-from a:visited, #ampm-selection-dropdown-from li a, #ampm-selection-dropdown-from li a:visited, #ampm-selection-dropdown-to a, #ampm-selection-dropdown-to a:visited, #ampm-selection-dropdown-to li a, #ampm-selection-dropdown-to li a:visited{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: inherit;
+    height: inherit;
+    text-decoration: none;
+    color: black;
+}
+
+#ampm-selection-dropdown-from a:hover, #ampm-selection-dropdown-to a:hover{
+    background-image: url(images/1.png);
+    color: white!important;
+}
+
+
+.tool-labels{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    font-size: 0.85em;
+    height: inherit;
+    width: inherit;
+}
+
+.tab-links, .tab-links:visited{
+    width: 7vw;
+    height: 3vh;
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+}
+
+.schedule_footer_tool{
+    width: 4vw;
+    height: 4vh;
+    top: 0.5vh;
+    background-image: url(images/2.png);
+    position: relative;
+    float: right;
+    display: table;
+    vertical-align: middle;
+    text-align: center;
+    margin-right: 0.5vw;
+    border-radius: 10px;
+}
+
+.schedule_footer_tool a, .schedule_footer_tool a:visited{
+    text-decoration: none;
+    color: black;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    font-weight: bold;
+    border-radius: 10px;
+    
+    
+    
+ }
