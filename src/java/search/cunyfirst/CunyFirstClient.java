@@ -96,7 +96,7 @@ public class CunyFirstClient {
     }
 
     //call after setup
-    public void setSearchTerms(MatchValuePair courseNumber, TimeRange start, TimeRange end,
+    public void setSearchTerms(MatchValuePair courseNumber, Integer start, Integer end,
                                String keyword, String professor, int[] days) {
         if(null != courseNumber) {
             searchParameters.put(ID.matchNbrId, courseNumber.comparison);
@@ -105,14 +105,12 @@ public class CunyFirstClient {
 
         //set times
         if(null != start) {
-            searchParameters.put(ID.start, ID.between);
-            searchParameters.put(ID.startVal1, Integer.toString(start.min));
-            searchParameters.put(ID.startVal2, Integer.toString(start.max));
+            searchParameters.put(ID.start, ID.greaterThanEq);
+            searchParameters.put(ID.startVal1, start.toString());
         }
         if(null != end) {
-            searchParameters.put(ID.end, ID.between);
-            searchParameters.put(ID.endVal1, Integer.toString(end.min));
-            searchParameters.put(ID.endVal2, Integer.toString(end.max));
+            searchParameters.put(ID.end, ID.lessThanEq);
+            searchParameters.put(ID.endVal1, end.toString());
         }
 
         if(null != keyword) {

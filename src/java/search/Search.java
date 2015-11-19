@@ -57,7 +57,7 @@ public class Search {
     }
 
     public void find(MatchValuePair courseNumber,
-                    TimeRange start, TimeRange end,
+                    Integer start, Integer end,
                     String keyword, String professor,
                     int[] days, Iterable<String> departments) {
 

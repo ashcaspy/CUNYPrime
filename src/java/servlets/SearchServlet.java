@@ -133,8 +133,8 @@ public class SearchServlet extends HttpServlet {
         );
         searcher.find(
             new MatchValuePair(ID.greaterThan, "0"), 
-            new TimeRange(10, 12), 
-            new TimeRange(11, 14),
+            10,
+            3,
             null, 
             null,
             new int[] {3},
