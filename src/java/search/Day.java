@@ -49,6 +49,15 @@ public class Day {
 
 
     /**
+     * A functions that adds an element to the list of close times.
+     * @param pair, An instance of Pair that contains a range of unavailable time slot.
+     */
+    public void addToCloseTimes(Pair pair){
+        closeTimes.add(pair);
+    }
+
+
+    /**
      * A function that returns the element in a given index for the openTimes list.
      * @param index, The index in the list desired.
      * @return, A Pair containing an open time slot range.
@@ -71,23 +80,45 @@ public class Day {
 
 
     /**
+     * A function that returns the element in a given index for the closeTimes list.
+     * @param index, The index in the list desired.
+     * @return, A Pair containing a close time slot range.
+     */
+    public Pair getClosedTimeElement(int index){
+        if(index < closeTimes.size() && index > -1) {
+            return closeTimes.get(index);
+        }
+        return new Pair();
+    }
+
+
+    /**
+     * A function that returns the size of the closeTimes list.
+     * @return, An integer that is the length of the closeTimes list.
+     */
+    public int getCloseTimeSize() { return closeTimes.size(); }
+
+
+    /**
      * A function that prints out the available and unavailable time slots for selected days.
      */
-    public void print(){
-        System.out.println("Day: " + day);
-        if(!openTimes.isEmpty()) {
-            System.out.println("Available time slots: ");
-            for (int i = 0; i < openTimes.size(); i++) {
-                System.out.println(openTimes.get(i).x + "  " + openTimes.get(i).y);
+    public void print() {
+        if (day != 0){
+            System.out.println("Day: " + day);
+            if (!openTimes.isEmpty()) {
+                System.out.println("Available time slots: ");
+                for (int i = 0; i < openTimes.size(); i++) {
+                    System.out.println(openTimes.get(i).x + "  " + openTimes.get(i).y);
+                }
             }
-        }
-        if(!closeTimes.isEmpty()){
-            System.out.println("Unavailable time slots: ");
-            for (int i = 0; i < closeTimes.size(); i++) {
-                System.out.println(closeTimes.get(i).x + "  " + closeTimes.get(i).y);
+            if (!closeTimes.isEmpty()) {
+                System.out.println("Unavailable time slots: ");
+                for (int i = 0; i < closeTimes.size(); i++) {
+                    System.out.println(closeTimes.get(i).x + "  " + closeTimes.get(i).y);
+                }
             }
+            System.out.println("-------------------");
         }
-        System.out.println("-------------------");
 
     }
 
