@@ -23,6 +23,20 @@ public class ID {
     public final static String between = "BT";
     public final static String greaterThanEq = "GE";
     public final static String lessThanEq = "LE";
+    
+    // honestly this only works as a single value if it's 30 but whatever
+    private final static String minutes = "30";
+
+    // add a half hour and format the result
+    public final static String toNearTime(int hour) {
+        String firstHalf;
+        if(hour < 10) {
+            firstHalf = "0" + hour;
+        } else {
+            firstHalf = Integer.toString(hour);
+        }
+        return firstHalf+minutes;
+    }
 
     public final static String start = "SSR_CLSRCH_WRK_SSR_START_TIME_OPR$8";
     public final static String startVal1 = "SSR_CLSRCH_WRK_MEETING_TIME_START$8";
