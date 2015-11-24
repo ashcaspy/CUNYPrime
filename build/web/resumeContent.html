@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="resumeOverlay.css">
+<script src = "resumeOverlay.js"></script>
+	
+
+<div id = "resume_container">
+    
+    <div id = "interaction_pane">
+        
+        <div id = "basic_info">
+            <b>Name:</b><input id = "resume_name" maxlength = 50 oninput = "javascript:changeName();"></input><br />
+            <b>Address:</b><input id = "resume_address" maxlength = 50 oninput = "javascript:changeAddress();"></input><br />
+            <b>City:</b><input id = "resume_city" maxlength = 50 oninput = "javascript:changeCity();"></input><br />
+            <b>State:</b><input id = "resume_state" maxlength = 50 oninput = "javascript:changeCity();"></input><br />
+        </div>
+    </div>
+
+    <div id = "display_pane">
+        <div id = "resume_margin_top"></div>
+        <div id = "resume_name_reflection"></div>
+        <div id = "resume_address_reflection"></div>
+        <div id = "resume_city_reflection"></div>
+        <div id = "resume_state_reflection"></div>
+    </div>
+
+</div>

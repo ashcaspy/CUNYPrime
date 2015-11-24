@@ -118,3 +118,13 @@ function fadeScheduleOverlay(){
     $("#schedule_overlay").fadeOut("fast");
     $("#schedule_blanket").fadeOut("fast");
 }
+
+function loadSearchOverlay(){
+    $("#search_overlay").fadeIn("fast");
+    $("#search_blanket").fadeIn("fast");
+}
+
+function fadeSearchOverlay(){
+    $("#search_overlay").fadeOut("fast");
+    $("#search_blanket").fadeOut("fast");
+}

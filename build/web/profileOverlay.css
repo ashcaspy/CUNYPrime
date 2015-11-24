@@ -95,7 +95,8 @@
     border-radius: 10px;
 }
 
-#login_overlay_link, #login_overlay_link:visited, #schedule_overlay_link, #schedule_overlay_link:visited{
+#login_overlay_link, #login_overlay_link:visited, #schedule_overlay_link, #schedule_overlay_link:visited,
+#search_overlay_link, #search_overlay_link:visited{
     height: inherit;
     width: inherit;
     text-decoration: none;
@@ -106,6 +107,26 @@
     text-align: center;
     color: black;
     font-weight: bold;
+}
+
+#search_blanket{
+    z-index: 2000;
+    height: 77vh;
+    width: 15vw;
+    top: 13vh;
+    left: 5vw;
+}
+
+#search_overlay{
+    display: none;
+    background-image: url(images/2.png);
+    height: 8vh;
+    width: 10vw;
+    top: 46vh;
+    left: 7.5vw;
+    position: absolute;
+    z-index: 2001;
+    border-radius: 10px;
 }
     
 #username, #email, #colleges, #majors, #academic_standing{

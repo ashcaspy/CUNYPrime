@@ -1,0 +1,72 @@
+#resume_container{
+    width: 75vw;
+    height: 83vh;
+    position: absolute;
+    overflow: hidden;
+}
+
+#interaction_pane{
+    width: 37.5vw;
+    height: inherit;
+    overflow: auto;
+    position: absolute;
+    text-align: left;
+}
+
+#basic_info input{
+    position: absolute;
+    right: 6vw;
+}
+
+#basic_info{
+    width: 30vw;
+    height: 20vh;
+    border: 1px solid black;
+    padding: 1vw;
+    margin-left: 3.75vw;
+    
+}
+
+
+
+
+#display_pane{
+    width: 50%;
+    height: inherit;
+    overflow: auto;
+    position: absolute;
+    border: 2px solid black;
+    left: 50%;
+}
+
+
+#resume_margin_top{
+    height: 10vh;
+}
+
+#resume_name_reflection{
+    height: 1.25em;
+    background: white;
+    left: 3vw;
+}
+
+#resume_address_reflection{
+    height: 1.25em;
+    background: white;
+    left: 3vw;
+}
+
+#resume_city_reflection{
+    height: 1.25em;
+    background: white;
+    left: 3vw;
+}
+
+#resume_state_reflection{
+    height: 1.25em;
+    width: 50%;
+    background: white;
+    left: 3vw;
+}
+
+
