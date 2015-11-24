@@ -7,15 +7,15 @@ import java.util.List;
 
 public class Day {
 
-    private int day;
+    private final int day;
     private List<Pair> openTimes ;
     private List<Pair> closeTimes;
 
     /**
      *  A constructor setting default vaules without parameters.
      */
-    public Day(){
-        day = 0;
+    public Day(int day){
+        this.day = day;
         openTimes = new ArrayList<>();
         closeTimes = new ArrayList<>();
     }
@@ -29,14 +29,6 @@ public class Day {
         return day;
     }
 
-
-    /**
-     * A function that sets the day to the value passed in.
-     * @param day, An integer that represents the day.
-     */
-    public void setDay(int day){
-        this.day = day;
-    }
 
 
     /**
@@ -66,7 +58,7 @@ public class Day {
         if(index < openTimes.size() && index > -1) {
             return openTimes.get(index);
         }
-        return new Pair();
+        return null;
     }
 
 
@@ -103,7 +95,7 @@ public class Day {
      * A function that prints out the available and unavailable time slots for selected days.
      */
     public void print() {
-        if (day != 0){
+        if (day != -1){
             System.out.println("Day: " + day);
             if (!openTimes.isEmpty()) {
                 System.out.println("Available time slots: ");
