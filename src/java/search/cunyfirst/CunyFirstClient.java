@@ -106,11 +106,11 @@ public class CunyFirstClient {
         //set times
         if(null != start) {
             searchParameters.put(ID.start, ID.greaterThanEq);
-            searchParameters.put(ID.startVal1, start.toString());
+            searchParameters.put(ID.startVal1, ID.toNearTime(start-1));
         }
         if(null != end) {
             searchParameters.put(ID.end, ID.lessThanEq);
-            searchParameters.put(ID.endVal1, end.toString());
+            searchParameters.put(ID.endVal1, ID.toNearTime(end));
         }
 
         if(null != keyword) {

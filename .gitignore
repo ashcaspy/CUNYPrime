@@ -1,3 +1,5 @@
 *.class
 nbproject/private
 build/web/WEB-INF/
+*.idea/
+*.iml
