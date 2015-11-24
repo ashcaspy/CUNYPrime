@@ -8,18 +8,35 @@ import java.util.List;
  */
 public class Requirements {
 
+    //A double that represent the number of credit or class needed to fulfill a requirement.
     private double num;
+
+    //A integer the represents the how many options a user can choose from in cases where there are multiple choices to fulfill a requirement.
     private int numForCategory;
-    private List <Requirements> subList;
+
+    //A list of string contaning classes that will fulfill a requirement.
     private List <String> myList;
-    private List<String> classCountAsDone;
+
+    //A list of Requirement that holds other options that will fulfill a requirement if there are multiple choices to choose from.
+    private List <Requirements> subList;
+
+   //A list of string contaning specific classes that won't fulfill a requirement.
     private List <String> exceptList;
+
+    //A string that holds whether the requirement is in terms of number of classes needed or number of credits needed. (Eg. 2 classes in or 6 credits in).
     private String c;
+
+    //A boolean that indicates whether the list of classes in a sublist of classes that can also fulflll a requirement contains "and".
     private boolean containsAndSubList;
+
+    //A boolean that indicates whether the list of classes that fulfils a requirement contains "and". This means every class in the list must be taken.
     private boolean containsAnd;
+
+    //A integer that is the size of the array of classes that will fulfill the requirement.
     private int index;
+
+    //A integer that is the size of the sublist array of classes that will fulfill the requirement.
     private int indexForSubList;
-	 private boolean shouldFulFillFirst;
 
     public Requirements(){
         numForCategory = 0;
@@ -56,8 +73,6 @@ public class Requirements {
 
     public Requirements getElementFromSublist(int i) { return subList.get(i); }
 
-    public void editSublist(Requirements req, int i){ subList.set(i, req); }
-
     public void addToSubList(Requirements param){ subList.add(param); indexForSubList++; }
 
     public int getIndex(){
@@ -80,7 +95,6 @@ public class Requirements {
 
     public boolean getcontainsAndSubList(){ return containsAndSubList; }
 	 
-	 public void setShouldFulFillFirst(boolean param) { shouldFulFillFirst = param; }
 
     public String println(){
     	  String output = "";
@@ -93,8 +107,6 @@ public class Requirements {
             System.out.println("Choose from " + numForCategory + " of the following: ");
             output = output + "Choose from " + numForCategory + " of the following: " + "\r\n";
         }
-        //System.out.println("Choose " + numForCategory + " from the following: ");
-
 
         for (int i = 0; i < myList.size(); i++){
             if(containsAnd) {
@@ -138,11 +150,6 @@ public class Requirements {
                 }
             }
 
-            /*if(!exceptList.isEmpty()){
-                for(int i = 0; i < exceptList.size(); i++){
-                    System.out.println(exceptList.get(i));
-                }
-            }*/
             System.out.println("*********************");
             output = output + "*********************" + "\r\n";
 

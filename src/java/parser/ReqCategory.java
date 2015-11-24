@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Created by gracie on 10/24/2015.
  */
+
 public class ReqCategory {
     private String name;
     private String creditReq;

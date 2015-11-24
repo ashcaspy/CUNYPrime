@@ -18,26 +18,28 @@ import java.util.Map;
 
 public class ProfileParser {
 
+    /**
+     * A function that returns whether the first character in a String is contains a digit
+     * @param param, A String that check if the first character is a digit.
+     * @return A boolean indicating whether the first character in a string contains a digit.
+     */
     public static boolean isFirstCharDigit(String param) {
+        final int zero = 0;
         param = param.replaceAll(" ", "");
-        if (Character.isDigit(param.charAt(0))) { //|| Character.isDigit(param.charAt(1))){
+        if (Character.isDigit(param.charAt(zero))) {
             return true;
         } else {
             return false;
         }
     }
 
-    public static boolean doesLineContainIP(String param) {
-        String temp[] = param.split(" ");
-        for (int i = 0; i < temp.length; i++) {
-            if (temp[i].equals("IP")) {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    public static String getDept(String dept) {
+    /**
+     * A function that returns the department of a course given a string containing a course.
+     * @param param, A string that contains a list of courses, either with the department (eg. ENGL 2100) or just a course number (2100).
+     * @return A string containing the department of a course, or if it the string passed in is just a course number it will return an empty string.
+     */
+    public static String getDept(String param) {
         String theDept = "";
         for (int i = 0; i < dept.length(); i++) {
             if (!Character.isDigit(dept.charAt(i))) {
@@ -48,6 +50,7 @@ public class ProfileParser {
         }
         return theDept;
     }
+
 
     /**
      * This function will add a course into a Requirement object.
@@ -84,16 +87,12 @@ public class ProfileParser {
 
             } else if (!isFirstCharDigit(myarr[j].replaceFirst(" ", ""))) {
                 if ((myarr[j].equals("residence = Y ") || myarr[j].equals("= Y ") || myarr[j].equals("Y ")) && param > -1) {
-                    //System.out.println(myarr[0]);
                     int index = requirements.getIndex();
                     String temp = requirements.getIndexedElementFromMyList(index);
-                    //System.out.println(temp);
                     temp = temp.concat(" " + myarr[j]);
-                    //System.out.println(temp);
 
                     requirements.editMyList(temp, index);
-                    //System.out.println(requirements.getIndexedElementFromMyList(index));
-                    //System.out.println("*******");
+
 
                 } else {
                     if(dealingWithException){
@@ -121,6 +120,11 @@ public class ProfileParser {
     }
 
 
+    /**
+     * A function that checks if a string contains all digits.
+     * @param param, A string that is being checked to see if it contains all digits.
+     * @return A boolean that indicates whether the passed String, param, contains all digits.
+     */
     public static boolean isAllDigit(String param) {
         int counter = 0;
         for (int i = 0; i < param.length(); i++) {
@@ -137,6 +141,12 @@ public class ProfileParser {
         }
     }
 
+
+    /**
+     * A function that checks to see if all the characters in a given String is in all caps.
+     * @param param, A String to be checked to see if all its character is in all caps.
+     * @return A boolean that indciates whether the string passed to the function, param, is in all caps.
+     */
     public static boolean isAllCaps(String param) {
         for (int i = 0; i < param.length(); i++) {
             if (Character.isLowerCase(param.charAt(i))) {
@@ -146,17 +156,27 @@ public class ProfileParser {
         return true;
     }
 
+
+    /**
+     * A function that returns the first word in a String.
+     * @param param, A string, that is passed into the function, to get the first word from.
+     * @return A string that holds the first word of the string, param.
+     */
     public static String getFirstWord(String param) {
         final int index = 0;
         String temp[] = param.split(" ");
         return temp[index];
     }
 
+
+
+    /**
+     * A function that returns if the string given potentially contains information that is needed.
+     * @param param, A string that is passed into the function to be checked if it contains information needed.
+     * @return A boolean indicating whether there is potentially information needed in the string passed in to the function.
+     */
     public static boolean isInfoIneed(String param) {
         String temp[] = param.split(" ");
-        /*if(param.contains("is ") || param.contains("satisfy")){
-            return false;
-        }*/
         int len = temp.length - 2;
         if(len > 0) {
             if (temp[len].contains("FALL") || temp[len].contains("SPRING") || temp[len].contains("SUMMER") || temp[len].contains("WINTER")) {
@@ -168,7 +188,6 @@ public class ProfileParser {
         for (int i = 0; i < temp.length; i++) {
 
             if ((temp[i].length() == 5 || temp[i].length() == 3) && isAllDigit(temp[i])) {
-                //System.out.println(temp[i]);
                 if (i == 0) {
                     return true;
                 } else if (temp[i - 1].equals("or")) {
@@ -178,7 +197,6 @@ public class ProfileParser {
                 } else if ((temp[i - 1].length() == 3 || temp[i - 1].length() == 4 || temp[i - 1].length() == 5) && isAllCaps(temp[i - 1])) {
                     return true;
                 }
-                //return true;
             } else if (temp[i].contains("@") && !param.contains("advisor")) {
                 return true;
             } else if (temp[i].length() == 11 && temp[i].contains(":")) {
@@ -188,9 +206,14 @@ public class ProfileParser {
         return false;
     }
 
+
+    /**
+     * A function that parses the information of interest from a pdf or cgi file, and returns the information as a string.
+     * @param fileInput, An InputSTream that is the pdf or cgi file to be parsed.
+     * @return, A string that contains information parsed from the pdf or cgi file.
+     */
     public String parseProfile(InputStream fileInput) {
         String myStr = "";
-        //InputStream in = getClass().getResourceAsStream(fileName);
         InputStream in = fileInput;
         COSDocument cosDoc = null;
         PDDocument pdDoc = null;
@@ -488,7 +511,6 @@ public class ProfileParser {
                     stringy = data[i].split("from ");
                     stringOfInt = getFirstWord(stringy[indexOf1]);
                     if (data[i].contains("(")) {
-                        //System.out.println(data[i]);
                         lastOne = false;
                         if (!data[i].contains("OR")) {
                             if(hasSub && !hasSubSubby){
@@ -571,8 +593,6 @@ public class ProfileParser {
 
                     if (data[i].contains("(")) {
                         if (!data[i].contains(")")) {
-
-                            //System.out.println(data[i]);
                             temp = stringy[indexOf0].split("\\( ");
                             num = Double.parseDouble(getFirstWord(temp[indexOf1]));
                             mySubReq2.setC(hold);
@@ -599,7 +619,6 @@ public class ProfileParser {
                             }
 
                         } else {
-                            //HERE
 
                             if(data[i].contains("Except ") || dealingWithException == true){
                                 dealingWithException = true;
@@ -628,7 +647,6 @@ public class ProfileParser {
                             }
                             if (data[i].contains(") OR") || data[i].contains(") or") || data[i].contains(") and")) {
                                 hasSubSubby = true;
-                                //BLAH
                                 num = Double.parseDouble(getFirstWord(stringy[indexOf0]));
                                 mySubReq2.setNum(num);
                                 mySubReq2.setC(hold);
@@ -638,12 +656,8 @@ public class ProfileParser {
                                         mySubReq.getElementFromSublist(mySubReq.getIndexForSubList()).addToSubList(mySubReq2);
 
                                     } else {
-                                        //mySubReq.println();
                                         mySubReq.addToSubList(new Requirements());
                                         mySubReq.getElementFromSublist(mySubReq.getIndexForSubList()).addToSubList(mySubReq2);
-
-                                        /*mySubReq.println();
-                                        System.out.println("done");*/
                                     }
                                     mySubReq2 = new Requirements();
 
@@ -742,7 +756,6 @@ public class ProfileParser {
                         }
 
                     } else {
-                        //System.out.println(data[i]);
                         if(!dealingWithException) {
                             if(isFirstCharDigit(data[i])){
                                 mySubReq2.addToList(dept + data[i]);
@@ -855,9 +868,6 @@ public class ProfileParser {
                         } else {
                             courses = data[i].split("or ");
                         }
-                        //if(data[i].contains("20600 or 22900 or CHEM 10301 or 10401 or 11000 or 24300 or")) {
-                        //SIGH
-
 
                         if(courses.length == 1){
 
@@ -896,8 +906,6 @@ public class ProfileParser {
 
                             if (!data[i].contains("residence") && !data[i].contains("Term") ) {
                                 String testy [] = null;
-                                //EE 40000:59999 or
-                                //check on IRISLinky.cgi
 
                                 for (int g = 0; g < courses.length; g++) {
                                     if (courses[g].contains(" or") || courses[g].contains("and ")) {
@@ -959,7 +967,6 @@ public class ProfileParser {
                                 }
 
                             } else {
-                                //blah!
 
                                 if(dealingWithException && !data[i].contains("Except")){
                                     dept = putCourses(courses, mySubReq2, dept, false, mySubReq2.getIndex());
@@ -992,22 +999,16 @@ public class ProfileParser {
 
                 }
             } else if (data[i].contains(")") && isInfoIneed(data[i - 1]) && !isInfoIneed(data[i]) && !data[i].contains("Catalog")) {
-                //mySubReq.println();
-
 
 
                 if(data[i].contains(") OR") || data[i].contains(") and") || data[i].contains(") or")){
                     hasSubSubby = true;
                     if(hasSubSubby){
                         if (mySubReq.getIndexForSubList() >= 0) {
-                            //mySubReq.println();
-                            //System.out.println("done");
                             mySubReq.getElementFromSublist(mySubReq.getIndexForSubList()).addToSubList(mySubReq2);
 
                         } else {
 
-                            //mySubReq.println();
-                            //System.out.println(mySubReq.getcontainsAndSubList());
                             mySubReq.addToSubList(new Requirements());
                             mySubReq.getElementFromSublist(mySubReq.getIndexForSubList()).setcontainsAndSubList(true);
 
@@ -1018,7 +1019,6 @@ public class ProfileParser {
                     if(hasSubSubby){
                         if(hasSub){
                             if(lastOne){
-                                //changed
 
                                 mySubReq.getElementFromSublist(mySubReq.getIndexForSubList()).addToSubList(mySubReq2);
 
@@ -1107,7 +1107,6 @@ public class ProfileParser {
         }
         for(int j = 0; j < myReqCat.size(); j++){
             myReqCat.get(j).print();
-            //parsedOutput = parsedOutput + myReqCat.get(j).print() + "\r\n";
 
         }
 
