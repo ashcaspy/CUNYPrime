@@ -33,7 +33,7 @@ function parseCourseResultset(data){
     courseInfoArray[1] = [];
     courseInfoArray[2] = [];
     courseInfoArray[3] = [];
-    for (var i = 0; i < tempCourseArray.length; i++){ 
+    for (var i = 0; i < tempCourseArray.length - 1; i++){ 
         var cObj = new courseObj();
         var tempCourseParts = tempCourseArray[i].split("FIELD_END");
         for (var k = 0; k < tempCourseParts.length; k++){
@@ -127,11 +127,17 @@ function loadList(num) {
                 courseInfoArray[num][i].courseNum + ": " + 
                 courseInfoArray[num][i].name + 
                 "<br />Section: " + courseInfoArray[num][i].sectionNum +
-                "<br />" + courseInfoArray[num][i].days + "&nbsp;&nbsp;&nbsp;&nbsp;" +
-                 courseInfoArray[num][i].startTime + " - " + courseInfoArray[num][i].endTime
-
+                "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + courseInfoArray[num][i].days + "&nbsp;&nbsp;&nbsp;&nbsp;" +
+                 courseInfoArray[num][i].startTime + " - " + courseInfoArray[num][i].endTime +
+                "<br />" + courseInfoArray[num][i].instructor
             );
-            $descDiv.html(courseInfoArray[num][i].desc);
+            $descDiv.html(
+                //components, requirements, credits
+                courseInfoArray[num][i].credits + " credits" +
+                "<br /><b>Requirements:</b> " + courseInfoArray[num][i].requirements +
+                "<br /><b>Components:</b> " + courseInfoArray[num][i].components + "<br /><br />&nbsp;&nbsp;&nbsp;" +
+                courseInfoArray[num][i].desc
+            );
             
             
         }
@@ -149,7 +155,7 @@ function loadList(num) {
         //document.getElementById("list_section_" + num).style.z_index = "999";
         
         if (num != 3){
-            for (var i = 0; i < numCoursesPerList[num] - 1; i++){
+            for (var i = 0; i < numCoursesPerList[num]; i++){
                 $("#list" + num + "res" + (i+1)).click(function(event){
                     var num1 = parseInt($(event.target).attr("id").substring(4, $(event.target).attr("id").indexOf("res")));
                     var num2 = parseInt($(event.target).attr("id").substring($(event.target).attr("id").indexOf("res") + 3, $(event.target).attr("id").length));
@@ -158,7 +164,7 @@ function loadList(num) {
             }
         }
         else{
-            for (var i = 0; i < numCoursesPerList[num] - 1; i++){
+            for (var i = 0; i < numCoursesPerList[num]; i++){
                 $("#list" + num + "res" + (i+1)).click(function(event){
                     var num1 = parseInt($(event.target).attr("id").substring(4, $(event.target).attr("id").indexOf("res")));
                     var num2 = parseInt($(event.target).attr("id").substring($(event.target).attr("id").indexOf("res") + 3, $(event.target).attr("id").length));

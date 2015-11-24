@@ -90,7 +90,7 @@ function populateCourseRequirements(inputString){
     coursesNotCompleted = [];
     coursesTransfer =[];
     major = "";
-    
+
     var exceptions = [];
     var creditsOrClassNeeded = "";
     var courses = [];
@@ -115,6 +115,7 @@ function populateCourseRequirements(inputString){
         } else if(lines[i].indexOf("Major") > -1 && i == 1){
             var temp = lines[i].replace("Catalog Year:", "");
             major = temp;
+
 
         } else if(lines[i].indexOf("in:") >-1) {
             
@@ -183,6 +184,7 @@ function populateCourseRequirements(inputString){
 
             }
             index++; 
+
         } else if(containsExceptions){
             exceptions.push(lines[i]);
         } else if(lines[i].indexOf("won't count") > -1){
@@ -212,6 +214,7 @@ function populateCourseRequirements(inputString){
             temp = temp.replace(")", "");
             temp = temp.replace("and", "");
             courses.push(temp);
+
         } else if(isCoursesTaken && putIntoArrays(lines[i])) {
 
             coursesTaken.push(lines[i]);

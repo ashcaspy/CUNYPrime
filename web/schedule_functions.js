@@ -14,7 +14,6 @@ var numDivsY = hourEnd - hourStart + 1;
 var scheduleTabs = new Array();
 var currentScheduleTab = -1;
 
-
 function createDivs(){
     
     var $container = $("#timeslot-list");
@@ -180,10 +179,10 @@ function createDivs(){
             
             // set size/pos
             $tempCourseDiv.css({
-                "width" : $("#timeslot-div-0-0").width(),
-                "height" : ($("#timeslot-div-0-0").height() * (courseEndTime - courseStartTime + 1)) - ((offsetStart/60) * $("#timeslot-div-0-0").height()) + ((offsetEnd/60) * $("#timeslot-div-0-0").height()) + "px",
+                "width" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).width(),
+                "height" : ($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height() * (courseEndTime - courseStartTime + 1)) - ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + ((offsetEnd/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
                 
-                "top" : parseFloat($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("top")) + ((offsetStart/60) * $("#timeslot-div-0-0").height()) + "px",
+                "top" : parseFloat($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("top")) + ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
                 
                 "left" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("left"),
             });

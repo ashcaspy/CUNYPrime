@@ -1,6 +1,7 @@
 var xhrRequest;
 function searchCourses(){
     // Set up the request.
+    loadSearchOverlay();
     var values = {
         college_value: $("#search_school").val(),
         term_value: $("#search_term").val(),
@@ -9,7 +10,10 @@ function searchCourses(){
         keyword_value: $("#search_keyword").val(),
         prof_value: $("#search_prof").val(),
         reqs: courseReqObjs,
-        sched: scheduleObjArray[currentScheduleTab],
+        //sched_open: scheduleObjArray[currentScheduleTab].openTimes,
+        //sched_closed: scheduleObjArray[currentScheduleTab].closedTimes,
+        //sched_class: scheduleObjArray[currentScheduleTab].classTimes,
+        
     };
     
     $.ajax({
@@ -17,6 +21,7 @@ function searchCourses(){
         url: "performclasssearch",
         data: values,
         success: function(data){
+            fadeSearchOverlay();
             parseCourseResultset(data);
         }
     });  
@@ -63,10 +68,11 @@ function loadUserSchedules(loaded){
                 });
                 var schedName = "Schedule" + (i+1);
                 $tabDiv.html("<a href = '#' class = 'tab-links'>" + schedName + "</a>");
-                courseInfoArray[3] = [];
+                //courseInfoArray[3] = [];
                 courseInfoArray[3] = tempTab.selectedCourses;
                 console.log(courseInfoArray[3].length);
                 numCoursesPerList[3] = courseInfoArray[3].length;
+                console.log(courseInfoArray[3].length);
                 $("#schedule_footer").append($tabDiv);    
                 $tabDiv.click(function(e){
 
@@ -111,12 +117,37 @@ function addCourseToSchedule(course){
     // parse out hours:
     var courseStartTime = Math.floor(parseInt(course.startTime) / 100);
     var courseEndTime = Math.floor(parseInt(course.endTime) / 100);
+    
+    //first run once to see if thereare  conflicts
+    for (var i = 0; i < courseDays.length; i++){
+        for (var k = courseStartTime; k < courseEndTime + 1; k++){
+            if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), classTimes) != -1){
+                alert("This course conflicts with another course in your schedule. Remove that course before adding this one.");
+                return;
+            }
+        }
+    }
+    
     // find timeslot divs that match the days and times
     for (var i = 0; i < courseDays.length; i++){
         for (var k = courseStartTime; k < courseEndTime + 1; k++){
-            classTimes.push("timeslot-div-" + courseDays[i] + "-" + k);
-            selectedDivs.push("timeslot-div-" + courseDays[i] + "-" + k);
-            //$("#timeslot-div-" + courseDays[i] + "-" + k).addClass("timeslot-class-div");
+            
+            if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), classTimes) == -1){
+                        
+                classTimes.push("timeslot-div-" + courseDays[i] + "-" + k);
+                selectedDivs.push("timeslot-div-" + courseDays[i] + "-" + k);
+                scheduleTabs[currentScheduleTab].classTimes.push("timeslot-div-" + courseDays[i] + "-" + k);
+                scheduleTabs[currentScheduleTab].selectedDivs.push("timeslot-div-" + courseDays[i] + "-" + k);
+
+                if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), closedTimes) > -1){
+                    closedTimes.splice($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), closedTimes), 1);
+                    scheduleTabs[currentScheduleTab].closedTimes.splice($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), scheduleTabs[currentScheduleTab].closedTimes), 1);
+                }
+                if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), openTimes) > -1){
+                    openTimes.splice($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), openTimes), 1);
+                    scheduleTabs[currentScheduleTab].openTimes.splice($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), scheduleTabs[currentScheduleTab].openTimes), 1);
+                }
+            }
         }
     }
     selectedCourses.push(course);
@@ -130,11 +161,13 @@ function addCourseToSchedule(course){
     $("#hour-list").html("");
     $("#day-list").html("");
     createDivs();
+    loadList(3);
+    loadList(3);
 }
 
 
 function removeCourseFromSchedule(course){
-    if (confirm("OK")){
+    if (confirm("Remove this course?")){
         var courseDays = [];
         for (var i = 0; i < course.days.length; i = i + 2){
             var tempDay = course.days.substr(i, 2);
@@ -167,6 +200,8 @@ function removeCourseFromSchedule(course){
         $("#hour-list").html("");
         $("#day-list").html("");
         createDivs();
+        loadList(3);
+        loadList(3);
     }
 }
 
