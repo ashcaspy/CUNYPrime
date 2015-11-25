@@ -60,8 +60,13 @@ function populateMajors(){
     document.getElementById("majors").innerHTML = defaultSelect + newOpt;
     
 }
-    
 
+    
+/**
+	This function will take an string input and check if it is a course (eg. ENGL 2100).
+	It will return a boolean indicating if the string passed into it is a course.
+
+*/
 function isAClass(input){
     var inputSplit = input.split(" ");
     if(inputSplit.length < 2  || input == "Sublist:"){
@@ -73,6 +78,12 @@ function isAClass(input){
     return false;
 }
 
+
+/**
+	This function will take in a string and decide whether it will put the information following the string into an array.
+	It will check whether the input string contiains the word Courses.
+	It will return a boolean indicating whether it should put the information following the input string into an array.
+*/
 function putIntoArrays(lines){
     if(lines.indexOf("Courses") > -1 ){
             return false;
@@ -81,7 +92,9 @@ function putIntoArrays(lines){
 }
 
 
-
+/**
+	This function will take in a string and parse the information to put it into a jagged array.
+*/
 function populateCourseRequirements(inputString){
     requirements = [];
     coursesTaken = [];
@@ -309,6 +322,11 @@ function createDbObject(evt){
 	storage.createIndex("username", "username", {unique: true});
 }
 
+
+/**
+	This function will take store course requirement information for the user in cient side.
+	It will take in a string containing the which user the information belongs to.
+*/
 function storeReq(username) {
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
@@ -331,14 +349,18 @@ function storeReq(username) {
 var allCourseReq = new Array();
 
 var schedArr = [];
-function store(username){
-    
+
+
+/**
+	This function defaults the profile information to empty values after a username is created. 
+	The profile information will be populated as the user supplies the information. 
+*/
+function store(username){    
 
     var input = {
         username: username,
         college: collegeOfStudent, 
         major: major, 
-        //courses: requirements, 
         coursesInProgress: coursesInProgress,
         coursesTaken: coursesTaken,
         coursesTransfer: coursesTransfer,
@@ -355,38 +377,31 @@ function store(username){
     var request = store.add(input);
 
     request.onsuccess = function(){
-        //window.alert("done adding");
     }
+
     request.onerror = function(){
         var transaction = db.transaction(["gracefulTable"], "readwrite");
         var store = transaction.objectStore("gracefulTable");
         var request2 = store.get(username);
         request2.onsuccess = function(){
-            //alert("Username " + username + " is already taken. Please choose another one.");
         }
     }
 }
 
 
+/**
+	This function returns the requirement information from client side storage to an array. It will also display the resulting array.
+	It takes in the username of the user whose information is being retrieved, and an array to store the information in.
+
+*/
 function getIndexForReq(username, arr){
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
     var req = store.get(username);
     req.onsuccess  = function(){
         var data = req.result;
-        
-        //if(index < 0 || index > data.req.length){
-        //    console.log("out of bound");
-        //} else {
-            /*for (var i = 0; i < data.req[index].length; i++){
-                arr.push(data.req[index][i]);
-                
-            }*/
             arr = data.req;
             displayReq(arr, true);
-        //}
-
-        console.log(arr);
     }
 }
 
@@ -464,7 +479,6 @@ if (window.indexedDB){
 
 } else {
     window.alert("Sorry, your browser does not support IndexedDB");
-    //ADD REGULAR LOCAL STORAGE HERE
 }
 
 
