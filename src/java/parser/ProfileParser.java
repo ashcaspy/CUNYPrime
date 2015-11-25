@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class ProfileParser {
 
-    /**
+    /***
      * A function that returns whether the first character in a String is contains a digit
      * @param param, A String that check if the first character is a digit.
      * @return A boolean indicating whether the first character in a string contains a digit.
