@@ -41,9 +41,9 @@ public class ProfileParser {
      */
     public static String getDept(String param) {
         String theDept = "";
-        for (int i = 0; i < dept.length(); i++) {
-            if (!Character.isDigit(dept.charAt(i))) {
-                theDept += dept.charAt(i);
+        for (int i = 0; i < param.length(); i++) {
+            if (!Character.isDigit(param.charAt(i))) {
+                theDept += param.charAt(i);
             } else {
                 break;
             }
