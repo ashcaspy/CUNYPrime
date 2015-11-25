@@ -63,13 +63,13 @@ public class ProfileParser {
      */
     public static String putCourses(String myarr[], Requirements requirements, String dept, boolean dealingWithException, int param) {
         String classCode = "";
-
+        final int numFour = 4;
         for (int j = 0; j < myarr.length; j++) {
             if (myarr[j].equals("")) {
 
             } else if (isFirstCharDigit(myarr[j].replaceAll(" ", ""))) {
                 myarr[j] = myarr[j].replaceAll(" ","");
-                if(myarr[j].length() == 4){
+                if(myarr[j].length() == numFour){
                     if(myarr[j].contains("@")){
                         classCode = dept.concat(myarr[j]);
 
@@ -187,19 +187,24 @@ public class ProfileParser {
         }
         for (int i = 0; i < temp.length; i++) {
 
-            if ((temp[i].length() == 5 || temp[i].length() == 3) && isAllDigit(temp[i])) {
+            final int num3 = 3;
+            final int num4 = 4;
+            final int num5 = 5;
+            final int num11= 11;
+
+            if ((temp[i].length() == num5 || temp[i].length() == num3) && isAllDigit(temp[i])) {
                 if (i == 0) {
                     return true;
                 } else if (temp[i - 1].equals("or")) {
                     return true;
                 } else if (temp[i].contains("and")) {
                     return true;
-                } else if ((temp[i - 1].length() == 3 || temp[i - 1].length() == 4 || temp[i - 1].length() == 5) && isAllCaps(temp[i - 1])) {
+                } else if ((temp[i - 1].length() == num3 || temp[i - 1].length() == num4 || temp[i - 1].length() == num5) && isAllCaps(temp[i - 1])) {
                     return true;
                 }
             } else if (temp[i].contains("@") && !param.contains("advisor")) {
                 return true;
-            } else if (temp[i].length() == 11 && temp[i].contains(":")) {
+            } else if (temp[i].length() == num11 && temp[i].contains(":")) {
                 return true;
             }
         }
@@ -408,11 +413,6 @@ public class ProfileParser {
                     infoNeed = true;
                 } else {
                     hold = data[i];
-                }
-
-                if(hasSub){
-                    requirements.getElementFromSublist(requirements.getIndexForSubList()).addToCountAsDone(data[i]);
-
                 }
 
 

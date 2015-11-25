@@ -42,17 +42,13 @@ public class Requirements {
         numForCategory = 0;
         myList = new ArrayList<>();
         subList = new ArrayList<>();
-        classCountAsDone = new ArrayList<>();
         c = "";
         exceptList = new ArrayList<>();
         containsAndSubList = false;
         containsAnd = false;
         index = -1;
         indexForSubList = -1;
-		  shouldFulFillFirst = false;
     }
-
-    public void addToCountAsDone(String param) { classCountAsDone.add(param); }
 
     public void addToList(String param){
         myList.add(param);
