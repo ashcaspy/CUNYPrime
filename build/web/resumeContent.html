@@ -5,21 +5,66 @@
 <div id = "resume_container">
     
     <div id = "interaction_pane">
-        
-        <div id = "basic_info">
-            <b>Name:</b><input id = "resume_name" maxlength = 50 oninput = "javascript:changeName();"></input><br />
-            <b>Address:</b><input id = "resume_address" maxlength = 50 oninput = "javascript:changeAddress();"></input><br />
-            <b>City:</b><input id = "resume_city" maxlength = 50 oninput = "javascript:changeCity();"></input><br />
-            <b>State:</b><input id = "resume_state" maxlength = 50 oninput = "javascript:changeCity();"></input><br />
+        <div id = "expand_basic_info"><a href = "#" onclick = "javascript:expandBasicInfo();">Contact Information</a></div>
+        <div id = "resume_basic_info">
+            <div id = "resume_basic_info_0" class = "resume_input_div">
+                <b>Name:</b><input id = "resume_name" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>Address:</b><input id = "resume_address" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>City:</b><input id = "resume_city" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>State:</b><input id = "resume_state" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>Zip:</b><input id = "resume_zip" maxlength = 5 onblur = "javascript:generatePDF();"></input><br />
+            </div>
         </div>
+
+        <br /><br />
+
+        <div id = "expand_education"><a href = "#" onclick = "javascript:expandEducation();">Education</a></div>
+        <div id = "resume_education">
+            <!--
+            <div id = "resume_education_1">
+                <b>College Name:</b><input id = "resume_education_where" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>Graduation Year:</b><input id = "resume_education_year" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>Degree:</b><input id = "resume_education_degree" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>Additional Info:</b><input id = "resume_education_info" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+            </div>
+            -->
+        </div>
+        <div id = "add_education"><a href = "#" onclick = "javascript:addEducation();">Add</a></div>
+        
+        <br /><br />
+        
+        <div id = "expand_work"><a href = "#" onclick = "javascript:expandWork();">Work</a></div>
+        <div id = "resume_work">
+            <!--
+            <div id = "resume_work_1">
+                <b>Employer:</b><input id = "resume_work_where" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>Dates:</b><input id = "resume_work_year" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>Position:</b><input id = "resume_work_position" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+                <b>Responsibilities:</b><input id = "resume_work_info" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
+            </div>
+            -->
+        </div>
+        <div id = "add_work"><a href = "#" onclick = "javascript:addWork();">Add</a></div>
+        
+
+        <div id = "resume_skills">
+            <b>Skills:</b><input id = "resume_skills_info" maxlength = 100 onblur = "javascript:generatePDF();"></input><br />
+        </div>
+        <br /><br /><br />
     </div>
 
+
+
+<!--PDF PREVIEW DISPLAY-->
     <div id = "display_pane">
-        <div id = "resume_margin_top"></div>
-        <div id = "resume_name_reflection"></div>
-        <div id = "resume_address_reflection"></div>
-        <div id = "resume_city_reflection"></div>
-        <div id = "resume_state_reflection"></div>
+        <object type='application/pdf' width='100%' height='100%' background = 'blue' id = 'pdf_view_pane'>
+            <p>It appears you don't have a PDF plugin for this browser.</p>
+        </object>
     </div>
+    
 
 </div>
+<script src = "jspdf.js"></script>
+<script>
+    initPDF();
+</script>
