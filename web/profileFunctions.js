@@ -367,6 +367,7 @@ function store(username){
         coursesWithdrew: coursesWithdrew,
         coursesNC: coursesNotCompleted,
         sched: schedArr,
+        resume: userResume,
         allCourseReq: allCourseReq,
         req: []
     }
@@ -926,6 +927,8 @@ function selectUser(){
         loadUserSchedules(false);
         // load user profile info
         prepProfile();
-
+        // load user resume
+        initPDF();
+        loadUserResume(userName, false);
     });
 }
