@@ -15,6 +15,20 @@ var major = "";
 var boolArr = [];
 boolArr[0] = false;
 
+var userResume = {
+    name: "",
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
+    phone: "",
+    email: "",
+    education: [],
+    work: [],
+    skills: []    
+};
+
+
 
 function loadInfo(){
     
@@ -60,8 +74,13 @@ function populateMajors(){
     document.getElementById("majors").innerHTML = defaultSelect + newOpt;
     
 }
-    
 
+    
+/**
+	This function will take an string input and check if it is a course (eg. ENGL 2100).
+	It will return a boolean indicating if the string passed into it is a course.
+
+*/
 function isAClass(input){
     var inputSplit = input.split(" ");
     if(inputSplit.length < 2  || input == "Sublist:"){
@@ -73,6 +92,12 @@ function isAClass(input){
     return false;
 }
 
+
+/**
+	This function will take in a string and decide whether it will put the information following the string into an array.
+	It will check whether the input string contiains the word Courses.
+	It will return a boolean indicating whether it should put the information following the input string into an array.
+*/
 function putIntoArrays(lines){
     if(lines.indexOf("Courses") > -1 ){
             return false;
@@ -81,7 +106,9 @@ function putIntoArrays(lines){
 }
 
 
-
+/**
+	This function will take in a string and parse the information to put it into a jagged array.
+*/
 function populateCourseRequirements(inputString){
     requirements = [];
     coursesTaken = [];
@@ -309,6 +336,11 @@ function createDbObject(evt){
 	storage.createIndex("username", "username", {unique: true});
 }
 
+
+/**
+	This function will take store course requirement information for the user in cient side.
+	It will take in a string containing the which user the information belongs to.
+*/
 function storeReq(username) {
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
@@ -331,20 +363,25 @@ function storeReq(username) {
 var allCourseReq = new Array();
 
 var schedArr = [];
-function store(username){
-    
+
+
+/**
+	This function defaults the profile information to empty values after a username is created. 
+	The profile information will be populated as the user supplies the information. 
+*/
+function store(username){    
 
     var input = {
         username: username,
         college: collegeOfStudent, 
         major: major, 
-        //courses: requirements, 
         coursesInProgress: coursesInProgress,
         coursesTaken: coursesTaken,
         coursesTransfer: coursesTransfer,
         coursesWithdrew: coursesWithdrew,
         coursesNC: coursesNotCompleted,
         sched: schedArr,
+        resume: userResume,
         allCourseReq: allCourseReq,
         req: []
     }
@@ -355,38 +392,31 @@ function store(username){
     var request = store.add(input);
 
     request.onsuccess = function(){
-        //window.alert("done adding");
     }
+
     request.onerror = function(){
         var transaction = db.transaction(["gracefulTable"], "readwrite");
         var store = transaction.objectStore("gracefulTable");
         var request2 = store.get(username);
         request2.onsuccess = function(){
-            //alert("Username " + username + " is already taken. Please choose another one.");
         }
     }
 }
 
 
+/**
+	This function returns the requirement information from client side storage to an array. It will also display the resulting array.
+	It takes in the username of the user whose information is being retrieved, and an array to store the information in.
+
+*/
 function getIndexForReq(username, arr){
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
     var req = store.get(username);
     req.onsuccess  = function(){
         var data = req.result;
-        
-        //if(index < 0 || index > data.req.length){
-        //    console.log("out of bound");
-        //} else {
-            /*for (var i = 0; i < data.req[index].length; i++){
-                arr.push(data.req[index][i]);
-                
-            }*/
             arr = data.req;
             displayReq(arr, true);
-        //}
-
-        console.log(arr);
     }
 }
 
@@ -448,6 +478,7 @@ if (window.indexedDB){
     };
     request.onsuccess = function(event){
         db = request.result;
+        selectUser(false);
 
     };
     //runs only when version is upgraded
@@ -464,7 +495,6 @@ if (window.indexedDB){
 
 } else {
     window.alert("Sorry, your browser does not support IndexedDB");
-    //ADD REGULAR LOCAL STORAGE HERE
 }
 
 
@@ -879,13 +909,15 @@ function getAllUsers(arr){
 	var store = transaction.objectStore("gracefulTable");
 	var index = store.index("username");
 	index.openCursor().onsuccess = function(evt){
-		var cur = evt.target.result;
+        var cur = evt.target.result;
 		if(cur){
 			arr.push(cur.value.username);
 			cur.continue();	
-
 		}
-
+        else{
+            console.log(usernames);
+            selectUser(true);
+        }
 	}
 }
 
@@ -897,21 +929,122 @@ function getAllUsers(arr){
 var userName = "";
 var usernames = [];
 
-function selectUser(){
-    
+function selectUser(done){
     loadLoginOverlay();
-    
-    $("#login_overlay_link").click(function(e){
-        e.preventDefault();
-        userName = "user";
-        console.log("username set");
-        fadeLoginOverlay();
-        store(userName);
+    if (done == false){
+        getAllUsers(usernames);   
+    }
+    else if (done == true){
+        $("#login_overlay").html("");
+            
+        // create all user images and selections
         
+        var $userChoice, $userChoiceImage, $userChoiceLabel;
+        for (var i = 0; i < usernames.length; i++){
+            $userChoice = $("<div>").addClass("login_user_choice").attr("id", usernames[i]);
+            $userChoiceLabel = $("<div>").addClass("login_user_choice_label").attr("id", usernames[i]);
+            $userChoiceImage = $("<div>").addClass("login_user_choice_image").attr("id", usernames[i]);
+            
+            $userChoiceLabel.html("<a href = \"#\" id = " + usernames[i] + ">" + usernames[i] + "</a>");
+            
+            $userChoiceImage.css({
+                "filter":"hue-rotate(" + (100 * (i + 1)) +"deg)",
+                "-webkit-filter":"hue-rotate(" + (100* (i + 1)) +"deg)",
+            });
+            
+            $userChoice.appendTo($("#login_overlay"));
+            $userChoiceImage.appendTo($userChoice);
+            $userChoiceLabel.appendTo($userChoice);
+            
+            $userChoiceImage.click(function(e){
+                e.preventDefault();
+                userName = $(e.target).attr("id");
+                fadeLoginOverlay();
+                store(userName);
+                // load user schedule info
+                loadUserSchedules(false);
+                // load user profile info
+                prepProfile();
+                // load user resume
+                initPDF();
+                loadUserResume(userName, false);
+            });
+            
+            $userChoiceLabel.click(function(e){
+                e.preventDefault();
+                userName = $(e.target).attr("id");
+                fadeLoginOverlay();
+                store(userName);
+                // load user schedule info
+                loadUserSchedules(false);
+                // load user profile info
+                prepProfile();
+                // load user resume
+                initPDF();
+                loadUserResume(userName, false);
+            });
+        }
+        
+        $userChoice = $("<div>").addClass("login_user_choice");
+        $userChoiceLabel = $("<div>").addClass("login_user_choice_label").attr("id", "create_new_user");
+        $userChoiceImage = $("<div>").addClass("login_user_choice_image").attr("id", "new_user_image");
+
+        $userChoiceLabel.html("New User");
+
+        $userChoice.appendTo($("#login_overlay"));
+        $userChoiceImage.appendTo($userChoice);
+        $userChoiceLabel.appendTo($userChoice);
+
+        $userChoiceImage.click(function(e){
+            e.preventDefault();
+            $("#login_overlay").html("");
+            
+            var $userChoice, $userChoiceImage, $userChoiceLabel;
+            $userChoice = $("<div>").addClass("login_user_choice");
+            $userChoiceLabel = $("<div>").addClass("login_user_choice_label").attr("id", "create_new_user");
+            $userChoiceImage = $("<div>").addClass("login_user_choice_image").attr("id", "new_user_image");
+            $userChoice.appendTo($("#login_overlay"));
+            $userChoiceImage.appendTo($userChoice);
+            $userChoiceLabel.appendTo($userChoice);
+
+            
+            $("#create_new_user").html(
+                "<input maxlength = 25>" +
+                "</input>" + 
+                "<button onclick = \"javascript:createNewUser();\">" +
+                "Create</button>" +
+                "<button onclick = \"javascript:selectUser(true);\">" +
+                "Cancel</button>"
+                
+            );
+            
+            $("#login_overlay").css({
+                "left": ($("#base_page").width()/2) - ($("#login_overlay").width()/2),
+            });
+        });
+        
+        
+        $("#login_overlay").css({
+            "left": ($("#base_page").width()/2) - ($("#login_overlay").width()/2),
+        });
+        
+        //$("#login_overlay_link").html();
+    }
+}
+
+function createNewUser(){
+    if ($.inArray($("#create_new_user input").val(), usernames) == -1){
+        userName = $("#create_new_user input").val();
+        store(userName);
+        fadeLoginOverlay();
         // load user schedule info
         loadUserSchedules(false);
         // load user profile info
         prepProfile();
-
-    });
+        // load user resume
+        initPDF();
+        loadUserResume(userName, false);
+    }
+    else
+        alert("That user name already exists.");
 }

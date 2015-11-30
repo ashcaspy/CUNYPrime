@@ -1,22 +1,4 @@
 /* BOXES TO HOLD PROFILE INFO*/
-/*
-this.courseNum = "";
-    this.dept = "";
-    this.name = "";
-    this.desc = "";
-    this.startTimes = "";
-    this.endTimes = "";
-    this.flag = false;
-    this.sectionNum = "";
-    this.components = "";
-    this.requirements = "";
-    this.credits = 0;
-    this.startTime = "";
-    this.endTime = "";
-    this.room = "";
-    this.days = "";
-    this.instructor = "";
-*/
 
 #major-div{
     position: absolute;

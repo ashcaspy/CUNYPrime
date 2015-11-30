@@ -24,7 +24,6 @@ public class MainConfig {
         String password = dbUri.getUserInfo().split(":")[1];
         String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
 
-       
         Class.forName("org.postgresql.Driver");
         return DriverManager.getConnection(dbUrl, username, password);
     }

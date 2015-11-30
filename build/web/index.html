@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="profileOverlay.css">
     <link rel="stylesheet" href="schedule.css">
     <link rel="stylesheet" href="profileInfo.css">
+    <link rel="stylesheet" href="header_footer.css">
 
     <script src="jquery.js"></script>
     <script src = "popbox.js"></script>
@@ -48,7 +49,7 @@
     <div class = "blanket" id = "schedule_blanket"></div>
     <div class = "blanket" id = "search_blanket"></div>
     <div id = "login_overlay">
-        <a href = "#" id = "login_overlay_link">Select User</a>
+        <!--<a href = "#" id = "login_overlay_link">Select User</a>-->
     </div>
     <div id = "schedule_overlay">
         <a href = "#" id = "schedule_overlay_link">CREATE NEW SCHEDULE</a>
@@ -71,7 +72,7 @@
     
 <!--Header block-->
 	<header id = "header">
-        <h3>Header and Nav</h3>
+        <div id = "header_logo"></div>
         <a href = "#" id = "profileLink" onclick = "javascript:selectProfileLoad();"><img src = "images/profile-icon.png" title = "Profile"/></a>
         
         <a href = "#" id = "resumeLink" onclick = "javascript:selectResumeLoad();"><img src = "images/resume-icon.png" title = "Resum&eacute;" /></a>
@@ -101,7 +102,7 @@
 <!--Footer begin-->
 	<div id = "footer_wrapper">
 	<footer id = "footer">
-		<h3>Footer</h3>
+        
 	</footer>
 	</div>
 
@@ -112,6 +113,6 @@
     
     <script src = "schedule_functions.js"></script>
     <script src = "searchFunctions.js"></script>
-    <script>selectUser();</script>
+    <script>//selectUser(0);</script>
 </body>
 </html>

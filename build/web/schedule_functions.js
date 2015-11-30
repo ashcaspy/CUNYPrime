@@ -1,11 +1,11 @@
 
 var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var hours = ["12:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00"];
-var dayStart = 0;
-var dayEnd = 6;
+var dayStart = -1;
+var dayEnd = -2;
 var numDivsX = dayEnd - dayStart + 1;
 
-var hourStart = 11, hourEnd = 22, ampm = "AM";
+var hourStart = -1, hourEnd = -2, ampm = "AM";
 var selectedDivs = new Array();
 
 //var numDivsX = 7;
@@ -165,29 +165,38 @@ function createDivs(){
                     courseDays.push(j);
             }
         }
+        var daysOk = true;
         for (k = 0; k < courseDays.length; k++){
-            // create div
-            var $tempCourseDiv = $("<div>").addClass("course_div_overlay");
-            $tempCourseDiv.attr("id", "course-div-" + i + "-" + courseDays[k]);
-            var courseStartTime = parseInt(selectedCourses[i].startTime) / 100;
-            var courseEndTime = parseInt(selectedCourses[i].endTime) / 100;
-            var offsetStart = Math.ceil((courseStartTime - Math.floor(courseStartTime)) * 100);
-            var offsetEnd = Math.ceil((courseEndTime - Math.floor(courseEndTime)) * 100);
-            courseStartTime = Math.floor(courseStartTime);
-            courseEndTime = Math.floor(courseEndTime);
-            
-            
-            // set size/pos
-            $tempCourseDiv.css({
-                "width" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).width(),
-                "height" : ($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height() * (courseEndTime - courseStartTime + 1)) - ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + ((offsetEnd/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
-                
-                "top" : parseFloat($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("top")) + ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
-                
-                "left" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("left"),
-            });
-            $tempCourseDiv.appendTo($("#timeslot-list"));
-            $tempCourseDiv.html("<p>" + selectedCourses[i].dept + " " + selectedCourses[i].courseNum + "</p>");
+            if (courseDays[k] > dayEnd || courseDays[k] < dayStart)
+                daysOk = false;
+        }
+        if (daysOk == true){
+            for (k = 0; k < courseDays.length; k++){
+                // create div
+                var $tempCourseDiv = $("<div>").addClass("course_div_overlay");
+                $tempCourseDiv.attr("id", "course-div-" + i + "-" + courseDays[k]);
+                var courseStartTime = parseInt(selectedCourses[i].startTime) / 100;
+                var courseEndTime = parseInt(selectedCourses[i].endTime) / 100;
+                if (hourStart < courseStartTime && hourEnd > courseEndTime){
+                    var offsetStart = Math.ceil((courseStartTime - Math.floor(courseStartTime)) * 100);
+                    var offsetEnd = Math.ceil((courseEndTime - Math.floor(courseEndTime)) * 100);
+                    courseStartTime = Math.floor(courseStartTime);
+                    courseEndTime = Math.floor(courseEndTime);
+
+
+                    // set size/pos
+                    $tempCourseDiv.css({
+                        "width" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).width(),
+                        "height" : ($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height() * (courseEndTime - courseStartTime + 1)) - ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + ((offsetEnd/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
+
+                        "top" : parseFloat($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("top")) + ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
+
+                        "left" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("left"),
+                    });
+                    $tempCourseDiv.appendTo($("#timeslot-list"));
+                    $tempCourseDiv.html("<p>" + selectedCourses[i].dept + " " + selectedCourses[i].courseNum + "</p>");
+                }
+            }
         }
         
     }
@@ -1161,6 +1170,13 @@ function loadScheduleTab(num){
         $("#day-list").html("");
         $("#hour-list").html("");
         $("#timeslot-list").html("");
+        dayStart = -1;
+        dayEnd = -2;
+        hourStart = -1;
+        hourEnd = -2;
+        numDivsX = dayEnd - dayStart + 1;
+        numDivsY = hourEnd - hourStart + 1;
+        
     }
     else{
         $("#schedule-tab-" + num).css({"background-image" :"url(images/2.png)"});

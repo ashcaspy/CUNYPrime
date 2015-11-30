@@ -76,8 +76,8 @@
     /*border: 1px solid black;*/
     width: 25vw;
     height: 30vh;
-    overflow-x: none;
-    overflow-y: none;
+    overflow-x: hidden;
+    overflow-y: scroll;
     border-radius: 10px;
     background-clip: content;
     background: white;

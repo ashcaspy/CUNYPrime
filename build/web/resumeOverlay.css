@@ -23,42 +23,69 @@
     overflow: hidden;
     position: absolute;
     left: 50%;
-    padding: 1vh;
+    padding: 1vw;
     background: #ffffff;
 }
 
 
 /*BASIC INFO DIVS*/
+.resume_section_header{
+    font-weight: bold;
+    font-size: 1.25em;
+    border-bottom: 2px solid grey;
+}
 
 .resume_input_div{
     padding: 1vw;
     margin-left: 3.75vw;
     background: #e6e6e6;
-    border-top: 2px solid grey;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
 
-.resume_input_div input{
+.resume_input_div input, .resume_input_div textarea{
     position: absolute;
     right: 6vw;
     border-radius: 5px;
     background: lightgrey;
 }
 
-#resume_basic_info{
-    width: 35vw;
+.resume_input_div textarea{
+    width: 20vw;
+    resize: none;
+    height: 10vh;
+    margin-top: 1vh;
+    font-family: inherit;
+}
+
+.resume_add_section, .resume_remove_section{
+    height: 3vh;
+    width: 3vh;
+    border-radius: 1vw;
+    background-image: url(images/add.png);
+    background-size: contain;
+    background-position: center;
+}
+
+.resume_add_section_link, .resume_add_section_link:visited, .resume_remove_section_link, .resume_remove_section_link:visited{
+    text-decoration: none;
+    display: block;
+    width: 3vh;
+    height: 3vh;
+    padding: 0;
+    border-radius: 1vw;
+}
+
+.resume_remove_section{
+    position: relative;
+    float: right;
+    background-image: url(images/remove.png);
+    margin-top: -0.5vh;
+    /**/
 }
 
 
-/*EDUCATION DIVS*/
-#resume_education{
-    width: 35vw;
-}
-
-
-/*WORK DIVS*/
-#resume_work{
+#resume_basic_info, #resume_education, #resume_work, #resume_skills{
     width: 35vw;
 }
 
@@ -69,6 +96,6 @@
     height: 2vh;
     background-image: url(images/1.png);
     color: white;
-    padding: 1vh 0vh 1vh 0vh;
+    padding: 1vh 1vh 1vh 0vh;
     border: none;
 }

@@ -90,32 +90,40 @@ $.fn.popbox = function(options){
                             courseDays.push(j);
                     }
                 }
-                for (k = 0; k < courseDays.length; k++){
-                    // create div
-                    var $tempCourseDiv = $("<div>").addClass("course_div_overlay");
-                    $tempCourseDiv.attr("id", "temp-course-div-" + k);
-                    var courseStartTime = parseInt(courseToDisplay.startTime) / 100;
-                    var courseEndTime = parseInt(courseToDisplay.endTime) / 100;
-                    var offsetStart = Math.ceil((courseStartTime - Math.floor(courseStartTime)) * 100);
-                    var offsetEnd = Math.ceil((courseEndTime - Math.floor(courseEndTime)) * 100);
-                    courseStartTime = Math.floor(courseStartTime);
-                    courseEndTime = Math.floor(courseEndTime);
-
-
-                    // set size/pos
-                    $tempCourseDiv.css({
-                        "width" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).width(),
-                        "height" : ($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height() * (courseEndTime - courseStartTime + 1)) - ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + ((offsetEnd/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
-
-                        "top" : parseFloat($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("top")) + ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
-
-                        "left" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("left"),
-                        "background" : "blue",//"rgba(255, 140, 19, 0.5)",
-                    });
-                    $tempCourseDiv.appendTo($("#timeslot-list"));
-                    $tempCourseDiv.html("<p>" + courseToDisplay.dept + " " + courseToDisplay.courseNum + "</p>");
-                }
                 
+                var daysOk = true;
+                for (k = 0; k < courseDays.length; k++){
+                    if (courseDays[k] > dayEnd || courseDays[k] < dayStart)
+                        daysOk = false;
+                }
+                if (daysOk == true){
+                    for (k = 0; k < courseDays.length; k++){
+                        // create div
+                        var $tempCourseDiv = $("<div>").addClass("course_div_overlay");
+                        $tempCourseDiv.attr("id", "temp-course-div-" + k);
+                        var courseStartTime = parseInt(courseToDisplay.startTime) / 100;
+                        var courseEndTime = parseInt(courseToDisplay.endTime) / 100;
+                        var offsetStart = Math.ceil((courseStartTime - Math.floor(courseStartTime)) * 100);
+                        var offsetEnd = Math.ceil((courseEndTime - Math.floor(courseEndTime)) * 100);
+                        courseStartTime = Math.floor(courseStartTime);
+                        courseEndTime = Math.floor(courseEndTime);
+
+                        if (hourStart < courseStartTime && hourEnd > courseEndTime){
+                            // set size/pos
+                            $tempCourseDiv.css({
+                                "width" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).width(),
+                                "height" : ($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height() * (courseEndTime - courseStartTime + 1)) - ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + ((offsetEnd/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
+
+                                "top" : parseFloat($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("top")) + ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
+
+                                "left" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("left"),
+                                "background" : "blue",//"rgba(255, 140, 19, 0.5)",
+                            });
+                            $tempCourseDiv.appendTo($("#timeslot-list"));
+                            $tempCourseDiv.html("<p>" + courseToDisplay.dept + " " + courseToDisplay.courseNum + "</p>");
+                        }
+                    }
+                }
                 
                 
                 

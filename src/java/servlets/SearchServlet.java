@@ -188,7 +188,7 @@ public class SearchServlet extends HttpServlet {
           response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
           response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
           response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
-          response.getWriter().write("Cr:~"+resultSet.getString("credits") + "ENTRY_END");
+          response.getWriter().write("Cr~"+resultSet.getString("credits") + "ENTRY_END");
          }
          System.out.println("OKAY HERE5");
          preparedStatement = conn.prepareStatement(query5);

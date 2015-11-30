@@ -5,20 +5,23 @@
 <div id = "resume_container">
     
     <div id = "interaction_pane">
-        <div id = "expand_basic_info"><a href = "#" onclick = "javascript:expandBasicInfo();">Contact Information</a></div>
+        <div class = "resume_section_header">Contact Information</div>
         <div id = "resume_basic_info">
+            <div class = "resume_filler"><b>Basic Info</b></div>
             <div id = "resume_basic_info_0" class = "resume_input_div">
                 <b>Name:</b><input id = "resume_name" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
                 <b>Address:</b><input id = "resume_address" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
                 <b>City:</b><input id = "resume_city" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
                 <b>State:</b><input id = "resume_state" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
                 <b>Zip:</b><input id = "resume_zip" maxlength = 5 onblur = "javascript:generatePDF();"></input><br />
+                <b>Phone:</b><input id = "resume_phone" maxlength = 14 placeholder = "(###)-###-####" onblur = "javascript:generatePDF();"></input><br />
+                <b>Email:</b><input id = "resume_email" maxlength = 50 onblur = "javascript:generatePDF();"></input><br />
             </div>
         </div>
 
         <br /><br />
 
-        <div id = "expand_education"><a href = "#" onclick = "javascript:expandEducation();">Education</a></div>
+        <div class = "resume_section_header">Education</div>
         <div id = "resume_education">
             <!--
             <div id = "resume_education_1">
@@ -29,11 +32,11 @@
             </div>
             -->
         </div>
-        <div id = "add_education"><a href = "#" onclick = "javascript:addEducation();">Add</a></div>
+        <div class = "resume_add_section"><a href = "#" class = "resume_add_section_link" onclick = "javascript:addEducation();"></a></div>
         
         <br /><br />
         
-        <div id = "expand_work"><a href = "#" onclick = "javascript:expandWork();">Work</a></div>
+        <div class = "resume_section_header">Work</div>
         <div id = "resume_work">
             <!--
             <div id = "resume_work_1">
@@ -44,12 +47,21 @@
             </div>
             -->
         </div>
-        <div id = "add_work"><a href = "#" onclick = "javascript:addWork();">Add</a></div>
+        <div class = "resume_add_section"><a href = "#" class = "resume_add_section_link" onclick = "javascript:addWork();"></a></div>
         
-
+        <br /><br />
+        
+        <div class = "resume_section_header">Skills and Interests</div>
         <div id = "resume_skills">
-            <b>Skills:</b><input id = "resume_skills_info" maxlength = 100 onblur = "javascript:generatePDF();"></input><br />
+            <!--
+            <div id = "resume_skills_0">
+                <b>Skill:</b><input id = "resume_skills_info" maxlength = 100 onblur = "javascript:generatePDF();"></input><br />
+                <b>Description:</b><input id = "resume_skills_info" maxlength = 100 onblur = "javascript:generatePDF();"></input><br />
+            </div>
+        
+            -->
         </div>
+        <div class = "resume_add_section"><a href = "#" class = "resume_add_section_link" onclick = "javascript:addSkill();"></a></div>
         <br /><br /><br />
     </div>
 
@@ -58,13 +70,15 @@
 <!--PDF PREVIEW DISPLAY-->
     <div id = "display_pane">
         <object type='application/pdf' width='100%' height='100%' background = 'blue' id = 'pdf_view_pane'>
-            <p>It appears you don't have a PDF plugin for this browser.</p>
+            <p>It appears you don't have a PDF plugin for this browser. You can download your Resum&eacute; <a href = "#" onclick = "javascript:downloadPDF();">here</a></p>
         </object>
     </div>
-    
-
 </div>
 <script src = "jspdf.js"></script>
-<script>
-    initPDF();
+<script src = "jspdf.min.js"></script>
+<script src = "jspdf.debug.js"></script>
+<script> 
+    if (checkMobile() == true){
+        $(".resume_input_div br").css({"line-height":"200%"});
+    }
 </script>

@@ -48,25 +48,6 @@ body{
     position: relative;
 }
 
-/*HEADER AND FOOTER*/
-#header, #footer{
-	display: table-cell;
-	vertical-align: middle;
-	padding: 0;
-	background: #0D3692;
-	color: #FF8C13;
-	min-width: 910px;
-	width: 100vw;
-	height: 7vh;
-	max-height:7vh;
-	overflow: hidden;
-	background-image: url(images/1.png);
-	margin: 0 auto;
-}
-#footer{
-	clear: both;
-}
-
 h3{
 	padding-left: 1vh;
 	margin: 0;

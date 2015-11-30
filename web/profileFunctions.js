@@ -15,6 +15,20 @@ var major = "";
 var boolArr = [];
 boolArr[0] = false;
 
+var userResume = {
+    name: "",
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
+    phone: "",
+    email: "",
+    education: [],
+    work: [],
+    skills: []    
+};
+
+
 
 function loadInfo(){
     
@@ -367,6 +381,7 @@ function store(username){
         coursesWithdrew: coursesWithdrew,
         coursesNC: coursesNotCompleted,
         sched: schedArr,
+        resume: userResume,
         allCourseReq: allCourseReq,
         req: []
     }
@@ -463,6 +478,7 @@ if (window.indexedDB){
     };
     request.onsuccess = function(event){
         db = request.result;
+        selectUser(false);
 
     };
     //runs only when version is upgraded
@@ -893,13 +909,15 @@ function getAllUsers(arr){
 	var store = transaction.objectStore("gracefulTable");
 	var index = store.index("username");
 	index.openCursor().onsuccess = function(evt){
-		var cur = evt.target.result;
+        var cur = evt.target.result;
 		if(cur){
 			arr.push(cur.value.username);
 			cur.continue();	
-
 		}
-
+        else{
+            console.log(usernames);
+            selectUser(true);
+        }
 	}
 }
 
@@ -911,21 +929,122 @@ function getAllUsers(arr){
 var userName = "";
 var usernames = [];
 
-function selectUser(){
-    
+function selectUser(done){
     loadLoginOverlay();
-    
-    $("#login_overlay_link").click(function(e){
-        e.preventDefault();
-        userName = "user";
-        console.log("username set");
-        fadeLoginOverlay();
-        store(userName);
+    if (done == false){
+        getAllUsers(usernames);   
+    }
+    else if (done == true){
+        $("#login_overlay").html("");
+            
+        // create all user images and selections
         
+        var $userChoice, $userChoiceImage, $userChoiceLabel;
+        for (var i = 0; i < usernames.length; i++){
+            $userChoice = $("<div>").addClass("login_user_choice").attr("id", usernames[i]);
+            $userChoiceLabel = $("<div>").addClass("login_user_choice_label").attr("id", usernames[i]);
+            $userChoiceImage = $("<div>").addClass("login_user_choice_image").attr("id", usernames[i]);
+            
+            $userChoiceLabel.html("<a href = \"#\" id = " + usernames[i] + ">" + usernames[i] + "</a>");
+            
+            $userChoiceImage.css({
+                "filter":"hue-rotate(" + (100 * (i + 1)) +"deg)",
+                "-webkit-filter":"hue-rotate(" + (100* (i + 1)) +"deg)",
+            });
+            
+            $userChoice.appendTo($("#login_overlay"));
+            $userChoiceImage.appendTo($userChoice);
+            $userChoiceLabel.appendTo($userChoice);
+            
+            $userChoiceImage.click(function(e){
+                e.preventDefault();
+                userName = $(e.target).attr("id");
+                fadeLoginOverlay();
+                store(userName);
+                // load user schedule info
+                loadUserSchedules(false);
+                // load user profile info
+                prepProfile();
+                // load user resume
+                initPDF();
+                loadUserResume(userName, false);
+            });
+            
+            $userChoiceLabel.click(function(e){
+                e.preventDefault();
+                userName = $(e.target).attr("id");
+                fadeLoginOverlay();
+                store(userName);
+                // load user schedule info
+                loadUserSchedules(false);
+                // load user profile info
+                prepProfile();
+                // load user resume
+                initPDF();
+                loadUserResume(userName, false);
+            });
+        }
+        
+        $userChoice = $("<div>").addClass("login_user_choice");
+        $userChoiceLabel = $("<div>").addClass("login_user_choice_label").attr("id", "create_new_user");
+        $userChoiceImage = $("<div>").addClass("login_user_choice_image").attr("id", "new_user_image");
+
+        $userChoiceLabel.html("New User");
+
+        $userChoice.appendTo($("#login_overlay"));
+        $userChoiceImage.appendTo($userChoice);
+        $userChoiceLabel.appendTo($userChoice);
+
+        $userChoiceImage.click(function(e){
+            e.preventDefault();
+            $("#login_overlay").html("");
+            
+            var $userChoice, $userChoiceImage, $userChoiceLabel;
+            $userChoice = $("<div>").addClass("login_user_choice");
+            $userChoiceLabel = $("<div>").addClass("login_user_choice_label").attr("id", "create_new_user");
+            $userChoiceImage = $("<div>").addClass("login_user_choice_image").attr("id", "new_user_image");
+            $userChoice.appendTo($("#login_overlay"));
+            $userChoiceImage.appendTo($userChoice);
+            $userChoiceLabel.appendTo($userChoice);
+
+            
+            $("#create_new_user").html(
+                "<input maxlength = 25>" +
+                "</input>" + 
+                "<button onclick = \"javascript:createNewUser();\">" +
+                "Create</button>" +
+                "<button onclick = \"javascript:selectUser(true);\">" +
+                "Cancel</button>"
+                
+            );
+            
+            $("#login_overlay").css({
+                "left": ($("#base_page").width()/2) - ($("#login_overlay").width()/2),
+            });
+        });
+        
+        
+        $("#login_overlay").css({
+            "left": ($("#base_page").width()/2) - ($("#login_overlay").width()/2),
+        });
+        
+        //$("#login_overlay_link").html();
+    }
+}
+
+function createNewUser(){
+    if ($.inArray($("#create_new_user input").val(), usernames) == -1){
+        userName = $("#create_new_user input").val();
+        store(userName);
+        fadeLoginOverlay();
         // load user schedule info
         loadUserSchedules(false);
         // load user profile info
         prepProfile();
-
-    });
+        // load user resume
+        initPDF();
+        loadUserResume(userName, false);
+    }
+    else
+        alert("That user name already exists.");
 }

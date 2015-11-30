@@ -22,7 +22,7 @@
     width: 75vw;
     overflow-y: hidden;
     overflow-x: hidden;
-    z-index: 901;
+    z-index: 801;
     position: absolute;
     min-height: 83vh;
     min-width: 75vw;
@@ -39,7 +39,7 @@
     width: 90vw;
     overflow-y: hidden;
     overflow-x: hidden;
-    z-index: 901;
+    z-index: 801;
     position: absolute;
     min-height: 85vh;
     min-width: 90vw;
@@ -56,16 +56,16 @@
     width: 100vw;
     top: 7vh;
     overflow: hidden;
-    z-index: 900;
+    z-index: 800;
     position: absolute;
     background: rgba(100, 100, 100, 0.75);
 }
 
 #login_blanket{
-    z-index: 2002;
+    z-index: 902;
 }
 #schedule_blanket{
-    z-index: 2000;
+    z-index: 900;
     height: 75vh;
     width: 60vw;
     top: 12.5vh;
@@ -80,22 +80,19 @@
     top: 45vh;
     left: 45vw;
     position: absolute;
-    z-index: 2001;
+    z-index: 901;
     border-radius: 10px;
 }
 #login_overlay{
-    z-index: 2003;
+    z-index: 903;
     display: none;
-    background-image: url(images/2.png);
-    height: 20vh;
-    width: 15vw;
-    top: 40vh;
+    top: 32.5vh;
     left: 42.5vw;
     position: absolute;
     border-radius: 10px;
 }
 
-#login_overlay_link, #login_overlay_link:visited, #schedule_overlay_link, #schedule_overlay_link:visited,
+#schedule_overlay_link, #schedule_overlay_link:visited,
 #search_overlay_link, #search_overlay_link:visited{
     height: inherit;
     width: inherit;
@@ -109,8 +106,64 @@
     font-weight: bold;
 }
 
+.login_user_choice_image{
+    position: absolute;
+    top: 0.5vh;
+    left: 0.5vh;
+    width: 20vh;
+    height: 20vh;
+    background-image: url(images/profile-icon.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    display: table-cell;
+    vertical-align: middle;
+    
+}
+.login_user_choice{
+    position: relative;
+    height: 25vh;
+    width: 20vh;
+    display: inline-block;
+    margin: 0.5vw;
+    padding: 0.5vh;
+    background: lightgray;
+    border-radius: 10px;
+    
+}
+
+.login_user_choice_label{
+    position: absolute;
+    top: 20.5vh;
+    left: 0.5vh;
+    height: 5vh;
+    width: 20vh;
+    display: table-cell;
+    vertical-align: middle;
+    font-family: custom-font-1;
+    font-weight: bold;
+    font-size: 1.25em;
+    padding: 0;
+    text-align: center;
+    padding-top: 1.25vh;
+}
+
+.login_user_choice_label input{
+    width: 20vh;
+    text-align: center;
+    background: lightgrey;
+}
+
+.login_user_choice_label a, .login_user_choice_label a:visited{
+    width: inherit;
+    height: inherit;
+    display: block;
+    text-decoration: none;
+    color: black;
+    
+}
+
 #search_blanket{
-    z-index: 2000;
+    z-index: 900;
     height: 77vh;
     width: 15vw;
     top: 13vh;
@@ -125,30 +178,11 @@
     top: 46vh;
     left: 7.5vw;
     position: absolute;
-    z-index: 2001;
+    z-index: 901;
     border-radius: 10px;
 }
     
-#username, #email, #colleges, #majors, #academic_standing{
-    position: relative;
-    float: right;
-    width: 10vw;
-    background: white;
-    border-radius: 25px;
-    padding-left: 0.5vw;
-    padding-right: 0.5vw;
-    
-}
 
-#colleges, #majors, #academic_standing{
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url(images/triangle_down.png);
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: right;
-}
 
 
 

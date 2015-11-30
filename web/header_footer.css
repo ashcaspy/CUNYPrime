@@ -1,0 +1,36 @@
+
+/*HEADER AND FOOTER*/
+#header, #footer{
+	display: table-cell;
+	vertical-align: middle;
+	padding: 0;
+	background: #0D3692;
+	color: #FF8C13;
+	min-width: 910px;
+	width: 100vw;
+	height: 7vh;
+	max-height:7vh;
+	overflow: hidden;
+	background-image: url(images/1.png);
+	margin: 0 auto;
+}
+
+.footer_link{
+    
+}
+
+#header_logo{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 15vw;
+    height: inherit;
+    background: darkorange;
+    background-image: url(images/logo.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+#footer{
+	clear: both;
+}
