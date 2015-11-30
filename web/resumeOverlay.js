@@ -46,6 +46,7 @@ function generatePDF(){
         stateString = ", ";
     if ($("#resume_zip").val() != "")
         zipString = ", ";
+
     
     
     
@@ -293,7 +294,6 @@ function generatePDF(){
     $("#pdf_view_pane_backup").attr("src", printDoc.output("datauristring"));
     
     storeUserResume(userName);
-    
 }
 
 function downloadPDF(){
@@ -693,7 +693,6 @@ function loadUserResume(username, flag){
     }
 }
 
-
 // ADD NEW EDUCATION/WORK/SKILL
 var workCounter = 0;
 var educationCounter = 0;
@@ -752,6 +751,7 @@ function addSkill(){
     $("#resume_skills").append($("<div>").addClass("resume_filler").html("<b>Skill/Interest " + (skillCounter+1) + "</b><div class = \"resume_remove_section\"><a href = \"#\" class = \"resume_remove_section_link\" id = \"testid\" onclick = \"javascript:removeSkill(" + skillCounter + ");\"></a></div>").attr("id", "resume_skill_filler_" + skillCounter));
     $("#resume_skills").append($newSkill);
     skillCounter++;
+
     if (checkMobile() == true){
         $(".resume_input_div br").css({"line-height":"200%"});
     }
@@ -776,6 +776,7 @@ function removeEducation(num){
     }
 }
 
+
 function removeWork(num){
     $("#resume_work_" + num).remove();
     $("#resume_work_filler_" + num).remove();
@@ -787,6 +788,7 @@ function removeWork(num){
     }
     
     workCounter--;
+
     if (checkMobile() == true){
         $(".resume_input_div br").css({"line-height":"200%"});
     }
