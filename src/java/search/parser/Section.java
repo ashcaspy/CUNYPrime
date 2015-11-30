@@ -106,7 +106,11 @@ public class Section {
      * meets at different times it will insert one row for each timeslot
      */
     void addToTable(Connection conn, String offset, Course owner) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO sections" + offset + " VALUES (?,?,?,?,?,?,?,?,?,?)");
+        PreparedStatement st = conn.prepareStatement("INSERT INTO sections" + offset + 
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+        
+        st.setInt(11, 1);
+        
         st.setString(1, owner.dept);
         st.setString(2, owner.number);
         st.setString(3, owner.name);
@@ -144,6 +148,7 @@ public class Section {
                 st.setString(5, start[i]);
                 st.setString(6, end[i]);
                 st.setString(7, days[i]);
+                st.setInt(11, i+1);
                 st.executeUpdate();
             }
         }
@@ -183,7 +188,8 @@ public class Section {
                         "days varchar(21)," +
                         "room varchar(40)," +
                         "instructor varchar(200)," +
-                        "open boolean" +
+                        "open boolean," +
+                        "count int" +
                         ")");
     }
 }
