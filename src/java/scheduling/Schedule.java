@@ -25,7 +25,7 @@ public class Schedule {
 
 
     /**
-     * A function that takes in aString arrays containing available times for selecte days, and sets the member variables according to values in the arrays.
+     * A function that takes in a String array containing available times for selecte days, and sets those values for those days.
      * @param timesArr, A string array containing available or unavailable time slots for selected days.
      */
     public void setOpenTimes (String timesArr []){
@@ -65,6 +65,20 @@ public class Schedule {
             }
         }
     }
+
+
+    /**
+     * A function that takes in a String array containing unavailable time slots for selected days, and set those values for those days.
+     * @param closeTimes, A String array containing unavailable time slots for selected days.
+     */
+    public void setCloseTimes(String closeTimes []){
+        String temp [];
+        for (int i = 0; i < closeTimes.length; i++){
+            temp = closeTimes[i].split("-");
+            mySchedule.get(Integer.parseInt(temp[2].replaceAll(" ", ""))).addToCloseTimes(Integer.parseInt(temp[3].replaceAll(" ", "")));
+        }
+    }
+
 
     /**
      * A function that prints the contents of the mySchedule array of Days.
