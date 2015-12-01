@@ -87,11 +87,12 @@ public class Search {
                 new Parser(client.getResults()).addToTable(conn, offset);
             } catch (IOException e) { }
         }
-
+        /*
         ++counter;
         if(counter > 2) {
             counter = 1;
         }
+        */
     }
 
 }
