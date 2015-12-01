@@ -66,9 +66,8 @@ public class Search {
 
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
-        String offset = Integer.toString(counter) + "_" + id;
         try {
-            Section.createTable(conn, offset);
+            Section.createTable(conn, offset());
         } catch(SQLException e) {
             e.printStackTrace();
             return;
@@ -77,14 +76,14 @@ public class Search {
         if(null != departments) {
             for (String dept : departments) {
                 try {
-                    new Parser(client.getResults(dept)).addToTable(conn, offset);
+                    new Parser(client.getResults(dept)).addToTable(conn, offset());
                 } catch (IOException e) {
                 }
             }
         }
         else {
             try {
-                new Parser(client.getResults()).addToTable(conn, offset);
+                new Parser(client.getResults()).addToTable(conn, offset());
             } catch (IOException e) { }
         }
         /*
@@ -93,6 +92,14 @@ public class Search {
             counter = 1;
         }
         */
+    }
+    
+    public String tableName() {
+        return Section.tablename + offset();
+    }
+    
+    private String offset() {
+        return Integer.toString(counter) + "_" + id;
     }
 
 }
