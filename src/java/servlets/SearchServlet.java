@@ -107,8 +107,11 @@ public class SearchServlet extends HttpServlet {
         String prof = request.getParameter("prof_value");
         
         System.out.println(college);
+        // use the original term since ID.semester() reconstructs the same thing
+        /*
         int year = Integer.parseInt(term.substring(0, 4));
         term = term.split(" ")[1];
+        */
         System.out.println(term);
 
         // by default, select all courses that meet the other criteria
@@ -128,7 +131,7 @@ public class SearchServlet extends HttpServlet {
         
         System.out.println("OKAY HERE2");
         Search searcher = new Search(conn, 1);
-        searcher.selectTerm(college.toUpperCase(), ID.semester("Fall", 2015));
+        searcher.selectTerm(college.toUpperCase(), term);
         searcher.find(
             mvpair, 
             //new TimeRange(10, 12), 
