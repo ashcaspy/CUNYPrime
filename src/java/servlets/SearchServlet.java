@@ -110,8 +110,16 @@ public class SearchServlet extends HttpServlet {
         int year = Integer.parseInt(term.substring(0, 4));
         term = term.split(" ")[1];
         System.out.println(term);
-        if (course_num == "")
-            course_num = "0";
+
+        // by default, select all courses that meet the other criteria
+        MatchValuePair mvpair;
+        if (course_num == "") {
+            mvpair = new MatchValuePair(ID.greaterThan, "0");
+        }
+        else {
+            mvpair = new MatchValuePair(ID.contains, course_num);
+        }
+        
         if (keyword == "")
             keyword = null;
         if (prof == "")
@@ -122,7 +130,7 @@ public class SearchServlet extends HttpServlet {
         Search searcher = new Search(conn, 1);
         searcher.selectTerm(college.toUpperCase(), ID.semester("Fall", 2015));
         searcher.find(
-            new MatchValuePair(ID.contains, course_num), 
+            mvpair, 
             //new TimeRange(10, 12), 
             //new TimeRange(11, 14), 
             null, null,
