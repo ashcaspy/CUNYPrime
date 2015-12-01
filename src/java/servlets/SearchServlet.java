@@ -113,16 +113,16 @@ public class SearchServlet extends HttpServlet {
 
         // by default, select all courses that meet the other criteria
         MatchValuePair mvpair;
-        if (course_num == "") {
+        if ("".equals(course_num)) {
             mvpair = new MatchValuePair(ID.greaterThan, "0");
         }
         else {
             mvpair = new MatchValuePair(ID.contains, course_num);
         }
         
-        if (keyword == "")
+        if ("".equals(keyword))
             keyword = null;
-        if (prof == "")
+        if ("".equals(prof))
             prof = null;
         
         
