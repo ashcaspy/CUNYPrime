@@ -200,61 +200,18 @@ public class SearchServlet extends HttpServlet {
             preparedStatement = conn.prepareStatement(queryA);
             preparedStatement.execute();
             resultSet = preparedStatement.executeQuery();
+            
+            String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
+            
             while (resultSet.next()){
                 String queryC = "Update " + searcher.tableName() + " set points = " + (resultSet.getInt("points") + 2) + " where cdept = " + resultSet.getString("cdept") + " and cnbr = " + resultSet.getString("cnbr") + " and sec = " + resultSet.getString("sec");
                 days = resultSet.getString("days");
-                if(days.contains("Mo")){
-                    Day temp = schedule.getElementFromSchedule(1);
-                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
-                }
-                if(days.contains("Tu")){
-                    Day temp = schedule.getElementFromSchedule(2);
-                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
-
-                }
-                if (days.contains("We")){
-                    Day temp = schedule.getElementFromSchedule(3);
-                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
-
-                }
-
-                if (days.contains("Th")){
-                    Day temp = schedule.getElementFromSchedule(4);
-                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
-
-                }
-                if(days.contains("Fr")){
-                    Day temp = schedule.getElementFromSchedule(2);
-                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
-
-                }
-                if(days.contains("Sa")){
-                    Day temp = schedule.getElementFromSchedule(6);
-                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
-
-                }
-                if(days.contains("Su")){
-                    Day temp = schedule.getElementFromSchedule(0);
-                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
-
-                    /*if( !temp.isCloseTimesEmpty()){
-                        while (closeTimeIndex < temp.getCloseTimeSize()) {
-                            if(temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("starttime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if (temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if(temp.getClosedTimeElement(closeTimeIndex) > Integer.parseInt(resultSet.getString("starttime")) && temp.getClosedTimeElement(closeTimeIndex) < Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            }
-                            closeTimeIndex++;
-                        }
+                for(int i=0; i<WEEK.length; ++i) {
+                    if(days.contains(WEEK[i])) {
+                        Day temp = schedule.getElementFromSchedule(i);
+                        closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
                     }
-                    closeTimeIndex = 0;*/
                 }
-
             }
         } catch (SQLException e) {
 
