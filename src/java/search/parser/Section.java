@@ -107,9 +107,13 @@ public class Section {
      */
     void addToTable(Connection conn, String offset, Course owner) throws SQLException {
         PreparedStatement st = conn.prepareStatement("INSERT INTO sections" + offset + 
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?)");
-        
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+
+        //default count is 1
         st.setInt(11, 1);
+        
+        //initial points is 0
+        st.setInt(12, 0);
         
         st.setString(1, owner.dept);
         st.setString(2, owner.number);
@@ -189,7 +193,8 @@ public class Section {
                         "room varchar(40)," +
                         "instructor varchar(200)," +
                         "open boolean," +
-                        "count int" +
+                        "count int," +
+                        "points int" +
                         ")");
     }
 }
