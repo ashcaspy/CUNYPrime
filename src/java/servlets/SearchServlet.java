@@ -77,6 +77,33 @@ public class SearchServlet extends HttpServlet {
 
     }
 
+
+    protected void closeTimeMatchAction (Connection conn, ResultSet res, String queryC, Day day, int closeTimeIndex, PreparedStatement preparedStatement){
+        if(!day.isCloseTimesEmpty()){
+            while (closeTimeIndex < day.getCloseTimeSize()){
+                try{
+                    if(day.getClosedTimeElement(closeTimeIndex) == res.getInt("starttime")){
+                        preparedStatement = conn.prepareStatement(queryC);
+                        preparedStatement.execute();
+                    } else if(day.getClosedTimeElement(closeTimeIndex) == res.getInt("endtime")){
+                        preparedStatement = conn.prepareStatement(queryC);
+                        preparedStatement.execute();
+                    } else if(day.getClosedTimeElement(closeTimeIndex) > res.getInt("starttime") && day.getClosedTimeElement(closeTimeIndex) < res.getInt("endtime")){
+                        preparedStatement = conn.prepareStatement(queryC);
+                        preparedStatement.execute();
+                    }
+                } catch (SQLException e){
+                    e.printStackTrace();
+
+                }
+
+            }
+        }
+
+    }
+
+
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -123,7 +150,7 @@ public class SearchServlet extends HttpServlet {
         else {
             mvpair = new MatchValuePair(ID.contains, course_num);
         }
-        
+
         if ("".equals(keyword))
             keyword = null;
         if ("".equals(prof))
@@ -135,14 +162,14 @@ public class SearchServlet extends HttpServlet {
         searcher.selectTerm(college.toUpperCase(), term);
         searcher.find(
 
-            mvpair, 
-            //new TimeRange(10, 12), 
-            //new TimeRange(11, 14), 
-            null, null,
-            keyword, 
-            prof,
-            new int[] {},
-            Arrays.asList(new String[]{dept})
+                mvpair,
+                //new TimeRange(10, 12),
+                //new TimeRange(11, 14),
+                null, null,
+                keyword,
+                prof,
+                new int[] {},
+                Arrays.asList(new String[]{dept})
         );
         searcher.find(
                 new MatchValuePair(ID.greaterThan, "0"),
@@ -163,10 +190,9 @@ public class SearchServlet extends HttpServlet {
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         int closeTimeIndex = 0;
-        //NEED ID_NUM
-        String id_num = "1";
 
-        String queryA = "select * from sections1_"+ id_num;
+
+        String queryA = "select * from "+ searcher.tableName();
 
 
         try {
@@ -175,126 +201,43 @@ public class SearchServlet extends HttpServlet {
             preparedStatement.execute();
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
-                String queryC = "Update sections1_" + id_num + " set points = " + (resultSet.getInt("points") + 2) + " where cdept = " + resultSet.getString("cdept") + " and cnbr = " + resultSet.getString("cnbr") + " and sec = " + resultSet.getString("sec");
+                String queryC = "Update " + searcher.tableName() + " set points = " + (resultSet.getInt("points") + 2) + " where cdept = " + resultSet.getString("cdept") + " and cnbr = " + resultSet.getString("cnbr") + " and sec = " + resultSet.getString("sec");
                 days = resultSet.getString("days");
                 if(days.contains("Mo")){
                     Day temp = schedule.getElementFromSchedule(1);
-                    if( !temp.isCloseTimesEmpty()){
-                        while (closeTimeIndex < temp.getCloseTimeSize()) {
-                            if(temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("starttime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if (temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if(temp.getClosedTimeElement(closeTimeIndex) > Integer.parseInt(resultSet.getString("starttime")) && temp.getClosedTimeElement(closeTimeIndex) < Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            }
-                            closeTimeIndex++;
-                        }
-                    }
-                    closeTimeIndex = 0;
+                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
                 }
                 if(days.contains("Tu")){
                     Day temp = schedule.getElementFromSchedule(2);
-                    if( !temp.isCloseTimesEmpty()){
-                        while (closeTimeIndex < temp.getCloseTimeSize()) {
-                            if(temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("starttime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if (temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if(temp.getClosedTimeElement(closeTimeIndex) > Integer.parseInt(resultSet.getString("starttime")) && temp.getClosedTimeElement(closeTimeIndex) < Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            }
-                            closeTimeIndex++;
-                        }
-                    }
-                    closeTimeIndex = 0;
+                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
+
                 }
                 if (days.contains("We")){
                     Day temp = schedule.getElementFromSchedule(3);
-                    if( !temp.isCloseTimesEmpty()){
-                        while (closeTimeIndex < temp.getCloseTimeSize()) {
-                            if(temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("starttime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if (temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if(temp.getClosedTimeElement(closeTimeIndex) > Integer.parseInt(resultSet.getString("starttime")) && temp.getClosedTimeElement(closeTimeIndex) < Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            }
-                            closeTimeIndex++;
-                        }
-                    }
-                    closeTimeIndex = 0;
+                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
+
                 }
 
                 if (days.contains("Th")){
                     Day temp = schedule.getElementFromSchedule(4);
-                    if( !temp.isCloseTimesEmpty()){
-                        while (closeTimeIndex < temp.getCloseTimeSize()) {
-                            if(temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("starttime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if (temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if(temp.getClosedTimeElement(closeTimeIndex) > Integer.parseInt(resultSet.getString("starttime")) && temp.getClosedTimeElement(closeTimeIndex) < Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            }
-                            closeTimeIndex++;
-                        }
-                    }
-                    closeTimeIndex = 0;
+                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
+
                 }
                 if(days.contains("Fr")){
                     Day temp = schedule.getElementFromSchedule(2);
-                    if( !temp.isCloseTimesEmpty()){
-                        while (closeTimeIndex < temp.getCloseTimeSize()) {
-                            if(temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("starttime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if (temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if(temp.getClosedTimeElement(closeTimeIndex) > Integer.parseInt(resultSet.getString("starttime")) && temp.getClosedTimeElement(closeTimeIndex) < Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            }
-                            closeTimeIndex++;
-                        }
-                    }
-                    closeTimeIndex = 0;
+                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
+
                 }
                 if(days.contains("Sa")){
                     Day temp = schedule.getElementFromSchedule(6);
-                    if( !temp.isCloseTimesEmpty()){
-                        while (closeTimeIndex < temp.getCloseTimeSize()) {
-                            if(temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("starttime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if (temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            } else if(temp.getClosedTimeElement(closeTimeIndex) > Integer.parseInt(resultSet.getString("starttime")) && temp.getClosedTimeElement(closeTimeIndex) < Integer.parseInt(resultSet.getString("endtime"))){
-                                preparedStatement = conn.prepareStatement(queryC);
-                                preparedStatement.execute();
-                            }
-                            closeTimeIndex++;
-                        }
-                    }
-                    closeTimeIndex = 0;
+                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
+
                 }
                 if(days.contains("Su")){
                     Day temp = schedule.getElementFromSchedule(0);
-                    if( !temp.isCloseTimesEmpty()){
+                    closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
+
+                    /*if( !temp.isCloseTimesEmpty()){
                         while (closeTimeIndex < temp.getCloseTimeSize()) {
                             if(temp.getClosedTimeElement(closeTimeIndex) == Integer.parseInt(resultSet.getString("starttime"))){
                                 preparedStatement = conn.prepareStatement(queryC);
@@ -309,7 +252,7 @@ public class SearchServlet extends HttpServlet {
                             closeTimeIndex++;
                         }
                     }
-                    closeTimeIndex = 0;
+                    closeTimeIndex = 0;*/
                 }
 
             }
@@ -324,12 +267,12 @@ public class SearchServlet extends HttpServlet {
         response.setHeader("Cache-Control", "no-cache");
         college = college.toLowerCase();
 
-        String query1 = 
+        String query1 =
                 "select * into combined_section_table1 "
-                + "from " + searcher.tableName() + " left join college_courses" + college + 
-                " on " + searcher.tableName() +".cdept = college_courses" + college + ".dept and "
-                + searcher.tableName() + ".cnbr = college_courses" +
-                college + ".nbr;";
+                        + "from " + searcher.tableName() + " left join college_courses" + college +
+                        " on " + searcher.tableName() +".cdept = college_courses" + college + ".dept and "
+                        + searcher.tableName() + ".cnbr = college_courses" +
+                        college + ".nbr;";
         System.out.println(query1);
         String query2 = "alter table combined_section_table1 drop column dept";
         String query3 = "alter table combined_section_table1 drop column nbr";
