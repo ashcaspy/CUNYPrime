@@ -134,16 +134,7 @@ public class SearchServlet extends HttpServlet {
         Search searcher = new Search(conn, 1);
         searcher.selectTerm(college.toUpperCase(), term);
         searcher.find(
-<<<<<<< HEAD
-                new MatchValuePair(ID.contains, course_num),
-                //new TimeRange(10, 12),
-                //new TimeRange(11, 14),
-                null, null,
-                keyword,
-                prof,
-                new int[] {},
-                Arrays.asList(new String[]{dept})
-=======
+
             mvpair, 
             //new TimeRange(10, 12), 
             //new TimeRange(11, 14), 
@@ -152,7 +143,6 @@ public class SearchServlet extends HttpServlet {
             prof,
             new int[] {},
             Arrays.asList(new String[]{dept})
->>>>>>> 2d6a911d295c868676bec555c69864611852f792
         );
         searcher.find(
                 new MatchValuePair(ID.greaterThan, "0"),
@@ -333,20 +323,13 @@ public class SearchServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setHeader("Cache-Control", "no-cache");
         college = college.toLowerCase();
-<<<<<<< HEAD
 
-        String query1 =
-                "select * into combined_section_table1 from sections1_1 left join college_courses" + college +
-                        " on sections1_1.cdept = college_courses" + college + ".dept and sections1_1.cnbr = college_courses" +
-                        college + ".nbr;";
-=======
         String query1 = 
                 "select * into combined_section_table1 "
                 + "from " + searcher.tableName() + " left join college_courses" + college + 
                 " on " + searcher.tableName() +".cdept = college_courses" + college + ".dept and "
                 + searcher.tableName() + ".cnbr = college_courses" +
                 college + ".nbr;";
->>>>>>> 2d6a911d295c868676bec555c69864611852f792
         System.out.println(query1);
         String query2 = "alter table combined_section_table1 drop column dept";
         String query3 = "alter table combined_section_table1 drop column nbr";
@@ -357,8 +340,8 @@ public class SearchServlet extends HttpServlet {
         //PreparedStatement preparedStatement;
         //ResultSet resultSet;
         System.out.println("OKAY HERE3");
+
         try {
-<<<<<<< HEAD
 
             preparedStatement = conn.prepareStatement(query1);
             preparedStatement.execute();
@@ -394,45 +377,6 @@ public class SearchServlet extends HttpServlet {
             preparedStatement = conn.prepareStatement(query6);
             preparedStatement.execute();
 
-
-=======
-         
-         preparedStatement = conn.prepareStatement(query1);
-         preparedStatement.execute();
-         preparedStatement = conn.prepareStatement(query2);
-         preparedStatement.execute();
-         preparedStatement = conn.prepareStatement(query3);
-         preparedStatement.execute();
-            
-        
-         preparedStatement = conn.prepareStatement(query4);
-         resultSet = preparedStatement.executeQuery();
-         
-         System.out.println("OKAY HERE4");
-         while(resultSet.next()) {
-          response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
-          response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
-          response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
-          response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
-          response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
-          response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
-          response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
-          response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
-          response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
-          response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
-          response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
-          response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
-          response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
-          response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
-         }
-         System.out.println("OKAY HERE5");
-         preparedStatement = conn.prepareStatement(query5);
-         preparedStatement.execute();
-         preparedStatement = conn.prepareStatement(query6);
-         preparedStatement.execute();         
-         
-         
->>>>>>> 2d6a911d295c868676bec555c69864611852f792
         }
         catch (SQLException e) {
 
