@@ -78,19 +78,16 @@ public class SearchServlet extends HttpServlet {
     }
 
 
-    protected void closeTimeMatchAction (Connection conn, ResultSet res, String queryC, Day day, int closeTimeIndex, PreparedStatement preparedStatement){
+    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, int closeTimeIndex){
         if(!day.isCloseTimesEmpty()){
             while (closeTimeIndex < day.getCloseTimeSize()){
                 try{
                     if(day.getClosedTimeElement(closeTimeIndex) == res.getInt("starttime")){
-                        preparedStatement = conn.prepareStatement(queryC);
-                        preparedStatement.execute();
+                        update.execute();
                     } else if(day.getClosedTimeElement(closeTimeIndex) == res.getInt("endtime")){
-                        preparedStatement = conn.prepareStatement(queryC);
-                        preparedStatement.execute();
+                        update.execute();
                     } else if(day.getClosedTimeElement(closeTimeIndex) > res.getInt("starttime") && day.getClosedTimeElement(closeTimeIndex) < res.getInt("endtime")){
-                        preparedStatement = conn.prepareStatement(queryC);
-                        preparedStatement.execute();
+                        update.execute();
                     }
                 } catch (SQLException e){
                     e.printStackTrace();
@@ -202,14 +199,21 @@ public class SearchServlet extends HttpServlet {
             resultSet = preparedStatement.executeQuery();
             
             String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
-            
+            PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
+                    + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
+
             while (resultSet.next()){
-                String queryC = "Update " + searcher.tableName() + " set points = " + (resultSet.getInt("points") + 2) + " where cdept = " + resultSet.getString("cdept") + " and cnbr = " + resultSet.getString("cnbr") + " and sec = " + resultSet.getString("sec");
+                update.setInt(1, resultSet.getInt("points")+2);
+                update.setString(2, resultSet.getString("cdept"));
+                update.setString(3, resultSet.getString("cnbr"));
+                update.setString(4, resultSet.getString("sec"));
+                
                 days = resultSet.getString("days");
+
                 for(int i=0; i<WEEK.length; ++i) {
                     if(days.contains(WEEK[i])) {
                         Day temp = schedule.getElementFromSchedule(i);
-                        closeTimeMatchAction(conn, resultSet, queryC, temp, closeTimeIndex, preparedStatement);
+                        closeTimeMatchAction(resultSet, update, temp, closeTimeIndex);
                     }
                 }
             }
