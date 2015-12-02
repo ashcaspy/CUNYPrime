@@ -92,6 +92,7 @@ public class SearchServlet extends HttpServlet {
                         preparedStatement = conn.prepareStatement(queryC);
                         preparedStatement.execute();
                     }
+                    closeTimeIndex++;
                 } catch (SQLException e){
                     e.printStackTrace();
 
