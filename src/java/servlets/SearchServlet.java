@@ -158,15 +158,17 @@ public class SearchServlet extends HttpServlet {
         response.setHeader("Cache-Control", "no-cache");
         college = college.toLowerCase();
         String query1 = 
-                "select * into combined_section_table1 from sections1_1 left join college_courses" + college + 
-                " on sections1_1.cdept = college_courses" + college + ".dept and sections1_1.cnbr = college_courses" +
+                "select * into combined_section_table1 "
+                + "from " + searcher.tableName() + " left join college_courses" + college + 
+                " on " + searcher.tableName() +".cdept = college_courses" + college + ".dept and "
+                + searcher.tableName() + ".cnbr = college_courses" +
                 college + ".nbr;";
         System.out.println(query1);
         String query2 = "alter table combined_section_table1 drop column dept";
         String query3 = "alter table combined_section_table1 drop column nbr";
         String query4 = "select * from combined_section_table1";
         String query5 = "drop table combined_section_table1;";
-        String query6 = "drop table sections1_1";
+        String query6 = "drop table " + searcher.tableName();
         //String query1 = "select * from sections1_1";
         PreparedStatement preparedStatement;
         ResultSet resultSet;
@@ -205,7 +207,7 @@ public class SearchServlet extends HttpServlet {
          preparedStatement = conn.prepareStatement(query5);
          preparedStatement.execute();
          preparedStatement = conn.prepareStatement(query6);
-         preparedStatement.execute();
+         preparedStatement.execute();         
          
          
         }
