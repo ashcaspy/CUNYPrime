@@ -80,6 +80,18 @@ public class Schedule {
     }
 
 
+    public int getSize(){
+        return mySchedule.size();
+    }
+
+    public Day getElementFromSchedule(int index){
+        if (index > -1 && index < mySchedule.size()){
+            return mySchedule.get(index);
+        }
+        return null;
+    }
+
+
     /**
      * A function that prints the contents of the mySchedule array of Days.
      */

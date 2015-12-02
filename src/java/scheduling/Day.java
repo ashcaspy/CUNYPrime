@@ -93,6 +93,9 @@ public class Day {
     public int getCloseTimeSize() { return closeTimes.size(); }
 
 
+    public boolean isCloseTimesEmpty(){
+        return closeTimes.isEmpty();
+    }
 
     /**
      * A function that prints out the available and unavailable time slots for selected days.
