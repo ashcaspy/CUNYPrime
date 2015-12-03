@@ -233,10 +233,12 @@ function loadTab(tabNum){
         //insert relevant content
         if (tabNum == 1){
             $("#left_scroll_wrapper").load("left_tab_1.html");
+            collegesLoaded = false;
         }
         
         else if (tabNum == 2){
             $("#left_scroll_wrapper").load("left_tab_2.html");
+            
         }
     }
         

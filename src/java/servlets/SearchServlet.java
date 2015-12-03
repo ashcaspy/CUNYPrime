@@ -116,9 +116,10 @@ public class SearchServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //processRequest(request, response);
-
-        // CALL KAT'S FUNCTION HERE
+        
+        /**********************************************************************/
+        // Initializing connection and search regardless of search type (may move)
+        /**********************************************************************/
         Connection conn = null;
         System.out.println("OKAY HERE1");
         try {
@@ -128,20 +129,19 @@ public class SearchServlet extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+        Search searcher;
+        
+        /**********************************************************************/
+        // getting parameters here regardless of search type
+        /**********************************************************************/
+        
         String college = request.getParameter("college_value").toLowerCase();
         String term = request.getParameter("term_value");
         String dept = request.getParameter("dept_value");
         String course_num = request.getParameter("course_num_value");
         String keyword = request.getParameter("keyword_value");
         String prof = request.getParameter("prof_value");
-
-        System.out.println(college);
-        // use the original term since ID.semester() reconstructs the same thing
-        /*
-        int year = Integer.parseInt(term.substring(0, 4));
-        term = term.split(" ")[1];
-        */
-        System.out.println(term);
+        int id_num = Integer.parseInt(request.getParameter("id_num"));
 
         MatchValuePair mvpair = null;
         if (!"".equals(course_num)) {
@@ -152,153 +152,210 @@ public class SearchServlet extends HttpServlet {
             keyword = null;
         if ("".equals(prof))
             prof = null;
-
-
-        System.out.println("OKAY HERE2");
-        Search searcher = new Search(conn, Integer.parseInt(request.getParameter("id_num")));
-        searcher.selectTerm(college.toUpperCase(), term);
-        searcher.find(
-
-                mvpair,
-                //new TimeRange(10, 12),
-                //new TimeRange(11, 14),
-                null, null,
-                keyword,
-                prof,
-                new int[] {},
-                Arrays.asList(new String[]{dept})
-        );
-        searcher.find(
-                new MatchValuePair(ID.greaterThan, "0"),
-                10,
-                3,
-                null,
-                null,
-                new int[] {3},
-                Arrays.asList(new String[]{"CSCI", "ANTHC"})
-        );
-
-        //Test values for available and unavailable times.
-        String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
-        String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
-        Schedule schedule = new Schedule();
-        schedule.setOpenTimes(testArr);
-        schedule.setCloseTimes(testArr2);
-        PreparedStatement preparedStatement;
-        ResultSet resultSet;
-
-
-        String queryA = "select * from "+ searcher.tableName();
-
-        int value[] = {0};
-
-        try {
-            String days = "";
-            preparedStatement = conn.prepareStatement(queryA);
-            preparedStatement.execute();
-            resultSet = preparedStatement.executeQuery();
+         System.out.println(request.getParameter("search_type"));
+        /**********************************************************************/
+        // Advanced search (some of Grace's code is still in here)
+        /**********************************************************************/
+        if (request.getParameter("search_type").equals("DEFAULT_SEARCH")){
             
-            String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
-            PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
-                    + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
+            System.out.println("OKAY HERE2");
+            searcher = new Search(conn, id_num);
+            searcher.selectTerm(college.toUpperCase(), term);
+            searcher.find(
+
+                    mvpair,
+                    //new TimeRange(10, 12),
+                    //new TimeRange(11, 14),
+                    null, null,
+                    keyword,
+                    prof,
+                    new int[] {},
+                    Arrays.asList(new String[]{dept})
+            );
+            searcher.find(
+                    new MatchValuePair(ID.greaterThan, "0"),
+                    10,
+                    3,
+                    null,
+                    null,
+                    new int[] {3},
+                    Arrays.asList(new String[]{"CSCI", "ANTHC"})
+            );
+
+            /**********************************************************************/
+            // Grace's code -- must be moved to relevant spot
+            /**********************************************************************/
+            
+            /*
+            //Test values for available and unavailable times.
+            String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
+            String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
+            Schedule schedule = new Schedule();
+            schedule.setOpenTimes(testArr);
+            schedule.setCloseTimes(testArr2);
+            PreparedStatement preparedStatement;
+            ResultSet resultSet;
+
+
+            String queryA = "select * from "+ searcher.tableName();
+
+            int value[] = {0};
+
+            try {
+                String days = "";
+                preparedStatement = conn.prepareStatement(queryA);
+                preparedStatement.execute();
+                resultSet = preparedStatement.executeQuery();
+
+                String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
+                PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
+                        + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
 
 
 
-            while (resultSet.next()){
+                while (resultSet.next()){
 
-                update.setString(2, resultSet.getString("cdept"));
-                update.setString(3, resultSet.getString("cnbr"));
-                update.setString(4, resultSet.getString("sec"));
-                
-                days = resultSet.getString("days");
+                    update.setString(2, resultSet.getString("cdept"));
+                    update.setString(3, resultSet.getString("cnbr"));
+                    update.setString(4, resultSet.getString("sec"));
 
-                for(int i=0; i<WEEK.length; ++i) {
-                    if(days.contains(WEEK[i])) {
-                        Day temp = schedule.getElementFromSchedule(i);
-                        closeTimeMatchAction(resultSet, update, temp);
+                    days = resultSet.getString("days");
+
+                    for(int i=0; i<WEEK.length; ++i) {
+                        if(days.contains(WEEK[i])) {
+                            Day temp = schedule.getElementFromSchedule(i);
+                            closeTimeMatchAction(resultSet, update, temp);
+                        }
                     }
                 }
+            } catch (SQLException e) {
+
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
+            */
+            /******************************************************************/
+            // End of Grace's code
+            /******************************************************************/
 
-            e.printStackTrace();
+            /******************************************************************/
+            // Response parsing -- leave this to Ashley unless you're testing
+            //  If you're testing, remember to change the table names where relevant
+            //      ex: bestfit, someconflicts, etc
+            /******************************************************************/
+
+            response.setContentType("text/html");
+            response.setHeader("Cache-Control", "no-cache");
+            college = college.toLowerCase();
+
+            String query1 =
+                    "select * into combined_section_table1 "
+                            + "from " + searcher.tableName() + " left join college_courses" + college +
+                            " on " + searcher.tableName() +".cdept = college_courses" + college + ".dept and "
+                            + searcher.tableName() + ".cnbr = college_courses" +
+                            college + ".nbr;";
+            System.out.println(query1);
+            String query2 = "alter table combined_section_table1 drop column dept";
+            String query3 = "alter table combined_section_table1 drop column nbr";
+            String query4 = "select * from combined_section_table1";
+            String query5 = "drop table combined_section_table1;";
+            String query6 = "drop table " + searcher.tableName();
+
+            PreparedStatement preparedStatement;
+            ResultSet resultSet;
+
+            try {
+
+             preparedStatement = conn.prepareStatement(query1);
+             preparedStatement.execute();
+             preparedStatement = conn.prepareStatement(query2);
+             preparedStatement.execute();
+             preparedStatement = conn.prepareStatement(query3);
+             preparedStatement.execute();
+
+
+             preparedStatement = conn.prepareStatement(query4);
+             resultSet = preparedStatement.executeQuery();
+
+             while(resultSet.next()) {
+              response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
+              response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
+              response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
+              response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
+              response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
+              response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
+              response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
+              response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
+              response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
+              response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
+              response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
+              response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
+              response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
+              response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
+             }
+             System.out.println("OKAY HERE5");
+             preparedStatement = conn.prepareStatement(query5);
+             preparedStatement.execute();
+             preparedStatement = conn.prepareStatement(query6);
+             preparedStatement.execute();
+
+
+            }
+            catch (SQLException e) {
+
+                e.printStackTrace();
+            }
         }
-
-
-
-        response.setContentType("text/html");
-        response.setHeader("Cache-Control", "no-cache");
-        college = college.toLowerCase();
-
-        String query1 =
-                "select * into combined_section_table1 "
-                        + "from " + searcher.tableName() + " left join college_courses" + college +
-                        " on " + searcher.tableName() +".cdept = college_courses" + college + ".dept and "
-                        + searcher.tableName() + ".cnbr = college_courses" +
-                        college + ".nbr;";
-        System.out.println(query1);
-        String query2 = "alter table combined_section_table1 drop column dept";
-        String query3 = "alter table combined_section_table1 drop column nbr";
-        String query4 = "select * from combined_section_table1";
-        String query5 = "drop table combined_section_table1;";
-        String query6 = "drop table " + searcher.tableName();
-        //String query1 = "select * from sections1_1";
-        //PreparedStatement preparedStatement;
-        //ResultSet resultSet;
-        System.out.println("OKAY HERE3");
-
-        try {
-         
-         preparedStatement = conn.prepareStatement(query1);
-         preparedStatement.execute();
-         preparedStatement = conn.prepareStatement(query2);
-         preparedStatement.execute();
-         preparedStatement = conn.prepareStatement(query3);
-         preparedStatement.execute();
+        
+        /**********************************************************************/
+        // Time focused search
+        /**********************************************************************/
+        else if (request.getParameter("search_type").equals("TIME_FOCUSED_SEARCH")){
+            
+        /**********************************************************************/
+        // parsing of parameters specific to this search goes here
+        /**********************************************************************/
             
         
-         preparedStatement = conn.prepareStatement(query4);
-         resultSet = preparedStatement.executeQuery();
-         
-         System.out.println("OKAY HERE4");
-         while(resultSet.next()) {
-          response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
-          response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
-          response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
-          response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
-          response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
-          response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
-          response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
-          response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
-          response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
-          response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
-          response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
-          response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
-          response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
-          response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
-         }
-         System.out.println("OKAY HERE5");
-         preparedStatement = conn.prepareStatement(query5);
-         preparedStatement.execute();
-         preparedStatement = conn.prepareStatement(query6);
-         preparedStatement.execute();
-         
-         
+        /**********************************************************************/
+        // Finds go here
+        /**********************************************************************/
+
+            
+        /**********************************************************************/
+        // Sorting goes here
+        /**********************************************************************/
+
         }
-        catch (SQLException e) {
+        
+        /**********************************************************************/
+        // Requirement focused search
+        /**********************************************************************/
+        else if (request.getParameter("search_type").equals("REQ_FOCUSED_SEARCH")){
+        
+        /**********************************************************************/
+        // parsing of parameters specific to this search goes here
+        /**********************************************************************/
+            
+        
+        /**********************************************************************/
+        // Finds go here
+        /**********************************************************************/
 
-            e.printStackTrace();
+            
+        /**********************************************************************/
+        // Sorting goes here
+        /**********************************************************************/
+ 
         }
-
-        System.out.println(response);
-
-
-
+        
         try {
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
+        
+       
     }
 
     /**

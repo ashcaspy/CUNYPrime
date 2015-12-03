@@ -1,5 +1,5 @@
 var xhrRequest;
-function searchCourses(){
+function searchCourses(type){
     // Set up the request.
     loadSearchOverlay();
     var values = {
@@ -13,7 +13,8 @@ function searchCourses(){
         "sched_open": JSON.stringify(scheduleTabs[currentScheduleTab].openTimes),
         "sched_closed": JSON.stringify(scheduleTabs[currentScheduleTab].closedTimes),
         "sched_class": JSON.stringify(scheduleTabs[currentScheduleTab].classTimes),
-        "id_num": id_num
+        "id_num": id_num,
+        "search_type": type
     };
     
     $.ajax({
