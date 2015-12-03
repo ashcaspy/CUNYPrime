@@ -78,9 +78,9 @@ public class SearchServlet extends HttpServlet {
     }
 
 
-    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day){
+    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, int value[]){
         int closeTimeIndex = 0;
-        int value = 0;
+
         if(!day.isCloseTimesEmpty()){
             while (closeTimeIndex < day.getCloseTimeSize()){
                 try{
@@ -88,8 +88,8 @@ public class SearchServlet extends HttpServlet {
                             day.getClosedTimeElement(closeTimeIndex) == res.getInt("endtime") ||
                             (day.getClosedTimeElement(closeTimeIndex) > res.getInt("starttime") &&
                                     day.getClosedTimeElement(closeTimeIndex) < res.getInt("endtime")) ){
-                        value += 2;
-                        update.setInt(1, value);
+                        value[0] += 2;
+                        update.setInt(1, value[0]);
                         update.execute();
                     }
                     closeTimeIndex++;
@@ -105,6 +105,7 @@ public class SearchServlet extends HttpServlet {
 
 
 
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -116,7 +117,7 @@ public class SearchServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         /**********************************************************************/
         // Initializing connection and search regardless of search type (may move)
         /**********************************************************************/
@@ -130,11 +131,11 @@ public class SearchServlet extends HttpServlet {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         Search searcher;
-        
+
         /**********************************************************************/
         // getting parameters here regardless of search type
         /**********************************************************************/
-        
+
         String college = request.getParameter("college_value").toLowerCase();
         String term = request.getParameter("term_value");
         String dept = request.getParameter("dept_value");
@@ -152,12 +153,10 @@ public class SearchServlet extends HttpServlet {
             keyword = null;
         if ("".equals(prof))
             prof = null;
-         System.out.println(request.getParameter("search_type"));
-        /**********************************************************************/
-        // Advanced search (some of Grace's code is still in here)
-        /**********************************************************************/
+        System.out.println(request.getParameter("search_type"));
+
         if (request.getParameter("search_type").equals("DEFAULT_SEARCH")){
-            
+
             System.out.println("OKAY HERE2");
             searcher = new Search(conn, id_num);
             searcher.selectTerm(college.toUpperCase(), term);
@@ -182,60 +181,6 @@ public class SearchServlet extends HttpServlet {
                     Arrays.asList(new String[]{"CSCI", "ANTHC"})
             );
 
-            /**********************************************************************/
-            // Grace's code -- must be moved to relevant spot
-            /**********************************************************************/
-            
-            /*
-            //Test values for available and unavailable times.
-            String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
-            String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
-            Schedule schedule = new Schedule();
-            schedule.setOpenTimes(testArr);
-            schedule.setCloseTimes(testArr2);
-            PreparedStatement preparedStatement;
-            ResultSet resultSet;
-
-
-            String queryA = "select * from "+ searcher.tableName();
-
-            int value[] = {0};
-
-            try {
-                String days = "";
-                preparedStatement = conn.prepareStatement(queryA);
-                preparedStatement.execute();
-                resultSet = preparedStatement.executeQuery();
-
-                String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
-                PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
-                        + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
-
-
-
-                while (resultSet.next()){
-
-                    update.setString(2, resultSet.getString("cdept"));
-                    update.setString(3, resultSet.getString("cnbr"));
-                    update.setString(4, resultSet.getString("sec"));
-
-                    days = resultSet.getString("days");
-
-                    for(int i=0; i<WEEK.length; ++i) {
-                        if(days.contains(WEEK[i])) {
-                            Day temp = schedule.getElementFromSchedule(i);
-                            closeTimeMatchAction(resultSet, update, temp);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-
-                e.printStackTrace();
-            }
-            */
-            /******************************************************************/
-            // End of Grace's code
-            /******************************************************************/
 
             /******************************************************************/
             // Response parsing -- leave this to Ashley unless you're testing
@@ -265,38 +210,38 @@ public class SearchServlet extends HttpServlet {
 
             try {
 
-             preparedStatement = conn.prepareStatement(query1);
-             preparedStatement.execute();
-             preparedStatement = conn.prepareStatement(query2);
-             preparedStatement.execute();
-             preparedStatement = conn.prepareStatement(query3);
-             preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query1);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query2);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query3);
+                preparedStatement.execute();
 
 
-             preparedStatement = conn.prepareStatement(query4);
-             resultSet = preparedStatement.executeQuery();
+                preparedStatement = conn.prepareStatement(query4);
+                resultSet = preparedStatement.executeQuery();
 
-             while(resultSet.next()) {
-              response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
-              response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
-              response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
-              response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
-              response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
-              response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
-              response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
-              response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
-              response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
-              response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
-              response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
-              response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
-              response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
-              response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
-             }
-             System.out.println("OKAY HERE5");
-             preparedStatement = conn.prepareStatement(query5);
-             preparedStatement.execute();
-             preparedStatement = conn.prepareStatement(query6);
-             preparedStatement.execute();
+                while(resultSet.next()) {
+                    response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
+                    response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
+                    response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
+                    response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
+                    response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
+                    response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
+                    response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
+                    response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
+                    response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
+                    response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
+                    response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
+                    response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
+                    response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
+                    response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
+                }
+                System.out.println("OKAY HERE5");
+                preparedStatement = conn.prepareStatement(query5);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query6);
+                preparedStatement.execute();
 
 
             }
@@ -305,57 +250,118 @@ public class SearchServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
-        
+
         /**********************************************************************/
         // Time focused search
         /**********************************************************************/
         else if (request.getParameter("search_type").equals("TIME_FOCUSED_SEARCH")){
-            
-        /**********************************************************************/
-        // parsing of parameters specific to this search goes here
-        /**********************************************************************/
-            
-        
-        /**********************************************************************/
-        // Finds go here
-        /**********************************************************************/
 
-            
-        /**********************************************************************/
-        // Sorting goes here
-        /**********************************************************************/
+            /**********************************************************************/
+            // parsing of parameters specific to this search goes here
+            /**********************************************************************/
+            searcher = new Search(conn, id_num);
+
+            //Test values for available and unavailable times.
+            String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
+            String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
+            Schedule schedule = new Schedule();
+            schedule.setOpenTimes(testArr);
+            schedule.setCloseTimes(testArr2);
+            /**********************************************************************/
+            // Finds go here
+            /**********************************************************************/
+
+
+            /**********************************************************************/
+            // Sorting goes here
+            /**********************************************************************/
+
+
+            PreparedStatement preparedStatement;
+            ResultSet resultSet;
+            String queryA = "select * from "+ searcher.tableName();
+
+            try {
+
+                String days = "";
+                preparedStatement = conn.prepareStatement(queryA);
+                preparedStatement.execute();
+                resultSet = preparedStatement.executeQuery();
+
+                String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
+                PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
+                        + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
+
+                int value[] = {0};
+
+                while (resultSet.next()){
+                    value[0] = 0;
+                    update.setString(2, resultSet.getString("cdept"));
+                    update.setString(3, resultSet.getString("cnbr"));
+                    update.setString(4, resultSet.getString("sec"));
+
+                    days = resultSet.getString("days");
+
+                    for(int i=0; i<WEEK.length; ++i) {
+                        if(days.contains(WEEK[i])) {
+                            Day temp = schedule.getElementFromSchedule(i);
+                            closeTimeMatchAction(resultSet, update, temp, value);
+                        }
+                    }
+                    boolean hasMatch=false;
+
+                    for (int i = 0; i < request.getParameter("reqs").length(); i++){
+                        if(request.getParameter("reqs").dept.replaceAll(" ", "").equals(resultSet.getString("cdept").replaceAll(" ", ""))){
+                            if(request.getParameter("reqs").hasAt){
+
+                            } else if(resultSet.getString("cnbr").replaceAll(" ","").equals(request.getParameter("reqs").cnum.replaceAll(" ",""))){
+                                hasMatch = true;
+                            }
+
+                        }
+                    }
+                    if(!hasMatch){
+                        update.setInt(1, value[0] + 1);
+                        update.execute();
+                    }
+
+                }
+            } catch (SQLException e) {
+
+                e.printStackTrace();
+            }
 
         }
-        
+
         /**********************************************************************/
         // Requirement focused search
         /**********************************************************************/
         else if (request.getParameter("search_type").equals("REQ_FOCUSED_SEARCH")){
-        
-        /**********************************************************************/
-        // parsing of parameters specific to this search goes here
-        /**********************************************************************/
-            
-        
-        /**********************************************************************/
-        // Finds go here
-        /**********************************************************************/
 
-            
-        /**********************************************************************/
-        // Sorting goes here
-        /**********************************************************************/
- 
+            /**********************************************************************/
+            // parsing of parameters specific to this search goes here
+            /**********************************************************************/
+
+
+            /**********************************************************************/
+            // Finds go here
+            /**********************************************************************/
+
+
+            /**********************************************************************/
+            // Sorting goes here
+            /**********************************************************************/
+
         }
-        
+
         try {
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
-        
-       
+
+
+
     }
 
     /**
