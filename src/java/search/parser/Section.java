@@ -107,7 +107,7 @@ public class Section {
      * meets at different times it will insert one row for each timeslot
      */
     void addToTable(Connection conn, String offset, Course owner) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO sections" + offset +
+        PreparedStatement st = conn.prepareStatement("INSERT INTO " + tablename + offset +
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 
         //default count is 1
