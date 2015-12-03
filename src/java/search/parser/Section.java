@@ -195,7 +195,8 @@ public class Section {
                 "instructor varchar(200)," +
                 "open boolean," +
                 "count int," +
-                "points int" +
+                "points int," +
+                "PRIMARY KEY(cdept, cnbr, sec, count)" +
                 ")");
     }
 }
