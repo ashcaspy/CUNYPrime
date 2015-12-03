@@ -155,7 +155,7 @@ public class SearchServlet extends HttpServlet {
 
 
         System.out.println("OKAY HERE2");
-        Search searcher = new Search(conn, 1);
+        Search searcher = new Search(conn, Integer.parseInt(request.getParameter("id_num")));
         searcher.selectTerm(college.toUpperCase(), term);
         searcher.find(
 
