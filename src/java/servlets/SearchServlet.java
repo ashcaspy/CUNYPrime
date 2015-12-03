@@ -28,6 +28,8 @@ import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import scheduling.*;
 
+import org.json.*;
+
 /**
  *
  * @author Ashley
@@ -102,7 +104,7 @@ public class SearchServlet extends HttpServlet {
         }
 
     }
-
+    
 
 
     /**
@@ -131,6 +133,7 @@ public class SearchServlet extends HttpServlet {
         }
         Search searcher;
         
+        
         /**********************************************************************/
         // getting parameters here regardless of search type
         /**********************************************************************/
@@ -142,7 +145,8 @@ public class SearchServlet extends HttpServlet {
         String keyword = request.getParameter("keyword_value");
         String prof = request.getParameter("prof_value");
         int id_num = Integer.parseInt(request.getParameter("id_num"));
-
+        searcher = new Search(conn, id_num);
+        
         MatchValuePair mvpair = null;
         if (!"".equals(course_num)) {
             mvpair = new MatchValuePair(ID.contains, course_num);
