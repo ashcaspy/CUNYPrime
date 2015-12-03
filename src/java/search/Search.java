@@ -63,6 +63,12 @@ public class Search {
 
         //clear previous search parameters in case some of these are null
         client.resetTerms();
+        
+        if(null == courseNumber) {
+            // default to this criteria, which doesn't affect results 
+            // ensures at least one was picked
+            courseNumber = new MatchValuePair(ID.greaterThan, "0");
+        }
 
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
