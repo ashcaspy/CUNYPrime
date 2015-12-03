@@ -78,15 +78,18 @@ public class SearchServlet extends HttpServlet {
     }
 
 
-    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, int closeTimeIndex){
+    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day){
+        int closeTimeIndex = 0;
+        int value = 0;
         if(!day.isCloseTimesEmpty()){
             while (closeTimeIndex < day.getCloseTimeSize()){
                 try{
-                    if(day.getClosedTimeElement(closeTimeIndex) == res.getInt("starttime")){
-                        update.execute();
-                    } else if(day.getClosedTimeElement(closeTimeIndex) == res.getInt("endtime")){
-                        update.execute();
-                    } else if(day.getClosedTimeElement(closeTimeIndex) > res.getInt("starttime") && day.getClosedTimeElement(closeTimeIndex) < res.getInt("endtime")){
+                    if(day.getClosedTimeElement(closeTimeIndex) == res.getInt("starttime") ||
+                            day.getClosedTimeElement(closeTimeIndex) == res.getInt("endtime") ||
+                            (day.getClosedTimeElement(closeTimeIndex) > res.getInt("starttime") &&
+                                    day.getClosedTimeElement(closeTimeIndex) < res.getInt("endtime")) ){
+                        value += 2;
+                        update.setInt(1, value);
                         update.execute();
                     }
                     closeTimeIndex++;
@@ -183,11 +186,11 @@ public class SearchServlet extends HttpServlet {
         schedule.setCloseTimes(testArr2);
         PreparedStatement preparedStatement;
         ResultSet resultSet;
-        int closeTimeIndex = 0;
 
 
         String queryA = "select * from "+ searcher.tableName();
 
+        int value[] = {0};
 
         try {
             String days = "";
@@ -199,8 +202,10 @@ public class SearchServlet extends HttpServlet {
             PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
                     + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
 
+
+
             while (resultSet.next()){
-                update.setInt(1, resultSet.getInt("points")+2);
+
                 update.setString(2, resultSet.getString("cdept"));
                 update.setString(3, resultSet.getString("cnbr"));
                 update.setString(4, resultSet.getString("sec"));
@@ -210,7 +215,7 @@ public class SearchServlet extends HttpServlet {
                 for(int i=0; i<WEEK.length; ++i) {
                     if(days.contains(WEEK[i])) {
                         Day temp = schedule.getElementFromSchedule(i);
-                        closeTimeMatchAction(resultSet, update, temp, closeTimeIndex);
+                        closeTimeMatchAction(resultSet, update, temp);
                     }
                 }
             }
