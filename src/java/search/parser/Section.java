@@ -179,7 +179,7 @@ public class Section {
     // this distinguishes between open and not-open
     public final boolean open;
 
-    public final static String tablename = "sections";
+    public final static String tablename = "_sections";
 
     public static void createTable(Connection conn, String offset) throws SQLException {
         Statement st = conn.createStatement();
