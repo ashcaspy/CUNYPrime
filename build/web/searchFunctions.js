@@ -3,17 +3,17 @@ function searchCourses(){
     // Set up the request.
     loadSearchOverlay();
     var values = {
-        college_value: $("#search_school").val(),
-        term_value: $("#search_term").val(),
-        dept_value: $("#search_dept").val(),
-        course_num_value: $("#search_course_num").val(),
-        keyword_value: $("#search_keyword").val(),
-        prof_value: $("#search_prof").val(),
-        reqs: courseReqObjs,
-        sched_open: scheduleObjArray[currentScheduleTab].openTimes,
-        sched_closed: scheduleObjArray[currentScheduleTab].closedTimes,
-        sched_class: scheduleObjArray[currentScheduleTab].classTimes,
-        id_num: id_num
+        "college_value": $("#search_school").val(),
+        "term_value": $("#search_term").val(),
+        "dept_value": $("#search_dept").val(),
+        "course_num_value": $("#search_course_num").val(),
+        "keyword_value": $("#search_keyword").val(),
+        "prof_value": $("#search_prof").val(),
+        "reqs": JSON.stringify(courseReqObjs),
+        "sched_open": JSON.stringify(scheduleTabs[currentScheduleTab].openTimes),
+        "sched_closed": JSON.stringify(scheduleTabs[currentScheduleTab].closedTimes),
+        "sched_class": JSON.stringify(scheduleTabs[currentScheduleTab].classTimes),
+        "id_num": id_num
     };
     
     $.ajax({

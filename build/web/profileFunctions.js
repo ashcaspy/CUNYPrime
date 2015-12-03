@@ -878,7 +878,9 @@ function getSchedules(username, myArr, boolArr) {
     req.onsuccess = function(){
         var data = req.result;
         
-        myArr = data.sched;
+        //myArr = data.sched;
+        scheduleObjArray = data.sched;
+        alert(scheduleObjArray[0].openTimes);
         /*
         for(var i = 0; i < data.sched.length; i++){
             myArr.push(data.sched[i]);
