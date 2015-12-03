@@ -187,7 +187,7 @@ function createDivs(){
                     // set size/pos
                     $tempCourseDiv.css({
                         "width" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).width(),
-                        "height" : ($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height() * (courseEndTime - courseStartTime + 1)) - ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + ((offsetEnd/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
+                        "height" : ($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height() * (courseEndTime - courseStartTime)) - ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + ((offsetEnd/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
 
                         "top" : parseFloat($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("top")) + ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
 
@@ -603,6 +603,7 @@ function createTools() {
     $dayList1.click(function(e){
         //e.preventDefault();
         if ($("#day-selection-dropdown-from ul").css("display") != "block"){
+            
             $("#day-selection-dropdown-from ul").css({"display" : "block"});
             $("#day-selection-dropdown-from ul li").css({"display" : "block"});
             $("#day-selection-dropdown-to ul").css({"display" : "none"});
@@ -1190,8 +1191,13 @@ function loadScheduleTab(num){
         hourEnd = scheduleTabs[num].hourEnd;
         //alert(hourEnd);
 
-
-        openTimes.splice(0, openTimes.length);
+        openTimes = scheduleTabs[num].openTimes;
+        closedTimes = scheduleTabs[num].closedTimes;
+        classTimes = scheduleTabs[num].classTimes;
+        selectedDivs = scheduleTabs[num].openTimes.concat(scheduleTabs[num].closedTimes, scheduleTabs[num].classTimes);
+        selectedCourses = scheduleTabs[num].selectedCourses;
+        
+        /*openTimes.splice(0, openTimes.length);
         closedTimes.splice(0, closedTimes.length);
         selectedDivs.splice(0, selectedDivs.length);
         classTimes.splice(0, classTimes.length);
@@ -1215,7 +1221,12 @@ function loadScheduleTab(num){
         for(var i = 0; i < scheduleTabs[num].selectedCourses.length; i++){
             selectedCourses.push(scheduleTabs[num].selectedCourses[i]);
         }
-
+        */
+        
+        courseInfoArray[3] = [];
+        courseInfoArray[3] = selectedCourses;
+        numCoursesPerList[3] = courseInfoArray[3].length;
+                
         numDivsX = dayEnd - dayStart + 1;
         numDivsY = hourEnd - hourStart + 1;
         //alert(numDivsY);
@@ -1296,7 +1307,9 @@ function createScheduleFooterTools(){
             hourEnd: 23,
             openTimes: new Array(),
             closedTimes: new Array(),
+            classTimes: new Array(),
             selectedDivs: new Array(),
+            selectedCourses: new Array(),
             valid: true,
         };
         
@@ -1326,8 +1339,7 @@ function createScheduleFooterTools(){
         });
         loadScheduleTab(scheduleTabs.length - 1);
         fadeScheduleOverlay();
-        createSched(userName);
-        
+        createSched(userName);        
         
     });
     

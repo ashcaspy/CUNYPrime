@@ -32,7 +32,6 @@ function parseCourseResultset(data){
     courseInfoArray[0] = [];
     courseInfoArray[1] = [];
     courseInfoArray[2] = [];
-    courseInfoArray[3] = [];
     for (var i = 0; i < tempCourseArray.length - 1; i++){ 
         var cObj = new courseObj();
         var tempCourseParts = tempCourseArray[i].split("FIELD_END");
@@ -150,6 +149,7 @@ function loadList(num) {
                 courseInfoArray[num][i].dept + ": " + courseInfoArray[num][i].courseNum + "</a>" +
                 "</div></li>";
         }
+        
         listContents += "</ul>";
         document.getElementById("list_section_" + num).innerHTML = listContents;
         //document.getElementById("list_section_" + num).style.z_index = "999";

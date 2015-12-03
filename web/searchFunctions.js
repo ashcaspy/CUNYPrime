@@ -10,10 +10,10 @@ function searchCourses(){
         keyword_value: $("#search_keyword").val(),
         prof_value: $("#search_prof").val(),
         reqs: courseReqObjs,
-        //sched_open: scheduleObjArray[currentScheduleTab].openTimes,
-        //sched_closed: scheduleObjArray[currentScheduleTab].closedTimes,
-        //sched_class: scheduleObjArray[currentScheduleTab].classTimes,
-        
+        sched_open: scheduleObjArray[currentScheduleTab].openTimes,
+        sched_closed: scheduleObjArray[currentScheduleTab].closedTimes,
+        sched_class: scheduleObjArray[currentScheduleTab].classTimes,
+        id_num: id_num
     };
     
     $.ajax({
@@ -68,11 +68,7 @@ function loadUserSchedules(loaded){
                 });
                 var schedName = "Schedule" + (i+1);
                 $tabDiv.html("<a href = '#' class = 'tab-links'>" + schedName + "</a>");
-                //courseInfoArray[3] = [];
-                courseInfoArray[3] = tempTab.selectedCourses;
-                console.log(courseInfoArray[3].length);
-                numCoursesPerList[3] = courseInfoArray[3].length;
-                console.log(courseInfoArray[3].length);
+                
                 $("#schedule_footer").append($tabDiv);    
                 $tabDiv.click(function(e){
 
@@ -102,7 +98,6 @@ function loadUserSchedules(loaded){
 
 
 function addCourseToSchedule(course){
-    
     // place course in schedule timeslots:
     // parse out days:
     var courseDays = [];
@@ -118,13 +113,29 @@ function addCourseToSchedule(course){
     var courseStartTime = Math.floor(parseInt(course.startTime) / 100);
     var courseEndTime = Math.floor(parseInt(course.endTime) / 100);
     
+    var specificStartTime = parseInt(course.startTime) / 100;
+    var specificEndTime = parseInt(course.endTime) / 100;
+    
+    
     //first run once to see if thereare  conflicts
-    for (var i = 0; i < courseDays.length; i++){
-        for (var k = courseStartTime; k < courseEndTime + 1; k++){
-            if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), classTimes) != -1){
-                alert("This course conflicts with another course in your schedule. Remove that course before adding this one.");
-                return;
+    for (var i = 0; i < selectedCourses.length; i++){
+        var tempstart = parseInt(selectedCourses[i].startTime) / 100;
+        var tempend = parseInt(selectedCourses[i].endTime) / 100;
+        if ((specificStartTime > tempstart && specificStartTime < tempend) ||(specificEndTime > tempstart && specificEndTime < tempend)){
+            var tempdays = [];
+            for (var j = 0; j < selectedCourses[i].days.length; j = j + 2){
+                var tempDay = selectedCourses[i].days.substr(j, 2);
+                for (var l = 0; l < days.length; l++){
+                    if (tempDay == days[l].substr(0, 2))
+                        tempdays.push(l);
+                }
             }
+            for (var k = 0; k < courseDays.length; k++){
+                if ($.inArray(courseDays[k], tempdays) != -1){
+                    alert("This course conflicts with another course in your schedule. Remove that course before adding this one.");
+                    return;
+                }
+            }            
         }
     }
     
@@ -150,12 +161,15 @@ function addCourseToSchedule(course){
             }
         }
     }
+    
     selectedCourses.push(course);
     setSelectedCourses(userName, selectedCourses);
     setClassTimes(userName, classTimes);
     setSelectedDiv(userName, selectedDivs);
-    courseInfoArray[3].push(course);
+    courseInfoArray[3] = selectedCourses;
     numCoursesPerList[3] = courseInfoArray[3].length;
+    
+   
     
     $("#timeslot-list").html("");
     $("#hour-list").html("");
@@ -193,7 +207,7 @@ function removeCourseFromSchedule(course){
         setSelectedCourses(userName, selectedCourses);
         setClassTimes(userName, classTimes);
         setSelectedDiv(userName, selectedDivs);
-        courseInfoArray[3].splice($.inArray(course, courseInfoArray[3]), 1);
+        courseInfoArray[3] = selectedCourses;
         numCoursesPerList[3] = courseInfoArray[3].length;
 
         $("#timeslot-list").html("");

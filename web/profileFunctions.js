@@ -14,6 +14,7 @@ var coursesTransfer =[];
 var major = "";
 var boolArr = [];
 boolArr[0] = false;
+var id_num = 0;
 
 var userResume = {
     name: "",
@@ -383,7 +384,8 @@ function store(username){
         sched: schedArr,
         resume: userResume,
         allCourseReq: allCourseReq,
-        req: []
+        req: [],
+        id_num: id_num
     }
 
     var transaction = db.transaction(["gracefulTable"], "readwrite");
@@ -875,11 +877,13 @@ function getSchedules(username, myArr, boolArr) {
     var req = store.get(username);
     req.onsuccess = function(){
         var data = req.result;
-
+        
+        myArr = data.sched;
+        /*
         for(var i = 0; i < data.sched.length; i++){
             myArr.push(data.sched[i]);
         }
-
+        */
         boolArr[0] = true;
         loadUserSchedules(true);
     }
@@ -982,6 +986,7 @@ function selectUser(done){
                 // load user resume
                 initPDF();
                 loadUserResume(userName, false);
+                loadUserIdNum(userName, false);
             });
         }
         
@@ -1044,7 +1049,37 @@ function createNewUser(){
         // load user resume
         initPDF();
         loadUserResume(userName, false);
+        setUserIdNum(userName, false);
     }
     else
         alert("That user name already exists.");
+}
+
+
+function loadUserIdNum(username, done){
+    var transaction = db.transaction(["gracefulTable"], "readwrite");
+    var store = transaction.objectStore("gracefulTable");
+    var req = store.get(username);
+    req.onsuccess = function(){
+        var data = req.result;
+        id_num = data.id_num;
+    }
+}
+
+function setUserIdNum(username, done){
+    $.ajax({
+        type: "GET",
+        url: "retrievenewid",
+        success: function(data){
+            id_num = parseInt(data);
+            var transaction = db.transaction(["gracefulTable"], "readwrite");
+            var store = transaction.objectStore("gracefulTable");
+            var req = store.get(username);
+            req.onsuccess = function(){
+                var data = req.result;
+                data.id_num = id_num;
+                var update = store.put(data);
+            }
+        }
+    });
 }

@@ -29,7 +29,7 @@ $.fn.popbox = function(options){
             clearTimeout(timeoutId1);
             timeoutId2 = setTimeout(function(){
                 $(settings['box']).fadeOut("fast");
-                var courseToDisplay = courseInfoArray[list_num][result_num - 1];    
+                var courseToDisplay = courseInfoArray[list_num][result_num - 1];  
                 var courseDays = [];
                 for (var k = 0; k < courseToDisplay.days.length; k = k + 2){
                     var tempDay = courseToDisplay.days.substr(k, 2);
@@ -38,11 +38,9 @@ $.fn.popbox = function(options){
                             courseDays.push(j);
                     }
                 }
-                console.log(courseDays.length);
-                for (k = 0; k < courseDays.length; k++){
+                for (var k = 0; k < courseDays.length; k++){
                     $("#temp-course-div-" +k).remove();
                 }
-                
             }, 250);
         // document.getElementById("footer").innerHTML = inPop + "1";
         },
@@ -90,7 +88,6 @@ $.fn.popbox = function(options){
                             courseDays.push(j);
                     }
                 }
-                
                 var daysOk = true;
                 for (k = 0; k < courseDays.length; k++){
                     if (courseDays[k] > dayEnd || courseDays[k] < dayStart)
@@ -107,12 +104,11 @@ $.fn.popbox = function(options){
                         var offsetEnd = Math.ceil((courseEndTime - Math.floor(courseEndTime)) * 100);
                         courseStartTime = Math.floor(courseStartTime);
                         courseEndTime = Math.floor(courseEndTime);
-
-                        if (hourStart < courseStartTime && hourEnd > courseEndTime){
+                        if (hourStart <= courseStartTime && hourEnd + 1 >= courseEndTime){
                             // set size/pos
                             $tempCourseDiv.css({
                                 "width" : $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).width(),
-                                "height" : ($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height() * (courseEndTime - courseStartTime + 1)) - ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + ((offsetEnd/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
+                                "height" : ($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height() * (courseEndTime - courseStartTime)) - ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + ((offsetEnd/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
 
                                 "top" : parseFloat($("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).css("top")) + ((offsetStart/60) * $("#timeslot-div-" + courseDays[k] + "-" + courseStartTime).height()) + "px",
 
@@ -124,12 +120,6 @@ $.fn.popbox = function(options){
                         }
                     }
                 }
-                
-                
-                
-                
-                
-                
 
             }, 500);
 
