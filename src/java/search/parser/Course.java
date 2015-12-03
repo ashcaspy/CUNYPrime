@@ -32,11 +32,7 @@ public class Course {
         PreparedStatement insertSection;
         for(Section sec: sections) {
             try {
-                insertSection = sec.prepareStatement(conn, offset);
-                insertSection.setString(1, dept);
-                insertSection.setString(2, number);
-                insertSection.setString(3, name);
-                insertSection.executeUpdate();
+                sec.addToTable(conn, offset, this);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

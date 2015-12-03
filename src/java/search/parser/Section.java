@@ -24,29 +24,30 @@ public class Section {
 
         if(count > 0) {
             days = new String[count];
-            start = new String[count];
-            end = new String[count];
+            start = new Integer[count];
+            end = new Integer[count];
             m.reset();
             for (int i = 0; m.find(); ++i) {
                 String[] temp = parseTime(m.group());
                 days[i] = temp[0];
                 if (temp[1].equals(ID.TBA)) {
-                    start[i] = ID.TBA;
-                    end[i] = ID.TBA;
+                    start[i] = -1;
+                    end[i] = -1;
                 } else {
                     temp = temp[1].split(" - ");
-                    start[i] = Integer.toString(hoursToInt(temp[0]));
-                    end[i] = Integer.toString(hoursToInt(temp[1]));
+                    start[i] = hoursToInt(temp[0]);
+                    end[i] = hoursToInt(temp[1]);
                 }
             }
         }
         else {
             //everything is TBA
-            days = start = end = new String[] {ID.TBA};
+            days = new String[] {ID.TBA};
+            start = end = new Integer[] {-1};
         }
 
         if(count > 1) {
-            HashSet<String> starts = new HashSet<>(Arrays.asList(start)), ends = new HashSet<>(Arrays.asList(end));
+            HashSet<Integer> starts = new HashSet<>(Arrays.asList(start)), ends = new HashSet<>(Arrays.asList(end));
             //if this happens, then the only reason the timeslots were listed separately is the rooms
             condense = (starts.size() == 1 && ends.size() == 1);
         }
@@ -55,6 +56,9 @@ public class Section {
             condense = true;
         }
 
+        // if there are multiple meeting times/places then these fields will
+        // be a bit of a mess but I'm not sure how to figure out which space
+        // is the divider so for now we'll let them deal with it
         room = Selector.select(ID.sectionRoom, elem).get(0).ownText();
         instructor = Selector.select(ID.instructor, elem).get(0).ownText();
 
@@ -64,11 +68,7 @@ public class Section {
         nbr = number.ownText().split(" ")[0];
 
         open = isOpen(elem);
-
-        id = number.id();
     }
-
-    public final String delimiter = ",";
 
     //return strings representing the days and the hours
     private String[] parseTime(String secTime) {
@@ -97,33 +97,29 @@ public class Section {
                 .attr("alt").equalsIgnoreCase("open");
     }
 
-    //the caller adds course info
-    PreparedStatement prepareStatement(Connection conn, String offset) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO sections" + offset + " VALUES (?,?,?,?,?,?,?,?,?,?)");
+    /**
+     * adds this section to sections[offset], may insert multiple rows
+     * @param conn - database connection
+     * @param offset - the string to choose a unique table of sections
+     * @param owner - the Course that owns this section, provides course info
+     *
+     * In the rare event (according to test data) that this section
+     * meets at different times it will insert one row for each timeslot
+     */
+    void addToTable(Connection conn, String offset, Course owner) throws SQLException {
+        PreparedStatement st = conn.prepareStatement("INSERT INTO sections" + offset +
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+
+        //default count is 1
+        st.setInt(11, 1);
+
+        //initial points is 0
+        st.setInt(12, 0);
+
+        st.setString(1, owner.dept);
+        st.setString(2, owner.number);
+        st.setString(3, owner.name);
         st.setString(4, nbr);
-
-        if(start[0].equals(ID.TBA)) {
-            st.setNull(5, Types.VARCHAR);
-            st.setNull(6, Types.VARCHAR);
-        }
-        else if(condense) {
-            st.setString(5, start[0]);
-            st.setString(6, end[0]);
-        }
-        else {
-            st.setString(5, String.join(delimiter, start));
-            st.setString(6, String.join(delimiter, end));
-        }
-
-        if(days[0].equals(ID.TBA)) {
-            st.setNull(7, Types.VARCHAR);
-        }
-        else if(condense) {
-            st.setString(7, String.join("",days));
-        }
-        else {
-            st.setString(7, String.join(delimiter, days));
-        }
 
         if(room.equals(ID.TBA)) {
             st.setNull(8, Types.VARCHAR);
@@ -133,14 +129,46 @@ public class Section {
         }
         st.setString(9, instructor);
         st.setBoolean(10, open);
-        return st;
+
+        if(days[0].equals(ID.TBA)) {
+            /* I don't think there are any cases where times were TBA
+               and days were not; the other way around seems even less likely
+            */
+            st.setNull(7, Types.VARCHAR);
+            st.setNull(5, Types.INTEGER);
+            st.setNull(6, Types.INTEGER);
+            st.executeUpdate();
+        }
+        else if(condense) {
+            // the section meets at the same time
+            // on different days in different classrooms
+            st.setInt(5, start[0]);
+            st.setInt(6, end[0]);
+            st.setString(7, String.join("", days));
+            st.executeUpdate();
+        }
+        else {
+            // insert one row for each timeslot
+            for(int i=0; i<days.length; ++i) {
+                st.setInt(5, start[i]);
+                st.setInt(6, end[i]);
+                st.setString(7, days[i]);
+                st.setInt(11, i+1);
+                st.executeUpdate();
+            }
+        }
     }
 
     public final String nbr;
 
-    //handle multiple timeslots
-    public final String[] start;
-    public final String[] end;
+    /* handle multiple timeslots
+       eg. a class that meets MoTh 9:45-11AM, Th 10:10-11AM
+       the index of each array should match up
+       if condense is true, the timeslots are identical
+       (except for classroom) and can be stored as a single row
+    */
+    public final Integer[] start;
+    public final Integer[] end;
     public final String[] days;
     private final boolean condense;
 
@@ -151,23 +179,23 @@ public class Section {
     // this distinguishes between open and not-open
     public final boolean open;
 
-    public final String id;
-
-    private final static String tablename = "sections";
+    public final static String tablename = "_sections";
 
     public static void createTable(Connection conn, String offset) throws SQLException {
         Statement st = conn.createStatement();
         st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + offset + "(" +
-                        "cdept varchar(6)," +
-                        "cnbr varchar(7)," +
-                        "cname varchar(100)," +
-                        "sec varchar(20)," +
-                        "starttime varchar(22)," +
-                        "endtime varchar(22)," +
-                        "days varchar(21)," +
-                        "room varchar(40)," +
-                        "instructor varchar(200)," +
-                        "open boolean" +
-                        ")");
+                "cdept varchar(6)," +
+                "cnbr varchar(7)," +
+                "cname varchar(100)," +
+                "sec varchar(20)," +
+                "starttime int," +
+                "endtime int," +
+                "days varchar(21)," +
+                "room varchar(40)," +
+                "instructor varchar(200)," +
+                "open boolean," +
+                "count int," +
+                "points int" +
+                ")");
     }
 }

@@ -10,7 +10,7 @@ public class Day {
 
     private final int day;
     private List<Pair> openTimes ;
-    private List<Pair> closeTimes;
+    private List<Integer> closeTimes;
 
     /**
      *  A constructor setting default vaules without parameters.
@@ -19,6 +19,7 @@ public class Day {
         this.day = day;
         openTimes = new ArrayList<>();
         closeTimes = new ArrayList<>();
+
     }
 
 
@@ -43,10 +44,10 @@ public class Day {
 
     /**
      * A functions that adds an element to the list of close times.
-     * @param pair, An instance of Pair that contains a range of unavailable time slot.
+     * @param time, An integer that represents an unavailable time.
      */
-    public void addToCloseTimes(Pair pair){
-        closeTimes.add(pair);
+    public void addToCloseTimes(int time){
+        closeTimes.add(time);
     }
 
 
@@ -75,13 +76,13 @@ public class Day {
     /**
      * A function that returns the element in a given index for the closeTimes list.
      * @param index, The index in the list desired.
-     * @return, A Pair containing a close time slot range.
+     * @return, An integer containing a close time slot range.
      */
-    public Pair getClosedTimeElement(int index){
+    public int getClosedTimeElement(int index){
         if(index < closeTimes.size() && index > -1) {
             return closeTimes.get(index);
         }
-        return new Pair();
+        return -1;
     }
 
 
@@ -91,6 +92,10 @@ public class Day {
      */
     public int getCloseTimeSize() { return closeTimes.size(); }
 
+
+    public boolean isCloseTimesEmpty(){
+        return closeTimes.isEmpty();
+    }
 
     /**
      * A function that prints out the available and unavailable time slots for selected days.
@@ -107,7 +112,7 @@ public class Day {
             if (!closeTimes.isEmpty()) {
                 System.out.println("Unavailable time slots: ");
                 for (int i = 0; i < closeTimes.size(); i++) {
-                    System.out.println(closeTimes.get(i).x + "  " + closeTimes.get(i).y);
+                    System.out.println(closeTimes.get(i));
                 }
             }
             System.out.println("-------------------");

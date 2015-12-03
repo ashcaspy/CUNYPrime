@@ -15,5 +15,6 @@ public class MatchValuePair {
     public final String comparison;
     public final String value;
 
-    private static final List<String> validComps = Arrays.asList(new String[] {ID.lessThan, ID.greaterThan, ID.exact});
+    private static final List<String> validComps = Arrays.asList(
+            new String[] {ID.lessThan, ID.greaterThan, ID.exact, ID.contains});
 }

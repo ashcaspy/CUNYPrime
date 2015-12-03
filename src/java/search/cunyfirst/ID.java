@@ -16,6 +16,7 @@ public class ID {
     public final static String greaterThan = "G";
     public final static String lessThan = "T";
     public final static String exact = "E";
+    public final static String contains = "C";
 
     public final static String matchNbrId = "SSR_CLSRCH_WRK_SSR_EXACT_MATCH1$1";
     public final static String courseNbrId = "SSR_CLSRCH_WRK_CATALOG_NBR$1";
