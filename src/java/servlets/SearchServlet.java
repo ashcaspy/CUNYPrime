@@ -106,6 +106,23 @@ public class SearchServlet extends HttpServlet {
     }
     
 
+    /**
+     * 
+     * 
+     */
+    protected JSONObject[] parseJSON(String input) {
+        JSONObject[] result = null;
+        try {
+            JSONArray array = new JSONArray(input);
+            result = new JSONObject[array.length()];
+            for(int i=0; i<array.length(); ++i) {
+                result[i] = new JSONObject(array.get(i).toString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
 
     /**
