@@ -86,10 +86,10 @@ public class SearchServlet extends HttpServlet {
         if(!day.isCloseTimesEmpty()){
             while (closeTimeIndex < day.getCloseTimeSize()){
                 try{
-                    if(day.getClosedTimeElement(closeTimeIndex) == res.getInt("starttime") ||
-                            day.getClosedTimeElement(closeTimeIndex) == res.getInt("endtime") ||
-                            (day.getClosedTimeElement(closeTimeIndex) > res.getInt("starttime") &&
-                                    day.getClosedTimeElement(closeTimeIndex) < res.getInt("endtime")) ){
+                    if(day.getClosedTimeElement(closeTimeIndex) * 100 == res.getInt("starttime") ||
+                            day.getClosedTimeElement(closeTimeIndex) * 100 == res.getInt("endtime") ||
+                            (day.getClosedTimeElement(closeTimeIndex) * 100  > res.getInt("starttime") &&
+                                    day.getClosedTimeElement(closeTimeIndex) * 100 < res.getInt("endtime")) ){
                         value[0] += 2;
                         update.setInt(1, value[0]);
                         update.execute();
