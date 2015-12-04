@@ -48,10 +48,10 @@ public class CourseData {
         st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + "(" +
                         "dept varchar(6)," +
                         "nbr varchar(7)," +
-                        "name varchar(90)," +
+                        "name varchar(200)," +
                         "components varchar(60)," +
-                        "requirements varchar(300)," +
-                        "description varchar(1300)," +
+                        "requirements varchar(500)," +
+                        "description varchar(2000)," +
                         "credits float," +
                         "PRIMARY KEY(dept, nbr)" +
                         ")");

@@ -186,13 +186,13 @@ public class Section {
         st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + offset + "(" +
                 "cdept varchar(6)," +
                 "cnbr varchar(7)," +
-                "cname varchar(100)," +
+                "cname varchar(200)," +
                 "sec varchar(20)," +
                 "starttime int," +
                 "endtime int," +
                 "days varchar(21)," +
-                "room varchar(40)," +
-                "instructor varchar(200)," +
+                "room varchar(60)," +
+                "instructor varchar(400)," +
                 "open boolean," +
                 "count int," +
                 "points int," +
