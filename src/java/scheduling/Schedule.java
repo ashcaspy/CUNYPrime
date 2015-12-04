@@ -11,7 +11,8 @@ import java.util.Arrays;
 public class Schedule {
 
     private List<Day> mySchedule;
-
+    private final String week [];
+    
     /**
      * Constructor
      */
@@ -21,11 +22,12 @@ public class Schedule {
         for (int i = 0; i < size; i++){
             mySchedule.add(new Day(i));
         }
+        week = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
     }
 
 
     /**
-     * A function that takes in a String array containing available times for selecte days, and sets those values for those days.
+     * A function that takes in a String array containing available times for selected days, and sets those values for those days.
      * @param timesArr, A string array containing available or unavailable time slots for selected days.
      */
     public void setOpenTimes (String timesArr []){
@@ -91,6 +93,9 @@ public class Schedule {
         return null;
     }
 
+    public String[] getWeek(){
+        return week; 
+    }
 
     /**
      * A function that prints the contents of the mySchedule array of Days.

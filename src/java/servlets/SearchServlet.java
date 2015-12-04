@@ -110,7 +110,7 @@ public class SearchServlet extends HttpServlet {
 
     }
     
-    protected void searchAction(Connection conn, String query, String week [], HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
+    protected void searchAction(Connection conn, String query, HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
         
             PreparedStatement preparedStatement;
             ResultSet resultSet;
@@ -133,8 +133,9 @@ public class SearchServlet extends HttpServlet {
 
                     days = resultSet.getString("days");
 
-                    for(int i=0; i<week.length; ++i) {
-                        if(days.contains(week[i])) {
+                    
+                    for(int i=0; i<schedule.getWeek().length; ++i) {
+                        if(days.contains(schedule.getWeek()[i])) {
                             Day temp = schedule.getElementFromSchedule(i);
                             closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
                         }
@@ -372,9 +373,8 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             
             String queryA = "select * from "+ searcher.tableName();
-            String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
             
-            searchAction(conn, queryA, WEEK, request, schedule, searcher, true);
+            searchAction(conn, queryA, request, schedule, searcher, true);
 
 
         }
