@@ -67,6 +67,12 @@ public class CunyFirstClient {
         HtmlSelect term = getSelect(ID.selectTerm);
         term.setSelectedAttribute(term.getOptionByText(semester), true);
         client.waitForBackgroundJavaScript(10000);
+        
+        HtmlSelect selectCareer = getSelect(ID.selectCareer);
+        HtmlOption career = selectCareer.getOptionByText("Undergraduate");
+        if(career != null) {
+            selectCareer.setSelectedAttribute(career, true);
+        }
 
         List<NameValuePair> list = getFormParams(searchPage);
         searchParameters = new HashMap<>(list.size());
