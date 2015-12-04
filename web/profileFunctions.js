@@ -241,7 +241,13 @@ function populateCourseRequirements(inputString){
             temp = temp.replace("OR", "");
             temp = temp.replace(")", "");
             temp = temp.replace("and", "");
-            courses.push(temp);
+            var temp2 =  temp.split(" ");
+
+            if(temp2[0] == "FALL" || temp2[0] == "SPRING" || temp2[0] == "SUMMER" || temp2[0] == "WINTER"){
+                courses[courses.length -1] = courses[courses.length-1].concat(temp);
+            } else {
+                courses.push(temp);
+            }
 
         } else if(isCoursesTaken && putIntoArrays(lines[i])) {
 
