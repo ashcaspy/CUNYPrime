@@ -14,9 +14,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -365,12 +370,60 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             // parsing of parameters specific to this search goes here
             /**********************************************************************/
-
-
+            
+            // find all unique departments and get all courses from them 
+            // to cut down on search time
+            HashMap<String, ArrayList<JSONObject>> reqs_by_dept = new HashMap<>();
+            for(JSONObject obj : parseJSON(request.getParameter("reqs"))) {
+                try {
+                    String req_dept = obj.getString("dept");
+                    if(!reqs_by_dept.containsKey(dept)) {
+                        reqs_by_dept.put(dept, new ArrayList<>());
+                    }
+                    reqs_by_dept.get(req_dept).add(obj);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            
             /**********************************************************************/
             // Finds go here
             /**********************************************************************/
+            
+            // check for entries with only one course number
+            // search for each by itself
+            // it takes the same amount of time search-wise
+            // and results are more specific
+            for(Entry<String, ArrayList<JSONObject>> entry : reqs_by_dept.entrySet()) {
+                if(entry.getValue().size() == 1) {
+                    MatchValuePair courseNumber;
+                    try {
+                        JSONObject req = entry.getValue().get(0);
+                        if(req.getBoolean("hasAt")) {
+                            // this is contains and not beginsWith 
+                            // but it's as close as it gets
+                            courseNumber = new MatchValuePair(
+                                    ID.contains, req.getString("cnum"));
+                        } else {
+                            courseNumber = new MatchValuePair(
+                                    ID.exact, req.getString("cnum"));
+                        }
+                        searcher.find(courseNumber, null, null, null, null, null, 
+                            Arrays.asList(new String[] {entry.getKey()}));
+                    } catch(JSONException e) {
+                        e.printStackTrace();
+                    }
+                    
+                }
+            }
+            
+            // get departments with more than one course
+            List<String> others = reqs_by_dept.entrySet().stream().filter(
+                    en -> en.getValue().size() > 1).map(en -> en.getKey())
+                    .collect(Collectors.toList());
 
+            searcher.find(null, null, null, null, null, null, others);
+            
 
             /**********************************************************************/
             // Sorting goes here
