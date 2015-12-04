@@ -110,16 +110,18 @@ public class SearchServlet extends HttpServlet {
 
     }
     
-    protected void searchAction(Connection conn, String query, HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
+    protected void searchAction(Connection conn, HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
         
             PreparedStatement preparedStatement;
             ResultSet resultSet;
             Integer value = 0; 
+            String queryA = "select * from "+ searcher.tableName();
+
            
             try {
 
                 String days = "";
-                preparedStatement = conn.prepareStatement(query);
+                preparedStatement = conn.prepareStatement(queryA);
                 preparedStatement.execute();
                 resultSet = preparedStatement.executeQuery();
                 PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
@@ -356,9 +358,6 @@ public class SearchServlet extends HttpServlet {
             //Test values for available and unavailable times.
             String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
             String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
-           
-            
-            
             Schedule schedule = new Schedule();
             schedule.setOpenTimes(testArr);
             schedule.setCloseTimes(testArr2);
@@ -372,9 +371,8 @@ public class SearchServlet extends HttpServlet {
             // Sorting goes here
             /**********************************************************************/
             
-            String queryA = "select * from "+ searcher.tableName();
             
-            searchAction(conn, queryA, request, schedule, searcher, true);
+            searchAction(conn, request, schedule, searcher, true);
 
 
         }
@@ -389,6 +387,13 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
 
 
+            //Test values for available and unavailable times.
+            String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
+            String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
+            Schedule schedule = new Schedule();
+            schedule.setOpenTimes(testArr);
+            schedule.setCloseTimes(testArr2);
+            
             /**********************************************************************/
             // Finds go here
             /**********************************************************************/
@@ -397,6 +402,8 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             // Sorting goes here
             /**********************************************************************/
+
+            searchAction(conn, request, schedule, searcher, false);
 
         }
 
