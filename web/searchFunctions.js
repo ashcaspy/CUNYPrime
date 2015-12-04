@@ -28,13 +28,15 @@ function searchCourses(type){
     });  
 }
 
-var scheduleObjArray = new Array();
+//var scheduleObjArray = new Array();
 function loadUserSchedules(loaded){
     if (loaded == false){
         var boolvar = false;
-        getSchedules(userName, scheduleObjArray, boolvar);
+        getSchedules(userName, scheduleTabs, boolvar);
     }
     else if (loaded == true){
+        
+        /*
         for(var i = 0; i < scheduleObjArray.length; i++)
         {
             var tempTab = {
@@ -51,6 +53,7 @@ function loadUserSchedules(loaded){
             };
             scheduleTabs.push(tempTab);
         }
+        */
         //create divs in schedule footer
         for (var i = 0; i < scheduleTabs.length; i++){
             if(scheduleTabs[i].valid == true){

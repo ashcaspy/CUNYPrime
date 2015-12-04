@@ -80,14 +80,15 @@ public class CreateNewIdServlet extends HttpServlet {
         
         response.setContentType("text/html");
         response.setHeader("Cache-Control", "no-cache");
-        
-        String query1 = "select max(id_num) from user_ids";
+        String query1 = "insert into user_ids (last_date_accessed) values(now())";
+        String query2 = "select max(id_num) from user_ids";
         PreparedStatement preparedStatement;
         ResultSet resultSet;
         try {
             preparedStatement = conn.prepareStatement(query1);
+            preparedStatement.executeUpdate();
+            preparedStatement = conn.prepareStatement(query2);
             resultSet = preparedStatement.executeQuery();
-            
             
             
             while(resultSet.next()) {
