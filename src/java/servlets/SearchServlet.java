@@ -377,8 +377,8 @@ public class SearchServlet extends HttpServlet {
             for(JSONObject obj : parseJSON(request.getParameter("reqs"))) {
                 try {
                     String req_dept = obj.getString("dept");
-                    if(!reqs_by_dept.containsKey(dept)) {
-                        reqs_by_dept.put(dept, new ArrayList<>());
+                    if(!reqs_by_dept.containsKey(req_dept)) {
+                        reqs_by_dept.put(req_dept, new ArrayList<>());
                     }
                     reqs_by_dept.get(req_dept).add(obj);
                 } catch (JSONException e) {
