@@ -149,7 +149,7 @@ public class SearchServlet extends HttpServlet {
                     }
                     
                     if(isTimeBased){
-                        boolean hasMatch=false;
+                        boolean hasMatch=true;
                         String cnum = "";
                         for (int i = 0; i < parseJSON(request.getParameter("reqs")).length; i++){
                            
@@ -164,8 +164,8 @@ public class SearchServlet extends HttpServlet {
                                         } else {
                                             hasMatch = false;
                                         }
-                                    } else if(resultSet.getString("cnbr").replaceAll(" ","").equals(parseJSON(request.getParameter("reqs"))[i].getString("cnum"))){
-                                        hasMatch = true;
+                                    } else if(!resultSet.getString("cnbr").replaceAll(" ","").equals(parseJSON(request.getParameter("reqs"))[i].getString("cnum"))){
+                                        hasMatch = false;
                                     }
 
 
