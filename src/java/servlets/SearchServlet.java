@@ -85,18 +85,23 @@ public class SearchServlet extends HttpServlet {
     }
 
 
-    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, int value[]){
+    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, Integer value, boolean isTimeBased){
         int closeTimeIndex = 0;
 
         if(!day.isCloseTimesEmpty()){
             while (closeTimeIndex < day.getCloseTimeSize()){
                 try{
-                    if(day.getClosedTimeElement(closeTimeIndex) == res.getInt("starttime") ||
-                            day.getClosedTimeElement(closeTimeIndex) == res.getInt("endtime") ||
-                            (day.getClosedTimeElement(closeTimeIndex) > res.getInt("starttime") &&
-                                    day.getClosedTimeElement(closeTimeIndex) < res.getInt("endtime")) ){
-                        value[0] += 2;
-                        update.setInt(1, value[0]);
+                    if(day.getClosedTimeElement(closeTimeIndex) * 100 == res.getInt("starttime") ||
+                            day.getClosedTimeElement(closeTimeIndex) * 100 == res.getInt("endtime") ||
+                            (day.getClosedTimeElement(closeTimeIndex) * 100  > res.getInt("starttime") &&
+                                    day.getClosedTimeElement(closeTimeIndex) * 100 < res.getInt("endtime")) ){
+                        if(isTimeBased){
+                            value += 2;
+                        } else {
+                            value += 1;
+                        }
+                        update.setInt(1, value);
+
                         update.execute();
                     }
                     closeTimeIndex++;
@@ -107,6 +112,73 @@ public class SearchServlet extends HttpServlet {
 
             }
         }
+
+    }
+    
+    protected void searchAction(Connection conn, HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
+        
+            PreparedStatement preparedStatement;
+            ResultSet resultSet;
+            Integer value = 0; 
+            String queryA = "select * from "+ searcher.tableName();
+
+           
+            try {
+
+                String days = "";
+                preparedStatement = conn.prepareStatement(queryA);
+                preparedStatement.execute();
+                resultSet = preparedStatement.executeQuery();
+                PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
+                        + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
+
+                while (resultSet.next()){
+                    value = 0;
+                    update.setString(2, resultSet.getString("cdept"));
+                    update.setString(3, resultSet.getString("cnbr"));
+                    update.setString(4, resultSet.getString("sec"));
+
+                    days = resultSet.getString("days");
+
+                    
+                    for(int i=0; i<schedule.getWeek().length; ++i) {
+                        if(days.contains(schedule.getWeek()[i])) {
+                            Day temp = schedule.getElementFromSchedule(i);
+                            closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
+                        }
+                    }
+                    
+                    if(isTimeBased){
+                        boolean hasMatch=false;
+
+                        for (int i = 0; i < parseJSON(request.getParameter("reqs")).length; i++){
+                            try {
+                                if( parseJSON(request.getParameter("reqs"))[i].getString("dept").equals(resultSet.getString("cdept").replaceAll(" ", ""))){
+                                    if(parseJSON(request.getParameter("reqs"))[i].getBoolean("hasAt")) {
+
+                                    } else if(resultSet.getString("cnbr").replaceAll(" ","").equals(parseJSON(request.getParameter("reqs"))[i].getString("cnum"))){
+                                        hasMatch = true;
+                                    }
+
+
+                                }
+                            } catch(JSONException e){
+                               e.printStackTrace();
+                            }
+
+                            if(!hasMatch){
+                                update.setInt(1, value + 1);
+                                update.execute();
+                            }
+
+                        }
+                    }
+                    
+                }
+            }catch (SQLException e) {
+
+                e.printStackTrace();
+            }
 
     }
     
@@ -124,7 +196,7 @@ public class SearchServlet extends HttpServlet {
                 result[i] = new JSONObject(array.get(i).toString());
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            e.printStackTrace(); 
         }
         return result;
     }
@@ -218,6 +290,8 @@ public class SearchServlet extends HttpServlet {
             response.setHeader("Cache-Control", "no-cache");
             college = college.toLowerCase();
 
+            System.out.println(request.getParameter("sched_open"));
+            
             String query1 =
                     "select * into combined_section_table1 "
                             + "from " + searcher.tableName() + " left join college_courses" + college +
@@ -293,6 +367,7 @@ public class SearchServlet extends HttpServlet {
             Schedule schedule = new Schedule();
             schedule.setOpenTimes(testArr);
             schedule.setCloseTimes(testArr2);
+            
             /**********************************************************************/
             // Finds go here
             /**********************************************************************/
@@ -301,65 +376,10 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             // Sorting goes here
             /**********************************************************************/
+            
+            
+            searchAction(conn, request, schedule, searcher, true);
 
-
-            PreparedStatement preparedStatement;
-            ResultSet resultSet;
-            String queryA = "select * from "+ searcher.tableName();
-
-            try {
-
-                String days = "";
-                preparedStatement = conn.prepareStatement(queryA);
-                preparedStatement.execute();
-                resultSet = preparedStatement.executeQuery();
-
-                String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
-                PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
-                        + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
-
-                int value[] = {0};
-
-                while (resultSet.next()){
-                    value[0] = 0;
-                    update.setString(2, resultSet.getString("cdept"));
-                    update.setString(3, resultSet.getString("cnbr"));
-                    update.setString(4, resultSet.getString("sec"));
-
-                    days = resultSet.getString("days");
-
-                    for(int i=0; i<WEEK.length; ++i) {
-                        if(days.contains(WEEK[i])) {
-                            Day temp = schedule.getElementFromSchedule(i);
-                            closeTimeMatchAction(resultSet, update, temp, value);
-                        }
-                    }
-                    boolean hasMatch=false;
-
-                    for (int i = 0; i < request.getParameter("reqs").length(); i++){
-                        /*
-                        if(request.getParameter("reqs").dept.replaceAll(" ", "").equals(resultSet.getString("cdept").replaceAll(" ", ""))){
-                            
-                            if(request.getParameter("reqs").hasAt){
-
-                            } else if(resultSet.getString("cnbr").replaceAll(" ","").equals(request.getParameter("reqs").cnum.replaceAll(" ",""))){
-                                hasMatch = true;
-                            }
-                        
-                            
-
-                        }*/
-                    }
-                    if(!hasMatch){
-                        update.setInt(1, value[0] + 1);
-                        update.execute();
-                    }
-
-                }
-            } catch (SQLException e) {
-
-                e.printStackTrace();
-            }
 
         }
 
@@ -368,6 +388,13 @@ public class SearchServlet extends HttpServlet {
         /**********************************************************************/
         else if (request.getParameter("search_type").equals("REQ_FOCUSED_SEARCH")){
 
+            //Test values for available and unavailable times.
+            String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
+            String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
+            Schedule schedule = new Schedule();
+            schedule.setOpenTimes(testArr);
+            schedule.setCloseTimes(testArr2);
+            
             /**********************************************************************/
             // parsing of parameters specific to this search goes here
             /**********************************************************************/
@@ -386,7 +413,7 @@ public class SearchServlet extends HttpServlet {
                     e.printStackTrace();
                 }
             }
-            
+
             /**********************************************************************/
             // Finds go here
             /**********************************************************************/
@@ -430,6 +457,8 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             // Sorting goes here
             /**********************************************************************/
+
+            searchAction(conn, request, schedule, searcher, false);
 
         }
 

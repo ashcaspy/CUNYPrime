@@ -580,14 +580,14 @@ function uploadPDF() {
 /*****************************************************/
 
 	
-function Schedule(dayStart, dayEnd, hoursStart, hoursEnd, openTimes, closeTimes, selectedDiv, valid, classTimes, selectedCourses){
+function Schedule(dayStart, dayEnd, hourStart, hourEnd, openTimes, closedTimes, classTimes, selectedDivs, valid, selectedCourses){
     this.dayStart = dayStart;
     this.dayEnd = dayEnd;
-    this.hoursStart = hoursStart;
-    this.hoursEnd = hoursEnd;
+    this.hourStart = hourStart;
+    this.hourEnd = hourEnd;
     this.openTimes = openTimes;
-    this.closeTimes = closeTimes;
-    this.selectedDiv = selectedDiv;
+    this.closedTimes = closedTimes;
+    this.selectedDivs = selectedDivs;
     this.valid = valid;
     this.classTimes = classTimes;
     this.selectedCourses = selectedCourses;
@@ -598,12 +598,12 @@ function Schedule(dayStart, dayEnd, hoursStart, hoursEnd, openTimes, closeTimes,
 //IT SHOULD GO INTO THE PROFILEFUNCTIONS.JS SO THE VARIABLE DB IS KNOWN!
 
 function createSched(username){
-    var open = [];
-    var closedTime = [];
-    var selectedDiv = [];
-    var classTime = [];
-    var selectedCourse = [];
-    var testSched = new Schedule(0,6,0,23,open, closedTime, selectedDiv, true, classTime, selectedCourse);
+    var open = new Array();
+    var closedTime = new Array();
+    var selectedDiv = new Array();
+    var classTime = new Array();
+    var selectedCourse = new Array();
+    var testSched = new Schedule(0,6,0,23,open, closedTime, classTime, selectedDiv, true, selectedCourse);
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
     var request = store.get(username);
@@ -681,7 +681,7 @@ function setClosedTimes(username, closeTimes){
     var req = store.get(username);
     req.onsuccess = function(){
         var data = req.result;
-        data.sched[currentScheduleTab].closeTimes = closeTimes;
+        data.sched[currentScheduleTab].closedTimes = closeTimes;
         var update = store.put(data);
     }
 }
@@ -692,12 +692,12 @@ function setSelectedDiv(username, selectedDiv){
     var req = store.get(username);
     req.onsuccess = function(){
         var data = req.result;
-        data.sched[currentScheduleTab].selectedDiv = selectedDiv;
+        data.sched[currentScheduleTab].selectedDivs = selectedDiv;
         var update = store.put(data);
     }
 }
 
-function setSelectedCourses(username, selectedDiv){
+function setSelectedCourses(username, selectedCourses){
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
     var req = store.get(username);
@@ -840,7 +840,7 @@ function getClosedTimes(username, myArr, boolArr) {
     req.onsuccess = function(){
         var data = req.result;
 
-        for(var i = 0; i < data.sched[currentScheduleTab].closeTimes.length; i++){
+        for(var i = 0; i < data.sched[currentScheduleTab].closedTimes.length; i++){
             myArr.push(data.sched[currentScheduleTab].openTimes[i]);
         }
 
@@ -861,7 +861,7 @@ function getSelectedDiv(username, myArr, boolArr) {
     req.onsuccess = function(){
         var data = req.result;
 
-        for(var i = 0; i < data.sched[currentScheduleTab].selectedDiv.length; i++){
+        for(var i = 0; i < data.sched[currentScheduleTab].selectedDivs.length; i++){
             myArr.push(data.sched[currentScheduleTab].openTimes[i]);
         }
 
@@ -879,8 +879,9 @@ function getSchedules(username, myArr, boolArr) {
         var data = req.result;
         
         //myArr = data.sched;
-        scheduleObjArray = data.sched;
-        alert(scheduleObjArray[0].openTimes);
+        scheduleTabs = data.sched;
+        //scheduleObjArray = data.sched;
+        //alert(scheduleObjArray[0].openTimes);
         /*
         for(var i = 0; i < data.sched.length; i++){
             myArr.push(data.sched[i]);
@@ -974,6 +975,7 @@ function selectUser(done){
                 // load user resume
                 initPDF();
                 loadUserResume(userName, false);
+                loadUserIdNum(userName, false);
             });
             
             $userChoiceLabel.click(function(e){
@@ -1065,6 +1067,7 @@ function loadUserIdNum(username, done){
     req.onsuccess = function(){
         var data = req.result;
         id_num = data.id_num;
+        alert(id_num);
     }
 }
 
@@ -1080,6 +1083,7 @@ function setUserIdNum(username, done){
             req.onsuccess = function(){
                 var data = req.result;
                 data.id_num = id_num;
+                alert("ok " + id_num);
                 var update = store.put(data);
             }
         }
