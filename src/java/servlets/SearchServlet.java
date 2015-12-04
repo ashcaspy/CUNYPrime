@@ -80,7 +80,7 @@ public class SearchServlet extends HttpServlet {
     }
 
 
-    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, int value[]){
+    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, int value[], boolean isTimeBased){
         int closeTimeIndex = 0;
 
         if(!day.isCloseTimesEmpty()){
@@ -90,8 +90,13 @@ public class SearchServlet extends HttpServlet {
                             day.getClosedTimeElement(closeTimeIndex) * 100 == res.getInt("endtime") ||
                             (day.getClosedTimeElement(closeTimeIndex) * 100  > res.getInt("starttime") &&
                                     day.getClosedTimeElement(closeTimeIndex) * 100 < res.getInt("endtime")) ){
-                        value[0] += 2;
+                        if(isTimeBased){
+                            value[0] += 2;
+                        } else {
+                            value[0] += 1;
+                        }
                         update.setInt(1, value[0]);
+
                         update.execute();
                     }
                     closeTimeIndex++;
@@ -102,6 +107,70 @@ public class SearchServlet extends HttpServlet {
 
             }
         }
+
+    }
+    
+    protected void searchAction(Connection conn, String query, String week [], HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
+        
+            PreparedStatement preparedStatement;
+            ResultSet resultSet;
+            int value [] ={0};
+           
+            try {
+
+                String days = "";
+                preparedStatement = conn.prepareStatement(query);
+                preparedStatement.execute();
+                resultSet = preparedStatement.executeQuery();
+                PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
+                        + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
+
+                while (resultSet.next()){
+                    value[0] = 0;
+                    update.setString(2, resultSet.getString("cdept"));
+                    update.setString(3, resultSet.getString("cnbr"));
+                    update.setString(4, resultSet.getString("sec"));
+
+                    days = resultSet.getString("days");
+
+                    for(int i=0; i<week.length; ++i) {
+                        if(days.contains(week[i])) {
+                            Day temp = schedule.getElementFromSchedule(i);
+                            closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
+                        }
+                    }
+                    
+                    if(isTimeBased){
+                        boolean hasMatch=false;
+
+                        for (int i = 0; i < parseJSON(request.getParameter("reqs")).length; i++){
+                            try {
+                                if( parseJSON(request.getParameter("reqs"))[i].getString("dept").equals(resultSet.getString("cdept").replaceAll(" ", ""))){
+                                    if(parseJSON(request.getParameter("reqs"))[i].getBoolean("hasAt")) {
+
+                                    } else if(resultSet.getString("cnbr").replaceAll(" ","").equals(parseJSON(request.getParameter("reqs"))[i].getString("cnum"))){
+                                        hasMatch = true;
+                                    }
+
+
+                                }
+                            } catch(JSONException e){
+                               e.printStackTrace();
+                            }
+
+
+                            update.setInt(1, value[0] + 1);
+
+                            update.execute();
+
+                        }
+                    }
+                    
+                }
+            }catch (SQLException e) {
+
+                e.printStackTrace();
+            }
 
     }
     
@@ -119,7 +188,7 @@ public class SearchServlet extends HttpServlet {
                 result[i] = new JSONObject(array.get(i).toString());
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            e.printStackTrace(); 
         }
         return result;
     }
@@ -295,65 +364,12 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             // Sorting goes here
             /**********************************************************************/
-
-
-            PreparedStatement preparedStatement;
-            ResultSet resultSet;
+            
             String queryA = "select * from "+ searcher.tableName();
+            String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
+            
+            searchAction(conn, queryA, WEEK, request, schedule, searcher, true);
 
-            try {
-
-                String days = "";
-                preparedStatement = conn.prepareStatement(queryA);
-                preparedStatement.execute();
-                resultSet = preparedStatement.executeQuery();
-
-                String[] WEEK = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
-                PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
-                        + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
-
-                int value[] = {0};
-
-                while (resultSet.next()){
-                    value[0] = 0;
-                    update.setString(2, resultSet.getString("cdept"));
-                    update.setString(3, resultSet.getString("cnbr"));
-                    update.setString(4, resultSet.getString("sec"));
-
-                    days = resultSet.getString("days");
-
-                    for(int i=0; i<WEEK.length; ++i) {
-                        if(days.contains(WEEK[i])) {
-                            Day temp = schedule.getElementFromSchedule(i);
-                            closeTimeMatchAction(resultSet, update, temp, value);
-                        }
-                    }
-                    boolean hasMatch=false;
-
-                    for (int i = 0; i < request.getParameter("reqs").length(); i++){
-                        /*
-                        if(request.getParameter("reqs").dept.replaceAll(" ", "").equals(resultSet.getString("cdept").replaceAll(" ", ""))){
-                            
-                            if(request.getParameter("reqs").hasAt){
-
-                            } else if(resultSet.getString("cnbr").replaceAll(" ","").equals(request.getParameter("reqs").cnum.replaceAll(" ",""))){
-                                hasMatch = true;
-                            }
-                        
-                            
-
-                        }*/
-                    }
-                    if(!hasMatch){
-                        update.setInt(1, value[0] + 1);
-                        update.execute();
-                    }
-
-                }
-            } catch (SQLException e) {
-
-                e.printStackTrace();
-            }
 
         }
 
