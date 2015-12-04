@@ -145,12 +145,20 @@ public class SearchServlet extends HttpServlet {
                     
                     if(isTimeBased){
                         boolean hasMatch=false;
-
+                        String cnum = "";
                         for (int i = 0; i < parseJSON(request.getParameter("reqs")).length; i++){
+                           
                             try {
                                 if( parseJSON(request.getParameter("reqs"))[i].getString("dept").equals(resultSet.getString("cdept").replaceAll(" ", ""))){
                                     if(parseJSON(request.getParameter("reqs"))[i].getBoolean("hasAt")) {
-
+                                        for (int k = 0; k < parseJSON(request.getParameter("reqs"))[i].length(); k++){
+                                            cnum += resultSet.getString("cnum").charAt(k);
+                                        }
+                                        if(cnum.equals(parseJSON(request.getParameter("reqs"))[i].getString("cnum"))){
+                                            hasMatch = true;
+                                        } else {
+                                            hasMatch = false;
+                                        }
                                     } else if(resultSet.getString("cnbr").replaceAll(" ","").equals(parseJSON(request.getParameter("reqs"))[i].getString("cnum"))){
                                         hasMatch = true;
                                     }
