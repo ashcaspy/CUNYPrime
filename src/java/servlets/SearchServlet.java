@@ -80,7 +80,7 @@ public class SearchServlet extends HttpServlet {
     }
 
 
-    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, int value[], boolean isTimeBased){
+    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, Integer value, boolean isTimeBased){
         int closeTimeIndex = 0;
 
         if(!day.isCloseTimesEmpty()){
@@ -91,11 +91,11 @@ public class SearchServlet extends HttpServlet {
                             (day.getClosedTimeElement(closeTimeIndex) * 100  > res.getInt("starttime") &&
                                     day.getClosedTimeElement(closeTimeIndex) * 100 < res.getInt("endtime")) ){
                         if(isTimeBased){
-                            value[0] += 2;
+                            value += 2;
                         } else {
-                            value[0] += 1;
+                            value += 1;
                         }
-                        update.setInt(1, value[0]);
+                        update.setInt(1, value);
 
                         update.execute();
                     }
@@ -114,7 +114,7 @@ public class SearchServlet extends HttpServlet {
         
             PreparedStatement preparedStatement;
             ResultSet resultSet;
-            int value [] ={0};
+            Integer value = 0; 
            
             try {
 
@@ -126,7 +126,7 @@ public class SearchServlet extends HttpServlet {
                         + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
 
                 while (resultSet.next()){
-                    value[0] = 0;
+                    value = 0;
                     update.setString(2, resultSet.getString("cdept"));
                     update.setString(3, resultSet.getString("cnbr"));
                     update.setString(4, resultSet.getString("sec"));
@@ -158,10 +158,10 @@ public class SearchServlet extends HttpServlet {
                                e.printStackTrace();
                             }
 
-
-                            update.setInt(1, value[0] + 1);
-
-                            update.execute();
+                            if(!hasMatch){
+                                update.setInt(1, value + 1);
+                                update.execute();
+                            }
 
                         }
                     }
@@ -281,6 +281,8 @@ public class SearchServlet extends HttpServlet {
             response.setHeader("Cache-Control", "no-cache");
             college = college.toLowerCase();
 
+            System.out.println(request.getParameter("sched_open"));
+            
             String query1 =
                     "select * into combined_section_table1 "
                             + "from " + searcher.tableName() + " left join college_courses" + college +
@@ -353,9 +355,13 @@ public class SearchServlet extends HttpServlet {
             //Test values for available and unavailable times.
             String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
             String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
+           
+            
+            
             Schedule schedule = new Schedule();
             schedule.setOpenTimes(testArr);
             schedule.setCloseTimes(testArr2);
+            
             /**********************************************************************/
             // Finds go here
             /**********************************************************************/
