@@ -473,7 +473,7 @@ public class SearchServlet extends HttpServlet {
             
             // get departments with more than one course
             List<String> others = reqs_by_dept.entrySet().stream().filter(
-                    en -> en.getValue().size() > 1).map(en -> en.getKey())
+                    en -> en.getValue().size() > 1).map(Entry::getKey)
                     .collect(Collectors.toList());
 
             searcher.find(null, null, null, null, null, null, others);
@@ -483,6 +483,42 @@ public class SearchServlet extends HttpServlet {
             // Sorting goes here
             /**********************************************************************/
 
+            // delete any rows that aren't actually requirements
+            
+            PreparedStatement delete;
+            for(String department: others) {
+                // courses to keep
+                ArrayList<JSONObject> courses = reqs_by_dept.get(department);
+                // the conditions to be and'ed together
+                String[] conditions = new String[courses.size()];
+                
+                for(int i=0; i<courses.size(); ++i) {
+                    try {
+                        String cnum = Integer.toString(courses.get(i).getInt("cnum"));
+                        if(courses.get(i).getBoolean("hasAt")) {
+                            conditions[i] = "cnbr NOT LIKE '" + cnum + "%'";
+                        } else {
+                            conditions[i] = "cnbr!='" + cnum + "'";
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        conditions[i] = "";
+                    }
+                }
+                
+                String ands = String.join(" AND ", conditions);
+                try {
+                    delete = conn.prepareStatement("DELETE FROM " + 
+                            searcher.tableName() + " WHERE " +
+                            "cnbr=? AND " + ands + ";");
+                    delete.setString(1, department);
+                    delete.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            // check if any requirements fall within closed times
             searchAction(conn, request, schedule, searcher, false);
             createPtBasedTables(conn, searcher, id_num);
 
