@@ -115,6 +115,24 @@ public class SearchServlet extends HttpServlet {
 
     }
     
+    protected void createPtBasedTables(Connection conn, Search searcher, int id_num){
+        try {
+            
+            PreparedStatement myStatement = conn.prepareStatement("delete from " + searcher.tableName() + " where points >= 3");
+            myStatement.execute();
+            myStatement = conn.prepareStatement("select * into best_fit_" + id_num + " from " + searcher.tableName() + " where points = 0");
+            myStatement.execute();
+            myStatement = conn.prepareStatement("select * into some_conflicts_" + id_num + " from " + searcher.tableName() + " where points = 1");
+            myStatement.execute();
+            myStatement = conn.prepareStatement("select * into others_" + id_num + " from " + searcher.tableName() + " where points = 2");
+            myStatement.execute();
+            
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    
+    
     protected void searchAction(Connection conn, HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
         
             PreparedStatement preparedStatement;
@@ -386,7 +404,7 @@ public class SearchServlet extends HttpServlet {
             
             
             searchAction(conn, request, schedule, searcher, true);
-
+            createPtBasedTables(conn, searcher, id_num);
 
         }
 
@@ -466,6 +484,8 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
 
             searchAction(conn, request, schedule, searcher, false);
+            createPtBasedTables(conn, searcher, id_num);
+
 
         }
 
