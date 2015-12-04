@@ -434,14 +434,15 @@ public class SearchServlet extends HttpServlet {
                     MatchValuePair courseNumber;
                     try {
                         JSONObject req = entry.getValue().get(0);
+                        String cnum = Integer.toString(req.getInt("cnum"));
                         if(req.getBoolean("hasAt")) {
                             // this is contains and not beginsWith 
                             // but it's as close as it gets
                             courseNumber = new MatchValuePair(
-                                    ID.contains, req.getString("cnum"));
+                                    ID.contains, cnum);
                         } else {
                             courseNumber = new MatchValuePair(
-                                    ID.exact, req.getString("cnum"));
+                                    ID.exact, cnum);
                         }
                         searcher.find(courseNumber, null, null, null, null, null, 
                             Arrays.asList(new String[] {entry.getKey()}));
