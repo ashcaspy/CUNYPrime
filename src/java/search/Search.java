@@ -19,10 +19,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
-import search.parser.Course;
-import search.parser.CourseData;
-import search.parser.Parser;
-import search.parser.Section;
+import search.parser.*;
 
 
 public class Search {
@@ -59,7 +56,7 @@ public class Search {
     public void find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
-                    int[] days, Iterable<String> departments) {
+                    int[] days, Iterable<String> departments) throws SearchError {
 
         //clear previous search parameters in case some of these are null
         client.resetTerms();
@@ -84,6 +81,10 @@ public class Search {
                 try {
                     new Parser(client.getResults(dept)).addToTable(conn, offset());
                 } catch (IOException e) {
+                } catch (NoResultsException error) {
+                    // throw new exception with the search criteria
+                    throw new SearchError(error.msg, courseNumber, start, end,
+                        keyword, professor, days, dept);
                 }
             }
         }
@@ -91,6 +92,11 @@ public class Search {
             try {
                 new Parser(client.getResults()).addToTable(conn, offset());
             } catch (IOException e) { }
+              catch (NoResultsException error) {
+                    // throw new exception with the search criteria
+                    throw new SearchError(error.msg, courseNumber, start, end, 
+                            keyword, professor, days, null);
+            }
         }
         /*
         ++counter;

@@ -16,9 +16,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Parser {
-    public Parser(HtmlPage page) throws IOException {
+    public Parser(HtmlPage page) throws IOException, NoResultsException {
         Element doc = Jsoup.parse(page.asXml());
         Elements courseElements = Selector.select(ID.course, doc);
+        
+        Element error = doc.getElementById(ID.error);
+        
+        if(null != error) {
+            throw new NoResultsException(error.ownText());
+        }
 
         courses = new ArrayList<>(courseElements.size());
 
