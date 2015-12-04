@@ -167,23 +167,26 @@ public class SearchServlet extends HttpServlet {
                     }
                     
                     if(isTimeBased){
-                        boolean hasMatch=true;
-                        String cnum = "";
+                        boolean hasMatch = false;
+                        int counter = 0;
                         for (int i = 0; i < parseJSON(request.getParameter("reqs")).length; i++){
-                           
+                           counter = 0;
                             try {
                                 if( parseJSON(request.getParameter("reqs"))[i].getString("dept").equals(resultSet.getString("cdept").replaceAll(" ", ""))){
                                     if(parseJSON(request.getParameter("reqs"))[i].getBoolean("hasAt")) {
                                         for (int k = 0; k < parseJSON(request.getParameter("reqs"))[i].length(); k++){
-                                            cnum += resultSet.getString("cnum").charAt(k);
+                                            if(resultSet.getString("cnum").charAt(k) != parseJSON(request.getParameter("reqs"))[i].getString("cnum").charAt(k)){
+                                                counter++;
+                                            }
+                                            
                                         }
-                                        if(cnum.equals(parseJSON(request.getParameter("reqs"))[i].getString("cnum"))){
-                                            hasMatch = true;
+                                        if(counter == 0){
+                                            hasMatch = hasMatch || true;
                                         } else {
-                                            hasMatch = false;
+                                            hasMatch = hasMatch || false;
                                         }
                                     } else if(!resultSet.getString("cnbr").replaceAll(" ","").equals(parseJSON(request.getParameter("reqs"))[i].getString("cnum"))){
-                                        hasMatch = false;
+                                        hasMatch = hasMatch || false;
                                     }
 
 
@@ -192,7 +195,7 @@ public class SearchServlet extends HttpServlet {
                                e.printStackTrace();
                             }
 
-                            if(!hasMatch){
+                            if(!hasMatch && parseJSON(request.getParameter("reqs")).length > 0){
                                 update.setInt(1, value + 1);
                                 update.execute();
                             }
