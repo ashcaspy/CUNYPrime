@@ -31,7 +31,8 @@ public class Data {
 
     //assume setup was called, otherwise returns empty list
     public List<String> getDepts() {
-        return client.getSelect(ID.selectDept).getOptions().stream().map(HtmlOption::getValueAttribute).collect(Collectors.toList());
+        return client.getSelect(ID.selectDept).getOptions().stream().map(HtmlOption::getValueAttribute)
+                .filter(d -> !d.isEmpty() && !ID.skippedDepts.contains(d)).collect(Collectors.toList());
     }
 
     public List<String> getSemesters() {
