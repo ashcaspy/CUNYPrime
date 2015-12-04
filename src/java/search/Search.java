@@ -56,7 +56,7 @@ public class Search {
     public void find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
-                    int[] days, Iterable<String> departments) throws SearchError {
+                    int[] days, String dept) throws SearchError {
 
         //clear previous search parameters in case some of these are null
         client.resetTerms();
@@ -76,26 +76,17 @@ public class Search {
             return;
         }
 
-        if(null != departments) {
-            for (String dept : departments) {
-                try {
-                    new Parser(client.getResults(dept)).addToTable(conn, offset());
-                } catch (IOException e) {
-                } catch (NoResultsException error) {
-                    // throw new exception with the search criteria
-                    throw new SearchError(error.msg, courseNumber, start, end,
-                        keyword, professor, days, dept);
-                }
-            }
-        }
-        else {
-            try {
+        try {
+            if(null != departments) {
+                new Parser(client.getResults(dept)).addToTable(conn, offset());
+            } else {
                 new Parser(client.getResults()).addToTable(conn, offset());
-            } catch (IOException e) { }
-              catch (NoResultsException error) {
-                    // throw new exception with the search criteria
-                    throw new SearchError(error.msg, courseNumber, start, end, 
-                            keyword, professor, days, null);
+            }
+        } catch (IOException e) {
+        } catch (NoResultsException error) {
+                // throw new exception with the search criteria
+                throw new SearchError(error.msg, courseNumber, start, end,
+                    keyword, professor, days, dept);
             }
         }
         /*

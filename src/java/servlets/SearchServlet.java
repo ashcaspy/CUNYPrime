@@ -194,7 +194,7 @@ public class SearchServlet extends HttpServlet {
                     keyword,
                     prof,
                     new int[] {},
-                    Arrays.asList(new String[]{dept})
+                    dept)
             );
             searcher.find(
                     new MatchValuePair(ID.greaterThan, "0"),
@@ -203,7 +203,8 @@ public class SearchServlet extends HttpServlet {
                     null,
                     null,
                     new int[] {3},
-                    Arrays.asList(new String[]{"CSCI", "ANTHC"})
+                    null
+                    //Arrays.asList(new String[]{"CSCI", "ANTHC"})
             );
 
 
@@ -409,7 +410,7 @@ public class SearchServlet extends HttpServlet {
                                     ID.exact, req.getString("cnum"));
                         }
                         searcher.find(courseNumber, null, null, null, null, null, 
-                            Arrays.asList(new String[] {entry.getKey()}));
+                            entry.getKey());
                     } catch(JSONException e) {
                         e.printStackTrace();
                     }
@@ -422,8 +423,9 @@ public class SearchServlet extends HttpServlet {
                     en -> en.getValue().size() > 1).map(en -> en.getKey())
                     .collect(Collectors.toList());
 
-            searcher.find(null, null, null, null, null, null, others);
-            
+            for(String dept : others) {
+                searcher.find(null, null, null, null, null, null, dept);
+            }
 
             /**********************************************************************/
             // Sorting goes here
