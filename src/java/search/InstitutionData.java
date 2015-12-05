@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 
 
 //retrieves and stores data that will never change
-public class Data {
+public class InstitutionData {
     CunyFirstClient client = new CunyFirstClient();
     Connection conn;
 
-    public Data(Connection c) {
+    public InstitutionData(Connection c) {
         conn = c;
     }
 
