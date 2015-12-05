@@ -104,7 +104,19 @@ public class Data {
     private String coursesTablename(String school_id) {
         return "college_courses" + school_id;
     }
-
+    
+    public void createAllCourseTables() {
+        try {
+            String id;
+            ResultSet ids = conn.createStatement().executeQuery("select id from " + schoolTable + ";");
+            while(ids.next()) {
+                id = ids.getString(1);
+                CourseData.createTable(conn, coursesTablename(id));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void addCourses(String school) throws SQLException {
         PreparedStatement st = conn.prepareStatement("select id from "+schoolTable+" where name=?;");
