@@ -81,27 +81,32 @@ public class Search {
             return ErrorCode.UNKNOWN;
         }
         
-        ErrorCode result = ErrorCode.SUCCESS;
 
         if(null != departments) {
+            ErrorCode result = ErrorCode.NORESULTS;
             for (String dept : departments) {
                 try {
                     new Parser(client.getResults(dept)).addToTable(conn, offset());
+                    
+                    // if no exception is thrown and result is still on NORESULTS
+                    if(ErrorCode.NORESULTS == result)
+                        result = ErrorCode.SUCCESS;
                 } catch (IOException e) {
                 } catch (SearchError e) {
-                    return ErrorCode.fromMsg(e.msg);
+                    result = ErrorCode.max(result, ErrorCode.fromMsg(e.msg));
                 }
             }
+            return result;
         }
         else {
             try {
                 new Parser(client.getResults()).addToTable(conn, offset());
+                return ErrorCode.SUCCESS;
             } catch (IOException e) { }
               catch (SearchError e) {
                   return ErrorCode.fromMsg(e.msg);
               }
         }
-        return result;
         /*
         ++counter;
         if(counter > 2) {
