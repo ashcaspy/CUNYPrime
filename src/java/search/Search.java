@@ -56,7 +56,7 @@ public class Search {
         client.setup(school, semester);
     }
 
-    public void find(MatchValuePair courseNumber,
+    public ErrorCode find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
                     int[] days, Iterable<String> departments) {
@@ -76,7 +76,7 @@ public class Search {
             Section.createTable(conn, offset());
         } catch(SQLException e) {
             e.printStackTrace();
-            return;
+            return ErrorCode.UNKNOWN;
         }
 
         if(null != departments) {
@@ -92,6 +92,8 @@ public class Search {
                 new Parser(client.getResults()).addToTable(conn, offset());
             } catch (IOException e) { }
         }
+        // nothing went wrong
+        return ErrorCode.SUCCESS;
         /*
         ++counter;
         if(counter > 2) {
