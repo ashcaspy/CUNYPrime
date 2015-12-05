@@ -230,6 +230,29 @@ public class SearchServlet extends HttpServlet {
         return result;
     }
 
+    
+    protected void putTimeSlotsInSched(Schedule schedule, HttpServletRequest request){
+        try {
+                JSONArray arr=  new JSONArray(request.getParameter("sched_open"));
+                String openTimesArr [] = new String[arr.length()];
+                for (int i =0; i < arr.length(); i++){
+                    openTimesArr[i] = arr.getString(i);
+                }
+                schedule.setOpenTimes(openTimesArr);
+                
+                arr = new JSONArray(request.getParameter("sched_closed"));
+                String closedTimesArr[] = new String[arr.length()];
+                  for (int i =0; i < arr.length(); i++){
+                    openTimesArr[i] = arr.getString(i);
+                }
+                schedule.setCloseTimes(closedTimesArr);
+            
+            } catch (JSONException e){
+                e.printStackTrace();
+                
+            }
+    }
+    
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -317,6 +340,9 @@ public class SearchServlet extends HttpServlet {
             response.setContentType("text/html");
             response.setHeader("Cache-Control", "no-cache");
             college = college.toLowerCase();
+            
+           System.out.println("Grace");
+
 
             System.out.println(request.getParameter("sched_open"));
             
@@ -389,12 +415,10 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             searcher = new Search(conn, id_num);
 
-            //Test values for available and unavailable times.
-            String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
-            String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
             Schedule schedule = new Schedule();
-            schedule.setOpenTimes(testArr);
-            schedule.setCloseTimes(testArr2);
+            putTimeSlotsInSched(schedule, request);
+            
+          
             
             /**********************************************************************/
             // Finds go here
@@ -416,12 +440,8 @@ public class SearchServlet extends HttpServlet {
         /**********************************************************************/
         else if (request.getParameter("search_type").equals("REQ_FOCUSED_SEARCH")){
 
-            //Test values for available and unavailable times.
-            String testArr [] = {"timeslot-div- 1 - 09", "timeslot-div-1-11", "timeslot-div- 1 - 10","timeslot-div-1-12", "timeslot-div-1-14","timeslot-div-1-15", "timeslot-div-2-12", "timeslot-div-2-13"};
-            String testArr2 []= {"timeslot-div-1-13", "timeslot-div-2-10", "timeslot-div-1-14"};
             Schedule schedule = new Schedule();
-            schedule.setOpenTimes(testArr);
-            schedule.setCloseTimes(testArr2);
+            putTimeSlotsInSched(schedule, request);           
             
             /**********************************************************************/
             // parsing of parameters specific to this search goes here
