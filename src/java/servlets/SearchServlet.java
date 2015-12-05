@@ -325,22 +325,13 @@ public class SearchServlet extends HttpServlet {
             response.setHeader("Cache-Control", "no-cache");
             college = college.toLowerCase();
             
-            String query1;
-            if (college.equals("htr01") || college.equals("cty01")){
-                query1 =
+            String query1 =
                     "select * into combined_section_table_" + id_num
                             + " from " + searcher.tableName() + " left join college_courses" + college +
                             " on " + searcher.tableName() +".cdept = college_courses" + college + ".dept and "
                             + searcher.tableName() + ".cnbr = college_courses" +
                             college + ".nbr;";
-            }
-            else{
-                query1 = "select * into combined_section_table_" + id_num
-                            + " from " + searcher.tableName() + " left join college_courses" + "_empty" +
-                            " on " + searcher.tableName() +".cdept = college_courses" + "_empty" + ".dept and "
-                            + searcher.tableName() + ".cnbr = college_courses" +
-                            "_empty" + ".nbr;";
-            }
+            
             String query2 = "alter table combined_section_table_" + id_num + " drop column dept";
             String query3 = "alter table combined_section_table" + id_num + " drop column nbr";
             String query4 = "select * from combined_section_table" + id_num;
