@@ -101,7 +101,7 @@ public class Data {
     }
     
     
-    private String coursesTablename(String school_id) {
+    public static String coursesTablename(String school_id) {
         return "college_courses" + school_id;
     }
     
