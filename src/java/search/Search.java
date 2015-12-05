@@ -77,8 +77,11 @@ public class Search {
             Section.createTable(conn, offset());
         } catch(SQLException e) {
             e.printStackTrace();
+            // the closest approximation I think
             return ErrorCode.UNKNOWN;
         }
+        
+        ErrorCode result = ErrorCode.SUCCESS;
 
         if(null != departments) {
             for (String dept : departments) {
@@ -86,7 +89,7 @@ public class Search {
                     new Parser(client.getResults(dept)).addToTable(conn, offset());
                 } catch (IOException e) {
                 } catch (SearchError e) {
-                    
+                    return ErrorCode.fromMsg(e.msg);
                 }
             }
         }
@@ -95,11 +98,10 @@ public class Search {
                 new Parser(client.getResults()).addToTable(conn, offset());
             } catch (IOException e) { }
               catch (SearchError e) {
-                  
+                  return ErrorCode.fromMsg(e.msg);
               }
         }
-        // nothing went wrong
-        return ErrorCode.SUCCESS;
+        return result;
         /*
         ++counter;
         if(counter > 2) {
