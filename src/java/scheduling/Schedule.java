@@ -22,7 +22,7 @@ public class Schedule {
         for (int i = 0; i < size; i++){
             mySchedule.add(new Day(i));
         }
-        week = new String[] {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
+        week = new String[] {"Su","Mo", "Tu", "We", "Th", "Fr", "Sa"};
     }
 
 
@@ -37,7 +37,6 @@ public class Schedule {
         int index = 0;
         final int indexOf2 = 2;
         final int indexOf3 = 3;
-
         Arrays.sort(timesArr);
 
         for (int i = 0; i < timesArr.length; i++){
