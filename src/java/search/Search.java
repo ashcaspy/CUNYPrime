@@ -81,9 +81,8 @@ public class Search {
             return ErrorCode.UNKNOWN;
         }
         
-
+        ErrorCode result = ErrorCode.NORESULTS;
         if(null != departments) {
-            ErrorCode result = ErrorCode.NORESULTS;
             for (String dept : departments) {
                 try {
                     new Parser(client.getResults(dept)).addToTable(conn, offset());
@@ -96,7 +95,6 @@ public class Search {
                     result = ErrorCode.max(result, ErrorCode.fromMsg(e.msg));
                 }
             }
-            return result;
         }
         else {
             try {
@@ -107,6 +105,7 @@ public class Search {
                   return ErrorCode.fromMsg(e.msg);
               }
         }
+        return result;
         /*
         ++counter;
         if(counter > 2) {
