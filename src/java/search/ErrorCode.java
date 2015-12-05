@@ -28,7 +28,7 @@ public enum ErrorCode {
     // chooses a value that best represents the error message
     public static ErrorCode fromMsg(String msg) {
         if(msg.contains("maximum")) {
-            return MORECRITERIA;
+            return TOOMANY;
         } else if(msg.contains("no results")) {
             return NORESULTS;
         } else if (msg.contains("narrow")) {
