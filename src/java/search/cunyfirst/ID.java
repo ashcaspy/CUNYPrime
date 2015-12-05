@@ -79,6 +79,10 @@ public class ID {
     public final static String deptCode = "SSR_CLSRCH_WRK_SUBJECT_SRCH";
 
     //parse results pages
+        
+    //technically this wouldn't be on the results page but it appears after a search failure
+    public final static String error = "DERIVED_CLSMSG_ERROR_TEXT";
+    
     private static String searchId(String id) {
         return "[id^="+id+"]";
     }

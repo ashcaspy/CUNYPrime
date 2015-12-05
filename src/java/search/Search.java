@@ -5,6 +5,7 @@ import search.cunyfirst.CunyFirstClient;
 import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import search.cunyfirst.TimeRange;
+import search.parser.SearchError;
 
 
 import java.io.IOException;
@@ -84,6 +85,8 @@ public class Search {
                 try {
                     new Parser(client.getResults(dept)).addToTable(conn, offset());
                 } catch (IOException e) {
+                } catch (SearchError e) {
+                    
                 }
             }
         }
@@ -91,6 +94,9 @@ public class Search {
             try {
                 new Parser(client.getResults()).addToTable(conn, offset());
             } catch (IOException e) { }
+              catch (SearchError e) {
+                  
+              }
         }
         // nothing went wrong
         return ErrorCode.SUCCESS;
