@@ -116,7 +116,7 @@ $.fn.popbox = function(options){
                                 "background" : "blue",//"rgba(255, 140, 19, 0.5)",
                             });
                             $tempCourseDiv.appendTo($("#timeslot-list"));
-                            $tempCourseDiv.html("<p>" + courseToDisplay.dept + " " + courseToDisplay.courseNum + "</p>");
+                            $tempCourseDiv.html("<div>" + courseToDisplay.dept + " " + courseToDisplay.courseNum + "</div>");
                         }
                     }
                 }

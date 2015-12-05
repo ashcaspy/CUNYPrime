@@ -185,6 +185,40 @@ h3{
 	color: #FFFFFF;
 }
 
+#left_column .scroll_wrapper ul li div{
+    display:table-cell;
+	vertical-align: middle;
+	list-style: none;
+	padding: 0;
+	width: 15vw;
+	padding-top:0px;
+	text-align:left;
+	background-image:url(images/2.png);
+	background-repeat:repeat-x;
+	color:#000000;
+	text-decoration:none;
+	font-size:15px;
+	font-weight:bold;
+	height: 7vh;
+	min-width: 130px;
+}
+
+#left_column .scroll_wrapper ul li div select{
+    background: lightgrey;
+    width: 10vw;
+    border-radius: 10px;
+    background-image: url(images/triangle_down.png);
+    background-position: right;
+    background-size: contain;
+    background-repeat: no-repeat;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    position: relative;
+    left: 2.5vw;
+    
+}
+
 
 /*RESULT COLUMN*/
 #right_column{

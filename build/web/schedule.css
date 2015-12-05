@@ -12,7 +12,7 @@
 
 .course_div_overlay{
     position: absolute;
-    background: #FF8C13;
+    background: rgba(255, 140, 19, 0.80);
     border-radius: 5px;
     box-shadow: 0px 0px 3px #CCC;
     display: table-cell;
@@ -21,7 +21,18 @@
     font-weight: bold;
     padding: 0;
     z-index: 3000;
-    
+    overflow: hidden;
+}
+
+.course_div_overlay div{
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0px;
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    padding-top: 0.5vh;
 }
 
 .timeslot-divs{

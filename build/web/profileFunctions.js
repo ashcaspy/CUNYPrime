@@ -649,7 +649,7 @@ function setHoursStart(username, hoursStart) {
     var req = store.get(username);
     req.onsuccess = function(){
         var data = req.result;
-        data.sched[currentScheduleTab].hoursStart = hoursStart;
+        data.sched[currentScheduleTab].hourStart = hoursStart;
         var update = store.put(data);
     }
 }
@@ -660,7 +660,7 @@ function setHoursEnd(username, hoursEnd) {
     var req = store.get(username);
     req.onsuccess = function(){
         var data = req.result;
-        data.sched[currentScheduleTab].hoursEnd = hoursEnd;
+        data.sched[currentScheduleTab].hourEnd = hoursEnd;
         var update = store.put(data);
     }
 }
@@ -1073,7 +1073,6 @@ function loadUserIdNum(username, done){
     req.onsuccess = function(){
         var data = req.result;
         id_num = data.id_num;
-        alert(id_num);
     }
 }
 
@@ -1089,7 +1088,6 @@ function setUserIdNum(username, done){
             req.onsuccess = function(){
                 var data = req.result;
                 data.id_num = id_num;
-                alert("ok " + id_num);
                 var update = store.put(data);
             }
         }

@@ -2,21 +2,96 @@ var xhrRequest;
 function searchCourses(type){
     // Set up the request.
     loadSearchOverlay();
-    var values = {
-        "college_value": $("#search_school").val(),
-        "term_value": $("#search_term").val(),
-        "dept_value": $("#search_dept").val(),
-        "course_num_value": $("#search_course_num").val(),
-        "keyword_value": $("#search_keyword").val(),
-        "prof_value": $("#search_prof").val(),
-        "reqs": JSON.stringify(courseReqObjs),
-        "sched_open": JSON.stringify(scheduleTabs[currentScheduleTab].openTimes),
-        "sched_closed": JSON.stringify(scheduleTabs[currentScheduleTab].closedTimes),
-        "sched_class": JSON.stringify(scheduleTabs[currentScheduleTab].classTimes),
-        "id_num": id_num,
-        "search_type": type
-    };
     
+    // Validate college name
+    var collegeValue = "";
+    var openTimes = new Array();
+    var closedTimes = new Array();
+    var classTimes = new Array();
+    var reqs = new Array();
+    
+    if (document.getElementById("search_school") === null || $("#search_school").val() == "none"){
+        collegeValue = majorDivInfo.collegeName;
+        if (majorDivInfo.collegeName == ""){
+            alert("Please select a school from the dropdown, or upload a DIG report.");
+            
+            fadeSearchOverlay();
+            return;
+        }
+    }
+    else
+        collegeValue = $("#search_school").val();
+    
+    // Validate open/closed times
+    if (currentScheduleTab == -1){
+        if (type == "TIME_FOCUSED_SEARCH"){
+            alert("You haven't made a schedule yet!");
+            fadeSearchOverlay();
+            return;
+        }
+    }
+    else if (scheduleTabs[currentScheduleTab].openTimes.length == 0){
+        if (type == "TIME_FOCUSED_SEARCH"){
+            alert("Please select your availability first!");
+            fadeSearchOverlay();
+            return;
+        }
+    }
+    else{
+        openTimes = scheduleTabs[currentScheduleTab].openTimes;
+        closedTimes = scheduleTabs[currentScheduleTab].openTimes;
+        classTimes = scheduleTabs[currentScheduleTab].openTimes;
+    
+    }
+    
+    // Validate Reqs
+    if (courseReqObjs.length == 0){
+        alert("Please upload a DIG report with your requirements first!");
+        fadeSearchOverlay();
+        return;
+    }
+    
+    
+    if (type == "DEFAULT_SEARCH"){
+    
+        var values = {
+            "college_value": collegeValue,
+            "term_value": $("#search_term").val(),
+            "dept_value": $("#search_dept").val(),
+            "course_num_value": $("#search_course_num").val(),
+            "keyword_value": $("#search_keyword").val(),
+            "prof_value": $("#search_prof").val(),
+            "id_num": id_num,
+            "search_type": type
+        };
+    }
+    else{       
+        if (type == "TIME_FOCUSED_SEARCH"){
+            var values = {
+                "college_value": $("#search_school").val(),
+                "term_value": $("#search_term").val(),
+                "reqs": JSON.stringify(courseReqObjs),
+                "sched_open": JSON.stringify(openTimes),
+                "sched_closed": JSON.stringify(closedTimes),
+                "sched_class": JSON.stringify(classTimes),
+                "id_num": id_num,
+                "search_type": type
+            };
+        }
+        else if (type == "REQ_FOCUSED_SEARCH"){
+            var values = {
+                "college_value": $("#search_school").val(),
+                "term_value": $("#search_term").val(),
+                "reqs": JSON.stringify(courseReqObjs),
+                "sched_open": JSON.stringify(scheduleTabs[currentScheduleTab].openTimes),
+                "sched_closed": JSON.stringify(scheduleTabs[currentScheduleTab].closedTimes),
+                "sched_class": JSON.stringify(scheduleTabs[currentScheduleTab].classTimes),
+                "id_num": id_num,
+                "search_type": type
+            };
+        }
+
+    }
     $.ajax({
         type: "POST",
         url: "performclasssearch",
@@ -154,14 +229,6 @@ function addCourseToSchedule(course){
                 scheduleTabs[currentScheduleTab].classTimes.push("timeslot-div-" + courseDays[i] + "-" + k);
                 scheduleTabs[currentScheduleTab].selectedDivs.push("timeslot-div-" + courseDays[i] + "-" + k);
 
-                if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), closedTimes) > -1){
-                    closedTimes.splice($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), closedTimes), 1);
-                    scheduleTabs[currentScheduleTab].closedTimes.splice($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), scheduleTabs[currentScheduleTab].closedTimes), 1);
-                }
-                if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), openTimes) > -1){
-                    openTimes.splice($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), openTimes), 1);
-                    scheduleTabs[currentScheduleTab].openTimes.splice($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), scheduleTabs[currentScheduleTab].openTimes), 1);
-                }
             }
         }
     }
