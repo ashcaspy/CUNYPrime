@@ -99,6 +99,12 @@ public class Data {
             }
         }
     }
+    
+    
+    private String coursesTablename(String school_id) {
+        return "college_courses" + school_id;
+    }
+
 
     public void addCourses(String school) throws SQLException {
         PreparedStatement st = conn.prepareStatement("select id from "+schoolTable+" where name=?;");
@@ -106,10 +112,8 @@ public class Data {
         ResultSet r = st.executeQuery();
         r.next();
         String id = r.getString(1);
-        final String table = "college_courses"+id;
-        CourseData.createTable(conn, table);
+        final String table = coursesTablename(id);
         st = conn.prepareStatement("SELECT * FROM "+table+" WHERE dept=? and nbr=?;");
-        CourseData.createTable(conn, table);
         ResultSet rs;
         client.setSchool(school);
         for(String sem: getSemesters()) {
