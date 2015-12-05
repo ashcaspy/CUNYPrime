@@ -270,7 +270,6 @@ public class SearchServlet extends HttpServlet {
         // Initializing connection and search regardless of search type (may move)
         /**********************************************************************/
         Connection conn = null;
-        System.out.println("OKAY HERE1");
         try {
             conn = ClassSearcher.classSearch();
         } catch (URISyntaxException ex) {
@@ -306,31 +305,16 @@ public class SearchServlet extends HttpServlet {
 
         if (request.getParameter("search_type").equals("DEFAULT_SEARCH")){
 
-            System.out.println("OKAY HERE2");
             searcher = new Search(conn, id_num);
             searcher.selectTerm(college.toUpperCase(), term);
             searcher.find(
-
                     mvpair,
-                    //new TimeRange(10, 12),
-                    //new TimeRange(11, 14),
                     null, null,
                     keyword,
                     prof,
                     new int[] {},
                     Arrays.asList(new String[]{dept})
             );
-            searcher.find(
-                    new MatchValuePair(ID.greaterThan, "0"),
-                    10,
-                    3,
-                    null,
-                    null,
-                    new int[] {3},
-                    Arrays.asList(new String[]{"CSCI", "ANTHC"})
-            );
-
-
             /******************************************************************/
             // Response parsing -- leave this to Ashley unless you're testing
             //  If you're testing, remember to change the table names where relevant
@@ -341,22 +325,26 @@ public class SearchServlet extends HttpServlet {
             response.setHeader("Cache-Control", "no-cache");
             college = college.toLowerCase();
             
-           System.out.println("Grace");
-
-
-            System.out.println(request.getParameter("sched_open"));
-            
-            String query1 =
-                    "select * into combined_section_table1 "
-                            + "from " + searcher.tableName() + " left join college_courses" + college +
+            String query1;
+            if (college.equals("htr01") || college.equals("cty01")){
+                query1 =
+                    "select * into combined_section_table_" + id_num
+                            + " from " + searcher.tableName() + " left join college_courses" + college +
                             " on " + searcher.tableName() +".cdept = college_courses" + college + ".dept and "
                             + searcher.tableName() + ".cnbr = college_courses" +
                             college + ".nbr;";
-            System.out.println(query1);
-            String query2 = "alter table combined_section_table1 drop column dept";
-            String query3 = "alter table combined_section_table1 drop column nbr";
-            String query4 = "select * from combined_section_table1";
-            String query5 = "drop table combined_section_table1;";
+            }
+            else{
+                query1 = "select * into combined_section_table_" + id_num
+                            + " from " + searcher.tableName() + " left join college_courses" + "_empty" +
+                            " on " + searcher.tableName() +".cdept = college_courses" + "_empty" + ".dept and "
+                            + searcher.tableName() + ".cnbr = college_courses" +
+                            "_empty" + ".nbr;";
+            }
+            String query2 = "alter table combined_section_table_" + id_num + " drop column dept";
+            String query3 = "alter table combined_section_table" + id_num + " drop column nbr";
+            String query4 = "select * from combined_section_table" + id_num;
+            String query5 = "drop table combined_section_table" + id_num;
             String query6 = "drop table " + searcher.tableName();
 
             PreparedStatement preparedStatement;
@@ -391,16 +379,12 @@ public class SearchServlet extends HttpServlet {
                     response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
                     response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
                 }
-                System.out.println("OKAY HERE5");
                 preparedStatement = conn.prepareStatement(query5);
                 preparedStatement.execute();
                 preparedStatement = conn.prepareStatement(query6);
                 preparedStatement.execute();
-
-
             }
             catch (SQLException e) {
-
                 e.printStackTrace();
             }
         }
@@ -432,7 +416,184 @@ public class SearchServlet extends HttpServlet {
             
             searchAction(conn, request, schedule, searcher, true);
             createPtBasedTables(conn, searcher, id_num);
+            
+            
+            /**********************************************************************/
+            // Response parsing
+            //  uncomment this when search/sort is functional
+            /**********************************************************************/
+            
+            /*
+            response.setContentType("text/html");
+            response.setHeader("Cache-Control", "no-cache");
+            college = college.toLowerCase();
+            
+            String queryBF;
+            if (college.equals("htr01") || college.equals("cty01")){
+                queryBF =
+                    "select * into combined_section_table_" + id_num
+                            + " from " + "best_fit" + id_num + " left join college_courses" + college +
+                            " on " + "best_fit" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "best_fit" + id_num + ".cnbr = college_courses" +
+                            college + ".nbr;";
+            }
+            else{
+                queryBF = "select * into combined_section_table_" + id_num
+                            + " from " + "best_fit" + " left join college_courses" + "_empty" +
+                            " on " + "best_fit" +".cdept = college_courses" + "_empty" + ".dept and "
+                            + "best_fit" + ".cnbr = college_courses" +
+                            "_empty" + ".nbr;";
+            }
+            String querySC;
+            if (college.equals("htr01") || college.equals("cty01")){
+                querySC =
+                    "select * into combined_section_table_" + id_num
+                            + " from " + "some_conflicts" + id_num + " left join college_courses" + college +
+                            " on " + "some_conflicts" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "some_conflicts" + id_num + ".cnbr = college_courses" +
+                            college + ".nbr;";
+            }
+            else{
+                querySC = "select * into combined_section_table_" + id_num
+                            + " from " + "some_conflicts" + " left join college_courses" + "_empty" +
+                            " on " + "some_conflicts" +".cdept = college_courses" + "_empty" + ".dept and "
+                            + "some_conflicts" + ".cnbr = college_courses" +
+                            "_empty" + ".nbr;";
+            }
+            String queryO;
+            if (college.equals("htr01") || college.equals("cty01")){
+                queryO =
+                    "select * into combined_section_table_" + id_num
+                            + " from " + "others" + id_num + " left join college_courses" + college +
+                            " on " + "others" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "others" + id_num + ".cnbr = college_courses" +
+                            college + ".nbr;";
+            }
+            else{
+                queryO = "select * into combined_section_table_" + id_num
+                            + " from " + "others" + " left join college_courses" + "_empty" +
+                            " on " + "others" +".cdept = college_courses" + "_empty" + ".dept and "
+                            + "others" + ".cnbr = college_courses" +
+                            "_empty" + ".nbr;";
+            }
+            
+            String query1 = "alter table combined_section_table_" + id_num + " drop column dept";
+            String query2 = "alter table combined_section_table" + id_num + " drop column nbr";
+            String query3 = "select * from combined_section_table" + id_num;
+            String query4 = "drop table combined_section_table" + id_num;
+            
+            String queryBFDrop = "drop table " + "best_fit" + id_num;
+            String querySCDrop = "drop table " + "some_conflicts" + id_num;
+            String queryODrop = "drop table " + "others" + id_num;
 
+            PreparedStatement preparedStatement;
+            ResultSet resultSet;
+
+            try {
+                // BEST FIT RESPONSE
+                preparedStatement = conn.prepareStatement(queryBF);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query1);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query2);
+                preparedStatement.execute();
+
+
+                preparedStatement = conn.prepareStatement(query3);
+                resultSet = preparedStatement.executeQuery();
+                
+                response.getWriter().write("BEST_FIT_START");
+                while(resultSet.next()) {
+                    response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
+                    response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
+                    response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
+                    response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
+                    response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
+                    response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
+                    response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
+                    response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
+                    response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
+                    response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
+                    response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
+                    response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
+                    response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
+                    response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
+                }
+                response.getWriter().write("BEST_FIT_END");
+                preparedStatement = conn.prepareStatement(query4);
+                preparedStatement.execute();
+                
+                // SOME CONFLICTS RESPONSE
+                preparedStatement = conn.prepareStatement(querySC);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query1);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query2);
+                preparedStatement.execute();
+
+
+                preparedStatement = conn.prepareStatement(query3);
+                resultSet = preparedStatement.executeQuery();
+                
+                response.getWriter().write("SOME_CONFLICTS_START");
+                while(resultSet.next()) {
+                    response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
+                    response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
+                    response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
+                    response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
+                    response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
+                    response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
+                    response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
+                    response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
+                    response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
+                    response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
+                    response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
+                    response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
+                    response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
+                    response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
+                }
+                response.getWriter().write("SOME_CONFLICTS_END");
+                preparedStatement = conn.prepareStatement(query4);
+                preparedStatement.execute();
+                
+                // OTHERS RESPONSE
+                preparedStatement = conn.prepareStatement(queryO);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query1);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query2);
+                preparedStatement.execute();
+
+
+                preparedStatement = conn.prepareStatement(query3);
+                resultSet = preparedStatement.executeQuery();
+                
+                response.getWriter().write("OTHERS_START");
+                while(resultSet.next()) {
+                    response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
+                    response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
+                    response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
+                    response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
+                    response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
+                    response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
+                    response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
+                    response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
+                    response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
+                    response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
+                    response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
+                    response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
+                    response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
+                    response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
+                }
+                response.getWriter().write("OTHERS_END");
+                preparedStatement = conn.prepareStatement(query4);
+                preparedStatement.execute();
+            }
+            catch (SQLException e) {
+
+                e.printStackTrace();
+            }
+            */
         }
 
         /**********************************************************************/
@@ -544,8 +705,184 @@ public class SearchServlet extends HttpServlet {
             // check if any requirements fall within closed times
             searchAction(conn, request, schedule, searcher, false);
             createPtBasedTables(conn, searcher, id_num);
+            
+            
+            /**********************************************************************/
+            // Response parsing
+            //  uncomment this when search/sort is functional
+            /**********************************************************************/
+            
+            /*
+            response.setContentType("text/html");
+            response.setHeader("Cache-Control", "no-cache");
+            college = college.toLowerCase();
+            
+            String queryBF;
+            if (college.equals("htr01") || college.equals("cty01")){
+                queryBF =
+                    "select * into combined_section_table_" + id_num
+                            + " from " + "best_fit" + id_num + " left join college_courses" + college +
+                            " on " + "best_fit" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "best_fit" + id_num + ".cnbr = college_courses" +
+                            college + ".nbr;";
+            }
+            else{
+                queryBF = "select * into combined_section_table_" + id_num
+                            + " from " + "best_fit" + " left join college_courses" + "_empty" +
+                            " on " + "best_fit" +".cdept = college_courses" + "_empty" + ".dept and "
+                            + "best_fit" + ".cnbr = college_courses" +
+                            "_empty" + ".nbr;";
+            }
+            String querySC;
+            if (college.equals("htr01") || college.equals("cty01")){
+                querySC =
+                    "select * into combined_section_table_" + id_num
+                            + " from " + "some_conflicts" + id_num + " left join college_courses" + college +
+                            " on " + "some_conflicts" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "some_conflicts" + id_num + ".cnbr = college_courses" +
+                            college + ".nbr;";
+            }
+            else{
+                querySC = "select * into combined_section_table_" + id_num
+                            + " from " + "some_conflicts" + " left join college_courses" + "_empty" +
+                            " on " + "some_conflicts" +".cdept = college_courses" + "_empty" + ".dept and "
+                            + "some_conflicts" + ".cnbr = college_courses" +
+                            "_empty" + ".nbr;";
+            }
+            String queryO;
+            if (college.equals("htr01") || college.equals("cty01")){
+                queryO =
+                    "select * into combined_section_table_" + id_num
+                            + " from " + "others" + id_num + " left join college_courses" + college +
+                            " on " + "others" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "others" + id_num + ".cnbr = college_courses" +
+                            college + ".nbr;";
+            }
+            else{
+                queryO = "select * into combined_section_table_" + id_num
+                            + " from " + "others" + " left join college_courses" + "_empty" +
+                            " on " + "others" +".cdept = college_courses" + "_empty" + ".dept and "
+                            + "others" + ".cnbr = college_courses" +
+                            "_empty" + ".nbr;";
+            }
+            
+            String query1 = "alter table combined_section_table_" + id_num + " drop column dept";
+            String query2 = "alter table combined_section_table" + id_num + " drop column nbr";
+            String query3 = "select * from combined_section_table" + id_num;
+            String query4 = "drop table combined_section_table" + id_num;
+            
+            String queryBFDrop = "drop table " + "best_fit" + id_num;
+            String querySCDrop = "drop table " + "some_conflicts" + id_num;
+            String queryODrop = "drop table " + "others" + id_num;
+
+            PreparedStatement preparedStatement;
+            ResultSet resultSet;
+
+            try {
+                // BEST FIT RESPONSE
+                preparedStatement = conn.prepareStatement(queryBF);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query1);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query2);
+                preparedStatement.execute();
 
 
+                preparedStatement = conn.prepareStatement(query3);
+                resultSet = preparedStatement.executeQuery();
+                
+                response.getWriter().write("BEST_FIT_START");
+                while(resultSet.next()) {
+                    response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
+                    response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
+                    response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
+                    response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
+                    response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
+                    response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
+                    response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
+                    response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
+                    response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
+                    response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
+                    response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
+                    response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
+                    response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
+                    response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
+                }
+                response.getWriter().write("BEST_FIT_END");
+                preparedStatement = conn.prepareStatement(query4);
+                preparedStatement.execute();
+                
+                // SOME CONFLICTS RESPONSE
+                preparedStatement = conn.prepareStatement(querySC);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query1);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query2);
+                preparedStatement.execute();
+
+
+                preparedStatement = conn.prepareStatement(query3);
+                resultSet = preparedStatement.executeQuery();
+                
+                response.getWriter().write("SOME_CONFLICTS_START");
+                while(resultSet.next()) {
+                    response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
+                    response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
+                    response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
+                    response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
+                    response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
+                    response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
+                    response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
+                    response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
+                    response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
+                    response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
+                    response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
+                    response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
+                    response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
+                    response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
+                }
+                response.getWriter().write("SOME_CONFLICTS_END");
+                preparedStatement = conn.prepareStatement(query4);
+                preparedStatement.execute();
+                
+                // OTHERS RESPONSE
+                preparedStatement = conn.prepareStatement(queryO);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query1);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(query2);
+                preparedStatement.execute();
+
+
+                preparedStatement = conn.prepareStatement(query3);
+                resultSet = preparedStatement.executeQuery();
+                
+                response.getWriter().write("OTHERS_START");
+                while(resultSet.next()) {
+                    response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
+                    response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
+                    response.getWriter().write("Name~"+resultSet.getString("name") + "FIELD_END");
+                    response.getWriter().write("Comp~"+resultSet.getString("components") + "FIELD_END");
+                    response.getWriter().write("Req~"+resultSet.getString("requirements") + "FIELD_END");
+                    response.getWriter().write("Desc~"+resultSet.getString("description") + "FIELD_END");
+                    response.getWriter().write("SNum~"+resultSet.getString("sec") + "FIELD_END");
+                    response.getWriter().write("STime~"+resultSet.getString("starttime") + "FIELD_END");
+                    response.getWriter().write("ETime~"+resultSet.getString("endtime") + "FIELD_END");
+                    response.getWriter().write("Days~"+resultSet.getString("days") + "FIELD_END");
+                    response.getWriter().write("Room~"+resultSet.getString("room") + "FIELD_END");
+                    response.getWriter().write("Inst~"+resultSet.getString("instructor") + "FIELD_END");
+                    response.getWriter().write("Flag~"+resultSet.getString("open") + "FIELD_END");
+                    response.getWriter().write("Cr~"+resultSet.getString("credits") + "FIELD_END" + "ENTRY_END");
+                }
+                response.getWriter().write("OTHERS_END");
+                preparedStatement = conn.prepareStatement(query4);
+                preparedStatement.execute();
+            }
+            catch (SQLException e) {
+
+                e.printStackTrace();
+            }
+            */
         }
 
         try {
