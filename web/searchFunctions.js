@@ -45,7 +45,7 @@ function searchCourses(type){
     }
     
     // Validate Reqs
-    if (courseReqObjs.length == 0){
+    if (courseReqObjs.length == 0 && type == "REQ_FOCUSED_SEARCH"){
         alert("Please upload a DIG report with your requirements first!");
         fadeSearchOverlay();
         return;
