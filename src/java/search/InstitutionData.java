@@ -8,7 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
-import search.parser.CourseData;
+import search.parser.*;
 
 import java.io.IOException;
 import java.sql.*;
