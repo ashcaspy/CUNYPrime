@@ -29,11 +29,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import search.ClassSearcher;
 import search.Search;
+import search.CunyFirstSearch;
 import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import scheduling.*;
 
 import org.json.*;
+import search.BackupSearch;
 
 /**
  *
@@ -229,8 +231,6 @@ public class SearchServlet extends HttpServlet {
         }
         return result;
     }
-    
-    //protected Search createSearch()
 
     
     protected void putTimeSlotsInSched(Schedule schedule, HttpServletRequest request){
@@ -293,6 +293,7 @@ public class SearchServlet extends HttpServlet {
         String prof = request.getParameter("prof_value");
         int id_num = Integer.parseInt(request.getParameter("id_num"));
         
+        // create searcher
         
         MatchValuePair mvpair = null;
         if (!"".equals(course_num)) {
@@ -304,11 +305,11 @@ public class SearchServlet extends HttpServlet {
         if ("".equals(prof))
             prof = null;
         System.out.println(request.getParameter("search_type"));
-        
-        
 
         if (request.getParameter("search_type").equals("DEFAULT_SEARCH")){
-            searcher = Search.createSearch(conn, id_num, college, term);
+
+            searcher = Search.createSearch(conn, id_num, college.toUpperCase(), term);
+            
             searcher.find(
                     mvpair,
                     null, null,
@@ -387,20 +388,19 @@ public class SearchServlet extends HttpServlet {
         /**********************************************************************/
         else if (request.getParameter("search_type").equals("TIME_FOCUSED_SEARCH")){
 
-            searcher = Search.createSearch(conn, id_num, college, term);
             /**********************************************************************/
             // parsing of parameters specific to this search goes here
             /**********************************************************************/
-
+            
             Schedule schedule = new Schedule();
             putTimeSlotsInSched(schedule, request);
-
-
+            
+          
             
             /**********************************************************************/
             // Finds go here
             /**********************************************************************/
-
+            searcher = Search.createSearch(conn, id_num, college.toUpperCase(), term);
 
             /**********************************************************************/
             // Sorting goes here
@@ -416,7 +416,7 @@ public class SearchServlet extends HttpServlet {
             //  uncomment this when search/sort is functional
             /**********************************************************************/
             
-            /*
+            
             response.setContentType("text/html");
             response.setHeader("Cache-Control", "no-cache");
             college = college.toLowerCase();
@@ -471,9 +471,9 @@ public class SearchServlet extends HttpServlet {
             }
             
             String query1 = "alter table combined_section_table_" + id_num + " drop column dept";
-            String query2 = "alter table combined_section_table" + id_num + " drop column nbr";
-            String query3 = "select * from combined_section_table" + id_num;
-            String query4 = "drop table combined_section_table" + id_num;
+            String query2 = "alter table combined_section_table_" + id_num + " drop column nbr";
+            String query3 = "select * from combined_section_table_" + id_num;
+            String query4 = "drop table combined_section_table_" + id_num;
             
             String queryBFDrop = "drop table " + "best_fit" + id_num;
             String querySCDrop = "drop table " + "some_conflicts" + id_num;
@@ -586,14 +586,14 @@ public class SearchServlet extends HttpServlet {
 
                 e.printStackTrace();
             }
-            */
+            
         }
 
         /**********************************************************************/
         // Requirement focused search
         /**********************************************************************/
         else if (request.getParameter("search_type").equals("REQ_FOCUSED_SEARCH")){
-            searcher = Search.createSearch(conn, id_num, college, term);
+
             
             Schedule schedule = new Schedule();
             putTimeSlotsInSched(schedule, request);           
@@ -604,6 +604,8 @@ public class SearchServlet extends HttpServlet {
             
             // find all unique departments and get all courses from them 
             // to cut down on search time
+            searcher = Search.createSearch(conn, id_num, college.toUpperCase(), term);
+           
             HashMap<String, ArrayList<JSONObject>> reqs_by_dept = new HashMap<>();
             for(JSONObject obj : parseJSON(request.getParameter("reqs"))) {
                 try {
@@ -706,7 +708,7 @@ public class SearchServlet extends HttpServlet {
             //  uncomment this when search/sort is functional
             /**********************************************************************/
             
-            /*
+            
             response.setContentType("text/html");
             response.setHeader("Cache-Control", "no-cache");
             college = college.toLowerCase();
@@ -761,9 +763,9 @@ public class SearchServlet extends HttpServlet {
             }
             
             String query1 = "alter table combined_section_table_" + id_num + " drop column dept";
-            String query2 = "alter table combined_section_table" + id_num + " drop column nbr";
-            String query3 = "select * from combined_section_table" + id_num;
-            String query4 = "drop table combined_section_table" + id_num;
+            String query2 = "alter table combined_section_table_" + id_num + " drop column nbr";
+            String query3 = "select * from combined_section_table_" + id_num;
+            String query4 = "drop table combined_section_table_" + id_num;
             
             String queryBFDrop = "drop table " + "best_fit" + id_num;
             String querySCDrop = "drop table " + "some_conflicts" + id_num;
@@ -876,7 +878,7 @@ public class SearchServlet extends HttpServlet {
 
                 e.printStackTrace();
             }
-            */
+            
         }
 
         try {
