@@ -35,6 +35,7 @@ import search.cunyfirst.MatchValuePair;
 import scheduling.*;
 
 import org.json.*;
+import search.BackupSearch;
 
 /**
  *
@@ -291,7 +292,16 @@ public class SearchServlet extends HttpServlet {
         String keyword = request.getParameter("keyword_value");
         String prof = request.getParameter("prof_value");
         int id_num = Integer.parseInt(request.getParameter("id_num"));
-        searcher = new CunyFirstSearch(conn, id_num);
+        
+        // create searcher
+        try {
+            searcher = new CunyFirstSearch(conn, id_num);
+        } catch (NullPointerException e) {
+            // use BackupSearch if CunyFirst is down
+            // this in NO WAY covers all cases 
+            // but it's the only way I've ever found to detect connection issues
+            searcher = new BackupSearch(conn, id_num);
+        }
         
         MatchValuePair mvpair = null;
         if (!"".equals(course_num)) {
