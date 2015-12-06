@@ -696,7 +696,7 @@ public class SearchServlet extends HttpServlet {
                 try {
                     delete = conn.prepareStatement("DELETE FROM " + 
                             searcher.tableName() + " WHERE " +
-                            "cnbr=? AND " + ands + ";");
+                            "cdept=? AND " + ands + ";");
                     delete.setString(1, department);
                     delete.executeUpdate();
                 } catch (SQLException e) {
