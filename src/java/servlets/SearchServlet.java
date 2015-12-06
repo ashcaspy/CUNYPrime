@@ -29,13 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import search.ClassSearcher;
 import search.Search;
-import search.CunyFirstSearch;
 import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import scheduling.*;
 
 import org.json.*;
-import search.BackupSearch;
 
 /**
  *
@@ -231,6 +229,8 @@ public class SearchServlet extends HttpServlet {
         }
         return result;
     }
+    
+    //protected Search createSearch()
 
     
     protected void putTimeSlotsInSched(Schedule schedule, HttpServletRequest request){
@@ -293,15 +293,6 @@ public class SearchServlet extends HttpServlet {
         String prof = request.getParameter("prof_value");
         int id_num = Integer.parseInt(request.getParameter("id_num"));
         
-        // create searcher
-        try {
-            searcher = new CunyFirstSearch(conn, id_num);
-        } catch (NullPointerException e) {
-            // use BackupSearch if CunyFirst is down
-            // this in NO WAY covers all cases 
-            // but it's the only way I've ever found to detect connection issues
-            searcher = new BackupSearch(conn, id_num);
-        }
         
         MatchValuePair mvpair = null;
         if (!"".equals(course_num)) {
@@ -313,11 +304,11 @@ public class SearchServlet extends HttpServlet {
         if ("".equals(prof))
             prof = null;
         System.out.println(request.getParameter("search_type"));
+        
+        
 
         if (request.getParameter("search_type").equals("DEFAULT_SEARCH")){
-
-            searcher = new CunyFirstSearch(conn, id_num);
-            searcher.selectTerm(college.toUpperCase(), term);
+            searcher = Search.createSearch(conn, id_num, college, term);
             searcher.find(
                     mvpair,
                     null, null,
@@ -396,10 +387,10 @@ public class SearchServlet extends HttpServlet {
         /**********************************************************************/
         else if (request.getParameter("search_type").equals("TIME_FOCUSED_SEARCH")){
 
+            searcher = Search.createSearch(conn, id_num, college, term);
             /**********************************************************************/
             // parsing of parameters specific to this search goes here
             /**********************************************************************/
-            searcher = new CunyFirstSearch(conn, id_num);
 
             Schedule schedule = new Schedule();
             putTimeSlotsInSched(schedule, request);
@@ -602,7 +593,8 @@ public class SearchServlet extends HttpServlet {
         // Requirement focused search
         /**********************************************************************/
         else if (request.getParameter("search_type").equals("REQ_FOCUSED_SEARCH")){
-
+            searcher = Search.createSearch(conn, id_num, college, term);
+            
             Schedule schedule = new Schedule();
             putTimeSlotsInSched(schedule, request);           
             

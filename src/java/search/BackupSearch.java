@@ -15,7 +15,7 @@ import search.parser.Section;
  * @author Kat
  */
 public class BackupSearch extends Search {
-    public BackupSearch(Connection c, int id) {
+    protected BackupSearch(Connection c, int id) {
         super(c, id);
     }
     
