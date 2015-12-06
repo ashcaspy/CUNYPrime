@@ -70,7 +70,14 @@ public class BackupSearch extends Search {
             
             
             insert = conn.prepareStatement("INSERT INTO " + tableName() + " SELECT * FROM "+ masterTable +
-                    " WHERE " + depts + " AND cnbr" + cnbr + ";");
+                    " WHERE " + depts + " AND cnbr" + cnbr + 
+                    " AND starttime>=?" + 
+                    " AND endtime<=?;");
+            
+            // defaults
+            insert.setInt(1, 0);
+            insert.setInt(2, 2400);
+            
             insert.execute();
             
         } catch (SQLException e) {
