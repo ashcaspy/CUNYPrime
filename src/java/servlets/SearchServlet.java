@@ -335,9 +335,9 @@ public class SearchServlet extends HttpServlet {
                             college + ".nbr;";
             
             String query2 = "alter table combined_section_table_" + id_num + " drop column dept";
-            String query3 = "alter table combined_section_table" + id_num + " drop column nbr";
-            String query4 = "select * from combined_section_table" + id_num;
-            String query5 = "drop table combined_section_table" + id_num;
+            String query3 = "alter table combined_section_table_" + id_num + " drop column nbr";
+            String query4 = "select * from combined_section_table_" + id_num;
+            String query5 = "drop table combined_section_table_" + id_num;
             String query6 = "drop table " + searcher.tableName();
 
             PreparedStatement preparedStatement;
@@ -394,8 +394,8 @@ public class SearchServlet extends HttpServlet {
 
             Schedule schedule = new Schedule();
             putTimeSlotsInSched(schedule, request);
-            
-          
+
+
             
             /**********************************************************************/
             // Finds go here
