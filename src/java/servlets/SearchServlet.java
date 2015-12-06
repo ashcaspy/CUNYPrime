@@ -294,14 +294,6 @@ public class SearchServlet extends HttpServlet {
         int id_num = Integer.parseInt(request.getParameter("id_num"));
         
         // create searcher
-        try {
-            searcher = new CunyFirstSearch(conn, id_num);
-        } catch (NullPointerException e) {
-            // use BackupSearch if CunyFirst is down
-            // this in NO WAY covers all cases 
-            // but it's the only way I've ever found to detect connection issues
-            searcher = new BackupSearch(conn, id_num);
-        }
         
         MatchValuePair mvpair = null;
         if (!"".equals(course_num)) {
@@ -316,7 +308,15 @@ public class SearchServlet extends HttpServlet {
 
         if (request.getParameter("search_type").equals("DEFAULT_SEARCH")){
 
-            searcher = new CunyFirstSearch(conn, id_num);
+            try {
+                searcher = new CunyFirstSearch(conn, id_num);
+            } catch (NullPointerException e) {
+                // use BackupSearch if CunyFirst is down
+                // this in NO WAY covers all cases 
+                // but it's the only way I've ever found to detect connection issues
+                searcher = new BackupSearch(conn, id_num);
+            }
+        
             searcher.selectTerm(college.toUpperCase(), term);
             searcher.find(
                     mvpair,
@@ -344,9 +344,9 @@ public class SearchServlet extends HttpServlet {
                             college + ".nbr;";
             
             String query2 = "alter table combined_section_table_" + id_num + " drop column dept";
-            String query3 = "alter table combined_section_table" + id_num + " drop column nbr";
-            String query4 = "select * from combined_section_table" + id_num;
-            String query5 = "drop table combined_section_table" + id_num;
+            String query3 = "alter table combined_section_table_" + id_num + " drop column nbr";
+            String query4 = "select * from combined_section_table_" + id_num;
+            String query5 = "drop table combined_section_table_" + id_num;
             String query6 = "drop table " + searcher.tableName();
 
             PreparedStatement preparedStatement;
@@ -399,8 +399,7 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             // parsing of parameters specific to this search goes here
             /**********************************************************************/
-            searcher = new CunyFirstSearch(conn, id_num);
-
+            
             Schedule schedule = new Schedule();
             putTimeSlotsInSched(schedule, request);
             
@@ -409,7 +408,17 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             // Finds go here
             /**********************************************************************/
-
+            try {
+                searcher = new CunyFirstSearch(conn, id_num);
+            } catch (NullPointerException e) {
+                // use BackupSearch if CunyFirst is down
+                // this in NO WAY covers all cases 
+                // but it's the only way I've ever found to detect connection issues
+                searcher = new BackupSearch(conn, id_num);
+            }
+        
+            searcher.selectTerm(college.toUpperCase(), term);
+            
 
             /**********************************************************************/
             // Sorting goes here
@@ -425,7 +434,7 @@ public class SearchServlet extends HttpServlet {
             //  uncomment this when search/sort is functional
             /**********************************************************************/
             
-            /*
+            
             response.setContentType("text/html");
             response.setHeader("Cache-Control", "no-cache");
             college = college.toLowerCase();
@@ -480,9 +489,9 @@ public class SearchServlet extends HttpServlet {
             }
             
             String query1 = "alter table combined_section_table_" + id_num + " drop column dept";
-            String query2 = "alter table combined_section_table" + id_num + " drop column nbr";
-            String query3 = "select * from combined_section_table" + id_num;
-            String query4 = "drop table combined_section_table" + id_num;
+            String query2 = "alter table combined_section_table_" + id_num + " drop column nbr";
+            String query3 = "select * from combined_section_table_" + id_num;
+            String query4 = "drop table combined_section_table_" + id_num;
             
             String queryBFDrop = "drop table " + "best_fit" + id_num;
             String querySCDrop = "drop table " + "some_conflicts" + id_num;
@@ -595,7 +604,7 @@ public class SearchServlet extends HttpServlet {
 
                 e.printStackTrace();
             }
-            */
+            
         }
 
         /**********************************************************************/
@@ -603,6 +612,7 @@ public class SearchServlet extends HttpServlet {
         /**********************************************************************/
         else if (request.getParameter("search_type").equals("REQ_FOCUSED_SEARCH")){
 
+            
             Schedule schedule = new Schedule();
             putTimeSlotsInSched(schedule, request);           
             
@@ -612,6 +622,17 @@ public class SearchServlet extends HttpServlet {
             
             // find all unique departments and get all courses from them 
             // to cut down on search time
+            try {
+                searcher = new CunyFirstSearch(conn, id_num);
+            } catch (NullPointerException e) {
+                // use BackupSearch if CunyFirst is down
+                // this in NO WAY covers all cases 
+                // but it's the only way I've ever found to detect connection issues
+                searcher = new BackupSearch(conn, id_num);
+            }
+        
+            searcher.selectTerm(college.toUpperCase(), term);
+            
             HashMap<String, ArrayList<JSONObject>> reqs_by_dept = new HashMap<>();
             for(JSONObject obj : parseJSON(request.getParameter("reqs"))) {
                 try {
@@ -714,7 +735,7 @@ public class SearchServlet extends HttpServlet {
             //  uncomment this when search/sort is functional
             /**********************************************************************/
             
-            /*
+            
             response.setContentType("text/html");
             response.setHeader("Cache-Control", "no-cache");
             college = college.toLowerCase();
@@ -769,9 +790,9 @@ public class SearchServlet extends HttpServlet {
             }
             
             String query1 = "alter table combined_section_table_" + id_num + " drop column dept";
-            String query2 = "alter table combined_section_table" + id_num + " drop column nbr";
-            String query3 = "select * from combined_section_table" + id_num;
-            String query4 = "drop table combined_section_table" + id_num;
+            String query2 = "alter table combined_section_table_" + id_num + " drop column nbr";
+            String query3 = "select * from combined_section_table_" + id_num;
+            String query4 = "drop table combined_section_table_" + id_num;
             
             String queryBFDrop = "drop table " + "best_fit" + id_num;
             String querySCDrop = "drop table " + "some_conflicts" + id_num;
@@ -884,7 +905,7 @@ public class SearchServlet extends HttpServlet {
 
                 e.printStackTrace();
             }
-            */
+            
         }
 
         try {
