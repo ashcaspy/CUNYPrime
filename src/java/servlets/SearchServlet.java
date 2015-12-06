@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import search.ClassSearcher;
-import search.Search;
+import search.CunyFirstSearch;
 import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import scheduling.*;
@@ -115,7 +115,7 @@ public class SearchServlet extends HttpServlet {
 
     }
     
-    protected void createPtBasedTables(Connection conn, Search searcher, int id_num){
+    protected void createPtBasedTables(Connection conn, CunyFirstSearch searcher, int id_num){
         try {
             
             PreparedStatement myStatement = conn.prepareStatement("delete from " + searcher.tableName() + " where points >= 3");
@@ -133,7 +133,7 @@ public class SearchServlet extends HttpServlet {
     }
     
     
-    protected void searchAction(Connection conn, HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
+    protected void searchAction(Connection conn, HttpServletRequest request, Schedule schedule, CunyFirstSearch searcher, boolean isTimeBased){
         
             PreparedStatement preparedStatement;
             ResultSet resultSet;
@@ -277,7 +277,7 @@ public class SearchServlet extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Search searcher;
+        CunyFirstSearch searcher;
 
         /**********************************************************************/
         // getting parameters here regardless of search type
@@ -290,7 +290,7 @@ public class SearchServlet extends HttpServlet {
         String keyword = request.getParameter("keyword_value");
         String prof = request.getParameter("prof_value");
         int id_num = Integer.parseInt(request.getParameter("id_num"));
-        searcher = new Search(conn, id_num);
+        searcher = new CunyFirstSearch(conn, id_num);
         
         MatchValuePair mvpair = null;
         if (!"".equals(course_num)) {
@@ -305,7 +305,7 @@ public class SearchServlet extends HttpServlet {
 
         if (request.getParameter("search_type").equals("DEFAULT_SEARCH")){
 
-            searcher = new Search(conn, id_num);
+            searcher = new CunyFirstSearch(conn, id_num);
             searcher.selectTerm(college.toUpperCase(), term);
             searcher.find(
                     mvpair,
@@ -388,7 +388,7 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             // parsing of parameters specific to this search goes here
             /**********************************************************************/
-            searcher = new Search(conn, id_num);
+            searcher = new CunyFirstSearch(conn, id_num);
 
             Schedule schedule = new Schedule();
             putTimeSlotsInSched(schedule, request);

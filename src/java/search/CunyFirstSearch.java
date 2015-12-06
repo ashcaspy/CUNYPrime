@@ -25,8 +25,8 @@ import search.parser.CourseData;
 import search.parser.Parser;
 import search.parser.Section;
 
-
-public class Search {
+// find sections using cunyfirst
+public class CunyFirstSearch {
     private CunyFirstClient client = new CunyFirstClient();
     private final Connection conn;
     private final String id;
@@ -35,12 +35,12 @@ public class Search {
     //create separate tables for each search run
     private int counter = 1;
 
-    public Search(Connection c, int id) {
+    public CunyFirstSearch(Connection c, int id) {
         conn = c;
         this.id = Integer.toString(id);
     }
 
-    public Search(Connection c, int id, String college, String semester) {
+    public CunyFirstSearch(Connection c, int id, String college, String semester) {
         this(c, id);
         selectTerm(college, semester);
     }
