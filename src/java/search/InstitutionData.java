@@ -164,5 +164,28 @@ public class InstitutionData {
             }
         }
     }
+    
+    // add all sections found in the given departments to a master table
+    public void addSections(String school_id, String semester, Iterable<String> depts) {
+        try {
+            Section.createTable(conn, school_id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
+        
+        client.setup(school_id, semester);
+        client.setSearchTerms(new MatchValuePair(ID.greaterThan, "0"), null, null, null, null, null);
+
+        for(String dept: depts) {
+            try {
+                new Parser(client.getResults(dept)).addToTable(conn, school_id);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SearchError e) {
+                System.out.println(dept + ": " + e.msg);
+            }
+        }
+    }
 
 }
