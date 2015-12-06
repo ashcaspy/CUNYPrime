@@ -308,16 +308,8 @@ public class SearchServlet extends HttpServlet {
 
         if (request.getParameter("search_type").equals("DEFAULT_SEARCH")){
 
-            try {
-                searcher = new CunyFirstSearch(conn, id_num);
-            } catch (NullPointerException e) {
-                // use BackupSearch if CunyFirst is down
-                // this in NO WAY covers all cases 
-                // but it's the only way I've ever found to detect connection issues
-                searcher = new BackupSearch(conn, id_num);
-            }
-        
-            searcher.selectTerm(college.toUpperCase(), term);
+            searcher = Search.createSearch(conn, id_num, college.toUpperCase(), term);
+            
             searcher.find(
                     mvpair,
                     null, null,
@@ -408,17 +400,7 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
             // Finds go here
             /**********************************************************************/
-            try {
-                searcher = new CunyFirstSearch(conn, id_num);
-            } catch (NullPointerException e) {
-                // use BackupSearch if CunyFirst is down
-                // this in NO WAY covers all cases 
-                // but it's the only way I've ever found to detect connection issues
-                searcher = new BackupSearch(conn, id_num);
-            }
-        
-            searcher.selectTerm(college.toUpperCase(), term);
-            
+            searcher = Search.createSearch(conn, id_num, college.toUpperCase(), term);
 
             /**********************************************************************/
             // Sorting goes here
@@ -622,17 +604,8 @@ public class SearchServlet extends HttpServlet {
             
             // find all unique departments and get all courses from them 
             // to cut down on search time
-            try {
-                searcher = new CunyFirstSearch(conn, id_num);
-            } catch (NullPointerException e) {
-                // use BackupSearch if CunyFirst is down
-                // this in NO WAY covers all cases 
-                // but it's the only way I've ever found to detect connection issues
-                searcher = new BackupSearch(conn, id_num);
-            }
-        
-            searcher.selectTerm(college.toUpperCase(), term);
-            
+            searcher = Search.createSearch(conn, id_num, college.toUpperCase(), term);
+           
             HashMap<String, ArrayList<JSONObject>> reqs_by_dept = new HashMap<>();
             for(JSONObject obj : parseJSON(request.getParameter("reqs"))) {
                 try {
