@@ -15,12 +15,9 @@ import search.parser.Section;
  * @author Kat
  */
 public class BackupSearch extends Search {
-    public BackupSearch(Connection c, Connection src, int id) {
+    public BackupSearch(Connection c, int id) {
         super(c, id);
-        source = src;
     }
-    
-    private final Connection source;
     
     private String masterTable;
     
