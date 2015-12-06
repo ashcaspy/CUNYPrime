@@ -31,6 +31,21 @@ public abstract class Search {
     protected String offset() {
         return Integer.toString(counter) + "_" + id;
     }
+    
+    public static Search createSearch(Connection c, int id_num, String college, String term) {
+        Search result;
+        try {
+            result = new CunyFirstSearch(c, id_num);
+            result.selectTerm(college.toUpperCase(), term);
+        }   catch (NullPointerException e) {
+            // use BackupSearch if CunyFirst is down
+            // this in NO WAY covers all cases 
+            // but it's the only way I've ever found to detect connection issues
+            result = new BackupSearch(c, id_num);
+            result.selectTerm(college, term);
+        }
+        return result;
+    }
 
     abstract public void selectTerm(String school, String semester);
 

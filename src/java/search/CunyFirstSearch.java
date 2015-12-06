@@ -29,11 +29,11 @@ import search.parser.Section;
 public class CunyFirstSearch extends Search {
     private CunyFirstClient client = new CunyFirstClient();
 
-    public CunyFirstSearch(Connection c, int id) {
+    protected CunyFirstSearch(Connection c, int id) {
         super(c, id);
     }
 
-    public CunyFirstSearch(Connection c, int id, String college, String semester) {
+    protected CunyFirstSearch(Connection c, int id, String college, String semester) {
         this(c, id);
         selectTerm(college, semester);
     }
