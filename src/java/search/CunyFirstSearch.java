@@ -26,18 +26,11 @@ import search.parser.Parser;
 import search.parser.Section;
 
 // find sections using cunyfirst
-public class CunyFirstSearch {
+public class CunyFirstSearch extends Search {
     private CunyFirstClient client = new CunyFirstClient();
-    private final Connection conn;
-    private final String id;
-
-
-    //create separate tables for each search run
-    private int counter = 1;
 
     public CunyFirstSearch(Connection c, int id) {
-        conn = c;
-        this.id = Integer.toString(id);
+        super(c, id);
     }
 
     public CunyFirstSearch(Connection c, int id, String college, String semester) {
@@ -112,14 +105,6 @@ public class CunyFirstSearch {
             counter = 1;
         }
         */
-    }
-    
-    public String tableName() {
-        return Section.tablename + offset();
-    }
-    
-    private String offset() {
-        return Integer.toString(counter) + "_" + id;
     }
 
 }

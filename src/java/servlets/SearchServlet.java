@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import search.ClassSearcher;
+import search.Search;
 import search.CunyFirstSearch;
 import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
@@ -115,7 +116,7 @@ public class SearchServlet extends HttpServlet {
 
     }
     
-    protected void createPtBasedTables(Connection conn, CunyFirstSearch searcher, int id_num){
+    protected void createPtBasedTables(Connection conn, Search searcher, int id_num){
         try {
             
             PreparedStatement myStatement = conn.prepareStatement("delete from " + searcher.tableName() + " where points >= 3");
@@ -133,7 +134,7 @@ public class SearchServlet extends HttpServlet {
     }
     
     
-    protected void searchAction(Connection conn, HttpServletRequest request, Schedule schedule, CunyFirstSearch searcher, boolean isTimeBased){
+    protected void searchAction(Connection conn, HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
         
             PreparedStatement preparedStatement;
             ResultSet resultSet;
@@ -277,7 +278,7 @@ public class SearchServlet extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        CunyFirstSearch searcher;
+        Search searcher;
 
         /**********************************************************************/
         // getting parameters here regardless of search type
