@@ -2,6 +2,7 @@ package search;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,8 +33,14 @@ public class BackupSearch extends Search {
                     int[] days, List<String> departments) {
         
         PreparedStatement insert;
+        
+        int before = 0, after = 0; // well if the search fails they would be
+        
         try {
             Section.createTable(conn, offset());
+            
+            before = countResults();
+            
             String depts, cnbr;
             
             // check departments
@@ -43,7 +50,7 @@ public class BackupSearch extends Search {
                 depts = "";
             } else {
                 // quote all departments and arrange them as ('x', 'y', ...)
-                depts = "AND cdept IN (" + String.join(",", departments.stream()
+                depts = " AND cdept IN (" + String.join(",", departments.stream()
                                 .map(d -> "'"+d+"'").collect(Collectors.toList())) +
                                 ")";
             }
@@ -57,7 +64,7 @@ public class BackupSearch extends Search {
                     cnbr = "='" + courseNumber.value + "'";
                 } else if(ID.contains.equals(courseNumber.comparison)) {
                     // note the space
-                    cnbr = " LIKE '%" + courseNumber.value + "%'";
+                cnbr = " LIKE '%" + courseNumber.value + "%'";
                 } else if(ID.lessThan.equals(courseNumber.comparison)) {
                     cnbr = "<='" + courseNumber.value + "'";
                 } else { // greater than
@@ -77,11 +84,31 @@ public class BackupSearch extends Search {
             
             insert.execute();
             
+            after = countResults();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
-        // this was cunyfirst-specific so let's just assume
-        return ErrorCode.SUCCESS;
+        if(before == after) {
+            return ErrorCode.NORESULTS;
+        }
+        else {
+            return ErrorCode.SUCCESS;
+        }
+    }
+    
+    private int countResults() {
+        try {
+            PreparedStatement count;
+            ResultSet resultCount;
+            count = conn.prepareStatement("SELECT COUNT(*) FROM " + tableName());
+            resultCount = count.executeQuery();
+            resultCount.next();
+            return resultCount.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

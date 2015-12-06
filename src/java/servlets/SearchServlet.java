@@ -245,8 +245,7 @@ public class SearchServlet extends HttpServlet {
                 arr = new JSONArray(request.getParameter("sched_closed"));
                 String closedTimesArr[] = new String[arr.length()];
                   for (int i =0; i < arr.length(); i++){
-                   closedTimesArr[i] = arr.getString(i);
-                    
+                    closedTimesArr[i] = arr.getString(i);
                 }
                 schedule.setCloseTimes(closedTimesArr);
             
