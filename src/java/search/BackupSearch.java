@@ -43,10 +43,10 @@ public class BackupSearch extends Search {
             if(null == departments) {
                 // instead of checking whether to use WHERE or not
                 // let this evaluate to true every time
-                depts = "cdept LIKE '%'";
+                depts = "";
             } else {
                 // quote all departments and arrange them as ('x', 'y', ...)
-                depts = "cdept IN (" + String.join(",", departments.stream()
+                depts = "AND cdept IN (" + String.join(",", departments.stream()
                                 .map(d -> "'"+d+"'").collect(Collectors.toList())) +
                                 ")";
             }
@@ -70,7 +70,7 @@ public class BackupSearch extends Search {
             
             
             insert = conn.prepareStatement("INSERT INTO " + tableName() + " SELECT * FROM "+ masterTable +
-                    " WHERE " + depts + " AND cnbr" + cnbr + 
+                    " WHERE " + " cnbr" + cnbr + depts + 
                     " AND starttime>=?" + 
                     " AND endtime<=?;");
             
