@@ -65,7 +65,12 @@ public class CunyFirstClient {
         setSchool(school);
 
         HtmlSelect term = getSelect(ID.selectTerm);
-        term.setSelectedAttribute(term.getOptionByText(semester), true);
+        if(null != semester) {
+            term.setSelectedAttribute(term.getOptionByText(semester), true);
+        } else {
+            // by default choose the latest available term
+            term.setSelectedAttribute(term.getOption(term.getOptionSize()-1), true);
+        }
         client.waitForBackgroundJavaScript(10000);
         
         HtmlSelect selectCareer = getSelect(ID.selectCareer);
