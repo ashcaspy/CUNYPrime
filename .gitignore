@@ -1,6 +1,6 @@
 *.class
 nbproject/private
-build/web/WEB-INF/
+build/
 .idea/
 *.iml
 dist/
