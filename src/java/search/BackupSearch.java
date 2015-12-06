@@ -43,7 +43,7 @@ public class BackupSearch extends Search {
                 depts = "";
             } else {
                 // quote all departments and arrange them as ('x', 'y', ...)
-                depts = "AND cdept IN (" + String.join(",", departments.stream()
+                depts = " AND cdept IN (" + String.join(",", departments.stream()
                                 .map(d -> "'"+d+"'").collect(Collectors.toList())) +
                                 ")";
             }
@@ -57,7 +57,7 @@ public class BackupSearch extends Search {
                     cnbr = "='" + courseNumber.value + "'";
                 } else if(ID.contains.equals(courseNumber.comparison)) {
                     // note the space
-                    cnbr = " LIKE '%" + courseNumber.value + "%'";
+                cnbr = " LIKE '%" + courseNumber.value + "%'";
                 } else if(ID.lessThan.equals(courseNumber.comparison)) {
                     cnbr = "<='" + courseNumber.value + "'";
                 } else { // greater than
