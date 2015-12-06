@@ -104,6 +104,7 @@ public class BackupSearch extends Search {
             ResultSet resultCount;
             count = conn.prepareStatement("SELECT COUNT(*) FROM " + tableName());
             resultCount = count.executeQuery();
+            resultCount.next();
             return resultCount.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
