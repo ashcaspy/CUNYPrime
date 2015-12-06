@@ -53,7 +53,7 @@ public class CunyFirstSearch extends Search {
     public ErrorCode find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
-                    int[] days, Iterable<String> departments) {
+                    int[] days, List<String> departments) {
 
         //clear previous search parameters in case some of these are null
         client.resetTerms();

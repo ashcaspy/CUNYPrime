@@ -1,6 +1,7 @@
 package search;
 
 import java.sql.*;
+import java.util.List;
 import search.cunyfirst.MatchValuePair;
 import search.parser.Section;
 
@@ -36,6 +37,6 @@ public abstract class Search {
     abstract public ErrorCode find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
-                    int[] days, Iterable<String> departments);
+                    int[] days, List<String> departments);
 
 }

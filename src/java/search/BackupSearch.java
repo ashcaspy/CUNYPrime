@@ -3,6 +3,7 @@ package search;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import search.cunyfirst.MatchValuePair;
 import search.parser.Section;
 
@@ -29,7 +30,7 @@ public class BackupSearch extends Search {
     public ErrorCode find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
-                    int[] days, Iterable<String> departments) {
+                    int[] days, List<String> departments) {
         
         PreparedStatement insert;
         try {
