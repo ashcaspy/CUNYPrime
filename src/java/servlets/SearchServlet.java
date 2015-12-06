@@ -245,7 +245,8 @@ public class SearchServlet extends HttpServlet {
                 arr = new JSONArray(request.getParameter("sched_closed"));
                 String closedTimesArr[] = new String[arr.length()];
                   for (int i =0; i < arr.length(); i++){
-                    openTimesArr[i] = arr.getString(i);
+                   closedTimesArr[i] = arr.getString(i);
+                    
                 }
                 schedule.setCloseTimes(closedTimesArr);
             
@@ -422,62 +423,37 @@ public class SearchServlet extends HttpServlet {
             college = college.toLowerCase();
             
             String queryBF;
-            if (college.equals("htr01") || college.equals("cty01")){
-                queryBF =
+            queryBF =
                     "select * into combined_section_table_" + id_num
-                            + " from " + "best_fit" + id_num + " left join college_courses" + college +
-                            " on " + "best_fit" + id_num +".cdept = college_courses" + college + ".dept and "
-                            + "best_fit" + id_num + ".cnbr = college_courses" +
+                            + " from " + "best_fit_" + id_num + " left join college_courses" + college +
+                            " on " + "best_fit_" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "best_fit_" + id_num + ".cnbr = college_courses" +
                             college + ".nbr;";
-            }
-            else{
-                queryBF = "select * into combined_section_table_" + id_num
-                            + " from " + "best_fit" + " left join college_courses" + "_empty" +
-                            " on " + "best_fit" +".cdept = college_courses" + "_empty" + ".dept and "
-                            + "best_fit" + ".cnbr = college_courses" +
-                            "_empty" + ".nbr;";
-            }
+            
             String querySC;
-            if (college.equals("htr01") || college.equals("cty01")){
-                querySC =
+            querySC =
                     "select * into combined_section_table_" + id_num
-                            + " from " + "some_conflicts" + id_num + " left join college_courses" + college +
-                            " on " + "some_conflicts" + id_num +".cdept = college_courses" + college + ".dept and "
-                            + "some_conflicts" + id_num + ".cnbr = college_courses" +
+                            + " from " + "some_conflicts_" + id_num + " left join college_courses" + college +
+                            " on " + "some_conflicts_" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "some_conflicts_" + id_num + ".cnbr = college_courses" +
                             college + ".nbr;";
-            }
-            else{
-                querySC = "select * into combined_section_table_" + id_num
-                            + " from " + "some_conflicts" + " left join college_courses" + "_empty" +
-                            " on " + "some_conflicts" +".cdept = college_courses" + "_empty" + ".dept and "
-                            + "some_conflicts" + ".cnbr = college_courses" +
-                            "_empty" + ".nbr;";
-            }
+            
             String queryO;
-            if (college.equals("htr01") || college.equals("cty01")){
-                queryO =
+            queryO =
                     "select * into combined_section_table_" + id_num
-                            + " from " + "others" + id_num + " left join college_courses" + college +
-                            " on " + "others" + id_num +".cdept = college_courses" + college + ".dept and "
-                            + "others" + id_num + ".cnbr = college_courses" +
+                            + " from " + "others_" + id_num + " left join college_courses" + college +
+                            " on " + "others_" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "others_" + id_num + ".cnbr = college_courses" +
                             college + ".nbr;";
-            }
-            else{
-                queryO = "select * into combined_section_table_" + id_num
-                            + " from " + "others" + " left join college_courses" + "_empty" +
-                            " on " + "others" +".cdept = college_courses" + "_empty" + ".dept and "
-                            + "others" + ".cnbr = college_courses" +
-                            "_empty" + ".nbr;";
-            }
             
             String query1 = "alter table combined_section_table_" + id_num + " drop column dept";
             String query2 = "alter table combined_section_table_" + id_num + " drop column nbr";
             String query3 = "select * from combined_section_table_" + id_num;
             String query4 = "drop table combined_section_table_" + id_num;
             
-            String queryBFDrop = "drop table " + "best_fit" + id_num;
-            String querySCDrop = "drop table " + "some_conflicts" + id_num;
-            String queryODrop = "drop table " + "others" + id_num;
+            String queryBFDrop = "drop table " + "best_fit_" + id_num;
+            String querySCDrop = "drop table " + "some_conflicts_" + id_num;
+            String queryODrop = "drop table " + "others_" + id_num;
 
             PreparedStatement preparedStatement;
             ResultSet resultSet;
@@ -580,6 +556,12 @@ public class SearchServlet extends HttpServlet {
                 }
                 response.getWriter().write("OTHERS_END");
                 preparedStatement = conn.prepareStatement(query4);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(queryODrop);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(queryBFDrop);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(querySCDrop);
                 preparedStatement.execute();
             }
             catch (SQLException e) {
@@ -714,62 +696,37 @@ public class SearchServlet extends HttpServlet {
             college = college.toLowerCase();
             
             String queryBF;
-            if (college.equals("htr01") || college.equals("cty01")){
-                queryBF =
+            queryBF =
                     "select * into combined_section_table_" + id_num
-                            + " from " + "best_fit" + id_num + " left join college_courses" + college +
-                            " on " + "best_fit" + id_num +".cdept = college_courses" + college + ".dept and "
-                            + "best_fit" + id_num + ".cnbr = college_courses" +
+                            + " from " + "best_fit_" + id_num + " left join college_courses" + college +
+                            " on " + "best_fit_" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "best_fit_" + id_num + ".cnbr = college_courses" +
                             college + ".nbr;";
-            }
-            else{
-                queryBF = "select * into combined_section_table_" + id_num
-                            + " from " + "best_fit" + " left join college_courses" + "_empty" +
-                            " on " + "best_fit" +".cdept = college_courses" + "_empty" + ".dept and "
-                            + "best_fit" + ".cnbr = college_courses" +
-                            "_empty" + ".nbr;";
-            }
+            
             String querySC;
-            if (college.equals("htr01") || college.equals("cty01")){
-                querySC =
+            querySC =
                     "select * into combined_section_table_" + id_num
-                            + " from " + "some_conflicts" + id_num + " left join college_courses" + college +
-                            " on " + "some_conflicts" + id_num +".cdept = college_courses" + college + ".dept and "
-                            + "some_conflicts" + id_num + ".cnbr = college_courses" +
+                            + " from " + "some_conflicts_" + id_num + " left join college_courses" + college +
+                            " on " + "some_conflicts_" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "some_conflicts_" + id_num + ".cnbr = college_courses" +
                             college + ".nbr;";
-            }
-            else{
-                querySC = "select * into combined_section_table_" + id_num
-                            + " from " + "some_conflicts" + " left join college_courses" + "_empty" +
-                            " on " + "some_conflicts" +".cdept = college_courses" + "_empty" + ".dept and "
-                            + "some_conflicts" + ".cnbr = college_courses" +
-                            "_empty" + ".nbr;";
-            }
+            
             String queryO;
-            if (college.equals("htr01") || college.equals("cty01")){
-                queryO =
+            queryO =
                     "select * into combined_section_table_" + id_num
-                            + " from " + "others" + id_num + " left join college_courses" + college +
-                            " on " + "others" + id_num +".cdept = college_courses" + college + ".dept and "
-                            + "others" + id_num + ".cnbr = college_courses" +
+                            + " from " + "others_" + id_num + " left join college_courses" + college +
+                            " on " + "others_" + id_num +".cdept = college_courses" + college + ".dept and "
+                            + "others_" + id_num + ".cnbr = college_courses" +
                             college + ".nbr;";
-            }
-            else{
-                queryO = "select * into combined_section_table_" + id_num
-                            + " from " + "others" + " left join college_courses" + "_empty" +
-                            " on " + "others" +".cdept = college_courses" + "_empty" + ".dept and "
-                            + "others" + ".cnbr = college_courses" +
-                            "_empty" + ".nbr;";
-            }
             
             String query1 = "alter table combined_section_table_" + id_num + " drop column dept";
             String query2 = "alter table combined_section_table_" + id_num + " drop column nbr";
             String query3 = "select * from combined_section_table_" + id_num;
             String query4 = "drop table combined_section_table_" + id_num;
             
-            String queryBFDrop = "drop table " + "best_fit" + id_num;
-            String querySCDrop = "drop table " + "some_conflicts" + id_num;
-            String queryODrop = "drop table " + "others" + id_num;
+            String queryBFDrop = "drop table " + "best_fit_" + id_num;
+            String querySCDrop = "drop table " + "some_conflicts_" + id_num;
+            String queryODrop = "drop table " + "others_" + id_num;
 
             PreparedStatement preparedStatement;
             ResultSet resultSet;
@@ -872,6 +829,12 @@ public class SearchServlet extends HttpServlet {
                 }
                 response.getWriter().write("OTHERS_END");
                 preparedStatement = conn.prepareStatement(query4);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(queryODrop);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(queryBFDrop);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(querySCDrop);
                 preparedStatement.execute();
             }
             catch (SQLException e) {
