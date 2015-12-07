@@ -141,11 +141,11 @@ public class SearchServlet extends HttpServlet {
             ResultSet resultSet;
             Integer value = 0; 
             String queryA = "select * from "+ searcher.tableName();
+            final JSONObject[] reqs = parseJSON(request.getParameter("reqs"));
 
-           
             try {
 
-                String days = "";
+                String days;
                 preparedStatement = conn.prepareStatement(queryA);
                 preparedStatement.execute();
                 resultSet = preparedStatement.executeQuery();
@@ -174,13 +174,17 @@ public class SearchServlet extends HttpServlet {
                     if(isTimeBased){
                         boolean hasMatch = false;
                         int counter = 0;
-                        for (int i = 0; i < parseJSON(request.getParameter("reqs")).length; i++){
+                        for (int i = 0; i < reqs.length; i++){
                            counter = 0;
                             try {
-                                if( parseJSON(request.getParameter("reqs"))[i].getString("dept").equals(resultSet.getString("cdept").replaceAll(" ", ""))){
-                                    if(parseJSON(request.getParameter("reqs"))[i].getBoolean("hasAt")) {
-                                        for (int k = 0; k < parseJSON(request.getParameter("reqs"))[i].length(); k++){
-                                            if(resultSet.getString("cnum").charAt(k) != parseJSON(request.getParameter("reqs"))[i].getString("cnum").charAt(k)){
+                                String cnbr = resultSet.getString("cnbr");
+                                String cnum = Integer.toString(reqs[i].getInt("cnum"));
+                                String dept = reqs[i].getString("dept");
+                                String cdept = resultSet.getString("cdept");
+                                if(dept.equals(cdept)) {
+                                    if(reqs[i].getBoolean("hasAt")) {
+                                        for (int k = 0; k < reqs[i].length(); k++){
+                                            if(cnbr.charAt(k) != cnum.charAt(k)){
                                                 counter++;
                                             }
                                             
@@ -190,27 +194,22 @@ public class SearchServlet extends HttpServlet {
                                         } else {
                                             hasMatch = hasMatch || false;
                                         }
-                                    } else if(!resultSet.getString("cnbr").replaceAll(" ","").equals(parseJSON(request.getParameter("reqs"))[i].getString("cnum"))){
+                                    } else if(!cnbr.equals(cnum)){
                                         hasMatch = hasMatch || false;
                                     }
-
-
                                 }
                             } catch(JSONException e){
                                e.printStackTrace();
                             }
-
-                            if(!hasMatch && parseJSON(request.getParameter("reqs")).length > 0){
+                            
+                            if(!hasMatch && reqs.length > 0){
                                 update.setInt(1, value + 1);
                                 update.execute();
                             }
-
-                        }
-                    }
-                    
-                }
-            }catch (SQLException e) {
-
+                        } // end for reqs
+                    } // end if(isTimeBased)
+                } // end while(rs.next())
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
 
@@ -295,8 +294,6 @@ public class SearchServlet extends HttpServlet {
         String keyword = request.getParameter("keyword_value");
         String prof = request.getParameter("prof_value");
         int id_num = Integer.parseInt(request.getParameter("id_num"));
-        
-        // create searcher
         
         MatchValuePair mvpair = null;
         if (!"".equals(course_num)) {
