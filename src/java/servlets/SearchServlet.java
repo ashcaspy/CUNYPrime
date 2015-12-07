@@ -238,11 +238,21 @@ public class SearchServlet extends HttpServlet {
     protected void putTimeSlotsInSched(Schedule schedule, HttpServletRequest request){
         try {
                 JSONArray arr=  new JSONArray(request.getParameter("sched_open"));
+
+                                    //System.out.println(arr.getString(i));
+
                 String openTimesArr [] = new String[arr.length()];
                 for (int i =0; i < arr.length(); i++){
                     openTimesArr[i] = arr.getString(i);
+
+                    
                 }
+                
+                
+                
                 schedule.setOpenTimes(openTimesArr);
+                
+                schedule.print();
                 
                 arr = new JSONArray(request.getParameter("sched_closed"));
                 String closedTimesArr[] = new String[arr.length()];
@@ -394,8 +404,7 @@ public class SearchServlet extends HttpServlet {
             
             Schedule schedule = new Schedule();
             putTimeSlotsInSched(schedule, request);
-            
-          
+             
             
             /**********************************************************************/
             // Finds go here

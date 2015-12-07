@@ -32,12 +32,18 @@ public class Schedule {
      */
     public void setOpenTimes (String timesArr []){
 
-        String temp[];
+ String temp[];
         int prevNum = 0;
         int index = 0;
         final int indexOf2 = 2;
         final int indexOf3 = 3;
-        Arrays.sort(timesArr);
+
+        if(timesArr.length > 0){
+            Arrays.sort(timesArr);
+            for (int i = 0; i < timesArr.length; i++){
+                System.out.println(timesArr[i]);
+            }
+        }
 
         for (int i = 0; i < timesArr.length; i++){
             temp = timesArr[i].split("-");
@@ -55,18 +61,23 @@ public class Schedule {
                 }
 
                 if (Math.abs(Integer.parseInt(temp[indexOf3].replaceAll(" ", "")) - prevNum) > 1) {
-                    mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                    if(Integer.parseInt(temp[indexOf3]) != prevNum) {
+                        mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                    }
                     mySchedule.get(index).addToOpenTimes(new Pair());
-                    mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).x = Integer.parseInt(temp[indexOf3].replaceAll(" ",""));
+                    if(Integer.parseInt(temp[indexOf3]) != prevNum) {
+                        mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).x = Integer.parseInt(temp[indexOf3].replaceAll(" ", ""));
+                    }
                 }
                 prevNum = Integer.parseInt(temp[indexOf3].replaceAll(" ",""));
-                mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                if(Integer.parseInt(temp[indexOf3])!= prevNum) {
+                    mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                }
 
 
             }
         }
     }
-
 
     /**
      * A function that takes in a String array containing unavailable time slots for selected days, and set those values for those days.
