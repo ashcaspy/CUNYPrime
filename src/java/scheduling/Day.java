@@ -10,10 +10,10 @@ public class Day {
 
     private final int day;
     private List<Pair> openTimes ;
-    private List<Integer> closeTimes;
+    private List<Pair> closeTimes;
 
     /**
-     *  A constructor setting default vaules without parameters.
+     *  A constructor setting default values without parameters.
      */
     public Day(int day){
         this.day = day;
@@ -44,10 +44,10 @@ public class Day {
 
     /**
      * A functions that adds an element to the list of close times.
-     * @param time, An integer that represents an unavailable time.
+     * @param pair, A pair that represents a range of unavailable time.
      */
-    public void addToCloseTimes(int time){
-        closeTimes.add(time);
+    public void addToCloseTimes(Pair pair){
+        closeTimes.add(pair);
     }
 
 
@@ -78,11 +78,11 @@ public class Day {
      * @param index, The index in the list desired.
      * @return, An integer containing a close time slot range.
      */
-    public int getClosedTimeElement(int index){
+    public Pair getClosedTimeElement(int index){
         if(index < closeTimes.size() && index > -1) {
             return closeTimes.get(index);
         }
-        return -1;
+        return null;
     }
 
 

@@ -93,10 +93,10 @@ public class SearchServlet extends HttpServlet {
         if(!day.isCloseTimesEmpty()){
             while (closeTimeIndex < day.getCloseTimeSize()){
                 try{
-                    if(day.getClosedTimeElement(closeTimeIndex) * 100 == res.getInt("starttime") ||
-                            day.getClosedTimeElement(closeTimeIndex) * 100 == res.getInt("endtime") ||
-                            (day.getClosedTimeElement(closeTimeIndex) * 100  > res.getInt("starttime") &&
-                                    day.getClosedTimeElement(closeTimeIndex) * 100 < res.getInt("endtime")) ){
+                    if(day.getClosedTimeElement(closeTimeIndex).X() * 100 == res.getInt("starttime") ||
+                            day.getClosedTimeElement(closeTimeIndex).Y() * 100 == res.getInt("endtime") ||
+                            (day.getClosedTimeElement(closeTimeIndex).X() * 100  > res.getInt("starttime") &&
+                                    day.getClosedTimeElement(closeTimeIndex).Y() * 100 < res.getInt("endtime")) ){
                         if(isTimeBased){
                             value += 2;
                         } else {
@@ -250,13 +250,11 @@ public class SearchServlet extends HttpServlet {
                 String openTimesArr [] = new String[arr.length()];
                 for (int i =0; i < arr.length(); i++){
                     openTimesArr[i] = arr.getString(i);
-
-                    
                 }
                 
                 
                 
-                schedule.setOpenTimes(openTimesArr);
+                schedule.setTimes(openTimesArr, true);
                 
                 schedule.print();
                 
@@ -265,7 +263,7 @@ public class SearchServlet extends HttpServlet {
                   for (int i =0; i < arr.length(); i++){
                     closedTimesArr[i] = arr.getString(i);
                 }
-                schedule.setCloseTimes(closedTimesArr);
+                schedule.setTimes(closedTimesArr, false);
             
             } catch (JSONException e){
                 e.printStackTrace();

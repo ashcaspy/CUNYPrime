@@ -30,9 +30,9 @@ public class Schedule {
      * A function that takes in a String array containing available times for selected days, and sets those values for those days.
      * @param timesArr, A string array containing available or unavailable time slots for selected days.
      */
-    public void setOpenTimes (String timesArr []){
+     public void setTimes (String timesArr [], boolean isOpenTimes){
 
- String temp[];
+        String temp[];
         int prevNum = 0;
         int index = 0;
         final int indexOf2 = 2;
@@ -40,9 +40,6 @@ public class Schedule {
 
         if(timesArr.length > 0){
             Arrays.sort(timesArr);
-            for (int i = 0; i < timesArr.length; i++){
-                System.out.println(timesArr[i]);
-            }
         }
 
         for (int i = 0; i < timesArr.length; i++){
@@ -52,42 +49,58 @@ public class Schedule {
 
                 if(Integer.parseInt(temp[indexOf2].replaceAll(" ", "")) != index) {
                     if(i != 0){
-                        mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                        if(isOpenTimes){
+                            mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                        } else {
+                            mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() -1 ).y = prevNum;
+                        }
                     }
                     index = Integer.parseInt(temp[indexOf2].replaceAll(" ", ""));
-                    mySchedule.get(index).addToOpenTimes(new Pair());
-                    mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).x = Integer.parseInt(temp[indexOf3].replaceAll(" ", ""));
+                    if(isOpenTimes){
+                        mySchedule.get(index).addToOpenTimes(new Pair());
+                        mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).x = Integer.parseInt(temp[indexOf3].replaceAll(" ", ""));
+                    } else {
+                        mySchedule.get(index).addToCloseTimes(new Pair());
+                        mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() - 1).x = Integer.parseInt(temp[indexOf3].replaceAll(" ", ""));
+
+
+                    }
                     prevNum = Integer.parseInt(temp[indexOf3].replaceAll(" ", ""));
                 }
 
                 if (Math.abs(Integer.parseInt(temp[indexOf3].replaceAll(" ", "")) - prevNum) > 1) {
                     if(Integer.parseInt(temp[indexOf3]) != prevNum) {
-                        mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                        if(isOpenTimes){
+                            mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                        } else {
+                            mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() - 1).y = prevNum;
+
+                        }
                     }
                     mySchedule.get(index).addToOpenTimes(new Pair());
                     if(Integer.parseInt(temp[indexOf3]) != prevNum) {
-                        mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).x = Integer.parseInt(temp[indexOf3].replaceAll(" ", ""));
+                        if(isOpenTimes){
+                            mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).x = Integer.parseInt(temp[indexOf3].replaceAll(" ", ""));
+                        } else {
+                            mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() - 1).x = Integer.parseInt(temp[indexOf3].replaceAll(" ", ""));
+
+                        }
                     }
                 }
-                prevNum = Integer.parseInt(temp[indexOf3].replaceAll(" ",""));
                 if(Integer.parseInt(temp[indexOf3])!= prevNum) {
-                    mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+
+                    prevNum = Integer.parseInt(temp[indexOf3].replaceAll(" ",""));
+                    System.out.println("here");
+                    if(isOpenTimes){
+                        mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                    } else {
+                        mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() - 1).y = prevNum;
+
+                    }
                 }
 
 
             }
-        }
-    }
-
-    /**
-     * A function that takes in a String array containing unavailable time slots for selected days, and set those values for those days.
-     * @param closeTimes, A String array containing unavailable time slots for selected days.
-     */
-    public void setCloseTimes(String closeTimes []){
-        String temp [];
-        for (int i = 0; i < closeTimes.length; i++){
-            temp = closeTimes[i].split("-");
-            mySchedule.get(Integer.parseInt(temp[2].replaceAll(" ", ""))).addToCloseTimes(Integer.parseInt(temp[3].replaceAll(" ", "")));
         }
     }
 
