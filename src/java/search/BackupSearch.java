@@ -76,7 +76,8 @@ public class BackupSearch extends Search {
             insert = conn.prepareStatement("INSERT INTO " + tableName() + " SELECT * FROM "+ masterTable +
                     " WHERE " + " cnbr" + cnbr + depts + 
                     " AND starttime>=?" + 
-                    " AND endtime<=?;");
+                    " AND endtime<=?" +
+                    " AND instructor LIKE ?;");
             
             //check times
             // search within a half hour of the cutoff
@@ -93,6 +94,13 @@ public class BackupSearch extends Search {
                 insert.setInt(2, hour + minutes);
             } else {
                 insert.setInt(2, 2400);
+            }
+            
+            // ignore keyword we can't really use it here
+            
+            // professor
+            if(professor != null) {
+                insert.setString(3, "%"+professor+"%");
             }
             
             insert.execute();
