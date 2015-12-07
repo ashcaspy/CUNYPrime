@@ -78,8 +78,16 @@ public class BackupSearch extends Search {
                     " AND starttime>=?" + 
                     " AND endtime<=?;");
             
-            // defaults
-            insert.setInt(1, 0);
+            //check times
+            // search within a half hour of the cutoff
+            final int minutes = 30;
+
+            if(null != start) {
+                int hour = (start-1) * 100;
+                insert.setInt(1, hour + minutes);
+            } else {
+                insert.setInt(1, 0);
+            }
             insert.setInt(2, 2400);
             
             insert.execute();
