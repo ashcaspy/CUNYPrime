@@ -37,7 +37,7 @@ public abstract class Search {
         try {
             result = new CunyFirstSearch(c, id_num);
             result.selectTerm(college.toUpperCase(), term);
-        }   catch (NullPointerException e) {
+        }   catch (RuntimeException e) {
             // use BackupSearch if CunyFirst is down
             // this in NO WAY covers all cases 
             // but it's the only way I've ever found to detect connection issues
