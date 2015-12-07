@@ -183,16 +183,10 @@ public class SearchServlet extends HttpServlet {
                                 String cnum = Integer.toString(obj.getInt("cnum"));
                                 String dept = obj.getString("dept");
                                 if(cnbr.startsWith(cnum)) {
-                                    
-                                    // Grace please fix this part
-                                    if(counter == 0){
-                                        hasMatch = hasMatch || true;
-                                    } else {
-                                        hasMatch = hasMatch || false;
-                                    }
-                                } else if(!cnbr.equals(cnum)){
-                                    hasMatch = hasMatch || false;
-                                }
+                                        hasMatch = true;
+                                        break;
+                                  
+                                } 
                             } catch(JSONException e){
                                e.printStackTrace();
                             }
