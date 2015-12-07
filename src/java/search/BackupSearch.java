@@ -27,7 +27,7 @@ public class BackupSearch extends Search {
         masterTable = Section.tablename + school;
     }
     
-    public ErrorCode find(MatchValuePair courseNumber,
+    public boolean[] find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
                     int[] days, List<String> departments) {
@@ -74,6 +74,7 @@ public class BackupSearch extends Search {
             
             // check days
             if(days != null) {
+                // todo: probably bugged
                 String[] checks = new String[days.length];
                 for(int i=0; i<days.length; ++i) {
                     checks[i] = "days LIKE '%"+dayToString(days[i])+"%'";
@@ -123,13 +124,14 @@ public class BackupSearch extends Search {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+        boolean[] res = new boolean[] {false, false, false};
         if(before == after) {
-            return ErrorCode.NORESULTS;
+            ErrorCode.NORESULTS.setArray(res);
         }
         else {
-            return ErrorCode.SUCCESS;
+            ErrorCode.SUCCESS.setArray(res);
         }
+        return res;
     }
     
     private int countResults() {

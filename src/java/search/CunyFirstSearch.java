@@ -50,7 +50,7 @@ public class CunyFirstSearch extends Search {
         client.setup(school, semester);
     }
 
-    public ErrorCode find(MatchValuePair courseNumber,
+    public boolean[] find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
                     int[] days, List<String> departments) {
@@ -66,39 +66,36 @@ public class CunyFirstSearch extends Search {
 
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
+        // indicates which errors occurred - ignore the ones I'm not expecting
+        boolean[] errors = new boolean[] {false, false, false};
         try {
             Section.createTable(conn, offset());
         } catch(SQLException e) {
             e.printStackTrace();
-            // the closest approximation I think
-            return ErrorCode.UNKNOWN;
+            return errors;
         }
         
-        ErrorCode result = ErrorCode.NORESULTS;
         if(null != departments) {
             for (String dept : departments) {
                 try {
                     new Parser(client.getResults(dept)).addToTable(conn, offset());
-                    
-                    // if no exception is thrown and result is still on NORESULTS
-                    if(ErrorCode.NORESULTS == result)
-                        result = ErrorCode.SUCCESS;
+                    ErrorCode.SUCCESS.setArray(errors);
                 } catch (IOException e) {
                 } catch (SearchError e) {
-                    result = ErrorCode.max(result, ErrorCode.fromMsg(e.msg));
+                    ErrorCode.fromMsg(e.msg).setArray(errors);
                 }
             }
         }
         else {
             try {
                 new Parser(client.getResults()).addToTable(conn, offset());
-                return ErrorCode.SUCCESS;
+                ErrorCode.SUCCESS.setArray(errors);
             } catch (IOException e) { }
               catch (SearchError e) {
-                  return ErrorCode.fromMsg(e.msg);
+                  ErrorCode.fromMsg(e.msg).setArray(errors);
               }
         }
-        return result;
+        return errors;
         /*
         ++counter;
         if(counter > 2) {

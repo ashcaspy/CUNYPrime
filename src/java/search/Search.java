@@ -46,10 +46,10 @@ public abstract class Search {
         }
         return result;
     }
-
+    
     abstract public void selectTerm(String school, String semester);
 
-    abstract public ErrorCode find(MatchValuePair courseNumber,
+    abstract public boolean[] find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
                     int[] days, List<String> departments);
