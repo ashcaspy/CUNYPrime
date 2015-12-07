@@ -101,6 +101,8 @@ public class BackupSearch extends Search {
             // professor
             if(professor != null) {
                 insert.setString(3, "%"+professor+"%");
+            } else {
+                insert.setString(3, "%");
             }
             
             insert.execute();
