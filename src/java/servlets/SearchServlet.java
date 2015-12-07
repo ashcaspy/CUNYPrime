@@ -190,11 +190,13 @@ public class SearchServlet extends HttpServlet {
                                e.printStackTrace();
                             }
                             
-                            if(!hasMatch && reqs.isEmpty()){
+                           
+                        } 
+                        // end for reqs
+                         if(!hasMatch && reqs.isEmpty()){
                                 update.setInt(1, value + 1);
                                 update.execute();
-                            }
-                        } // end for reqs
+                         }
                     } // end if(isTimeBased)
                 } // end while(rs.next())
             } catch (SQLException e) {
