@@ -135,13 +135,13 @@ public class SearchServlet extends HttpServlet {
     }
     
     
-    protected void searchAction(Connection conn, HttpServletRequest request, Schedule schedule, Search searcher, boolean isTimeBased){
+    protected void searchAction(Connection conn, HashMap<String, List<JSONObject>> reqs, Schedule schedule, Search searcher, boolean isTimeBased){
         
             PreparedStatement preparedStatement;
             ResultSet resultSet;
             Integer value = 0; 
             String queryA = "select * from "+ searcher.tableName();
-            final JSONObject[] reqs = parseJSON(request.getParameter("reqs"));
+            //final JSONObject[] reqs = parseJSON(request.getParameter("reqs"));
 
             try {
 
@@ -171,38 +171,33 @@ public class SearchServlet extends HttpServlet {
                         }
                     }
                     
+                    String cnbr = resultSet.getString("cnbr");
+                    String cdept = resultSet.getString("cdept");
+                    
                     if(isTimeBased){
                         boolean hasMatch = false;
                         int counter = 0;
-                        for (int i = 0; i < reqs.length; i++){
+                        for (JSONObject obj : reqs.get(cdept)) {
                            counter = 0;
                             try {
-                                String cnbr = resultSet.getString("cnbr");
-                                String cnum = Integer.toString(reqs[i].getInt("cnum"));
-                                String dept = reqs[i].getString("dept");
-                                String cdept = resultSet.getString("cdept");
-                                if(dept.equals(cdept)) {
-                                    if(reqs[i].getBoolean("hasAt")) {
-                                        for (int k = 0; k < reqs[i].length(); k++){
-                                            if(cnbr.charAt(k) != cnum.charAt(k)){
-                                                counter++;
-                                            }
-                                            
-                                        }
-                                        if(counter == 0){
-                                            hasMatch = hasMatch || true;
-                                        } else {
-                                            hasMatch = hasMatch || false;
-                                        }
-                                    } else if(!cnbr.equals(cnum)){
+                                String cnum = Integer.toString(obj.getInt("cnum"));
+                                String dept = obj.getString("dept");
+                                if(cnbr.startsWith(cnum)) {
+                                    
+                                    // Grace please fix this part
+                                    if(counter == 0){
+                                        hasMatch = hasMatch || true;
+                                    } else {
                                         hasMatch = hasMatch || false;
                                     }
+                                } else if(!cnbr.equals(cnum)){
+                                    hasMatch = hasMatch || false;
                                 }
                             } catch(JSONException e){
                                e.printStackTrace();
                             }
                             
-                            if(!hasMatch && reqs.length > 0){
+                            if(!hasMatch && reqs.isEmpty()){
                                 update.setInt(1, value + 1);
                                 update.execute();
                             }
@@ -232,6 +227,22 @@ public class SearchServlet extends HttpServlet {
             e.printStackTrace(); 
         }
         return result;
+    }
+    
+    protected HashMap<String, List<JSONObject>> sort_reqs(JSONObject[] reqs) {
+        HashMap<String, List<JSONObject>> reqs_by_dept = new HashMap<>(); 
+        for(JSONObject obj : reqs) {
+            try {
+                String req_dept = obj.getString("dept");
+                if(!reqs_by_dept.containsKey(req_dept)) {
+                    reqs_by_dept.put(req_dept, new ArrayList<>());
+                }
+                reqs_by_dept.get(req_dept).add(obj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return reqs_by_dept;
     }
 
     
@@ -432,7 +443,8 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
 
             
-            searchAction(conn, request, schedule, searcher, true);
+            searchAction(conn, sort_reqs(parseJSON(request.getParameter("reqs"))), 
+                    schedule, searcher, true);
             createPtBasedTables(conn, searcher, id_num);
             
             
@@ -615,18 +627,9 @@ public class SearchServlet extends HttpServlet {
             // to cut down on search time
             searcher = Search.createSearch(conn, id_num, college.toUpperCase(), term);
            
-            HashMap<String, ArrayList<JSONObject>> reqs_by_dept = new HashMap<>();
-            for(JSONObject obj : parseJSON(request.getParameter("reqs"))) {
-                try {
-                    String req_dept = obj.getString("dept");
-                    if(!reqs_by_dept.containsKey(req_dept)) {
-                        reqs_by_dept.put(req_dept, new ArrayList<>());
-                    }
-                    reqs_by_dept.get(req_dept).add(obj);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+            HashMap<String, List<JSONObject>> reqs_by_dept = sort_reqs(
+                    parseJSON(request.getParameter("reqs")));
+            
 
             /**********************************************************************/
             // Finds go here
@@ -636,7 +639,7 @@ public class SearchServlet extends HttpServlet {
             // search for each by itself
             // it takes the same amount of time search-wise
             // and results are more specific
-            for(Entry<String, ArrayList<JSONObject>> entry : reqs_by_dept.entrySet()) {
+            for(Entry<String, List<JSONObject>> entry : reqs_by_dept.entrySet()) {
                 if(entry.getValue().size() == 1) {
                     MatchValuePair courseNumber;
                     try {
@@ -677,7 +680,7 @@ public class SearchServlet extends HttpServlet {
             PreparedStatement delete;
             for(String department: others) {
                 // courses to keep
-                ArrayList<JSONObject> courses = reqs_by_dept.get(department);
+                List<JSONObject> courses = reqs_by_dept.get(department);
                 // the conditions to be and'ed together
                 String[] conditions = new String[courses.size()];
                 
@@ -708,7 +711,8 @@ public class SearchServlet extends HttpServlet {
             }
             
             // check if any requirements fall within closed times
-            searchAction(conn, request, schedule, searcher, false);
+            searchAction(conn, sort_reqs(parseJSON(request.getParameter("reqs"))), 
+                    schedule, searcher, false);
             createPtBasedTables(conn, searcher, id_num);
             
             
