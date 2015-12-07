@@ -176,27 +176,27 @@ public class SearchServlet extends HttpServlet {
                     
                     if(isTimeBased){
                         boolean hasMatch = false;
-                       
-                        for (JSONObject obj : reqs.get(cdept)) {
-                            try {
-                                String cnum = Integer.toString(obj.getInt("cnum"));
-                                String dept = obj.getString("dept");
-                                if(cnbr.startsWith(cnum)) {
-                                        hasMatch = true;
-                                        break;
-                                  
-                                } 
-                            } catch(JSONException e){
-                               e.printStackTrace();
-                            }
-                            
-                           
-                        } 
-                        // end for reqs
-                         if(!hasMatch && reqs.isEmpty()){
-                                update.setInt(1, value + 1);
-                                update.execute();
-                         }
+                        List<JSONObject> courses = reqs.get(cdept);
+                        if(null != courses) {
+                            for (JSONObject obj : courses) {
+                                try {
+                                    String cnum = Integer.toString(obj.getInt("cnum"));
+                                    String dept = obj.getString("dept");
+                                    if(cnbr.startsWith(cnum)) {
+                                            hasMatch = true;
+                                            break;
+
+                                    } 
+                                } catch(JSONException e){
+                                   e.printStackTrace();
+                                }
+
+                                if(!hasMatch && reqs.isEmpty()){
+                                        update.setInt(1, value + 1);
+                                        update.execute();
+                                }
+                            } // end for courses
+                        } // and if courses!=null
                     } // end if(isTimeBased)
                 } // end while(rs.next())
             } catch (SQLException e) {
