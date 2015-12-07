@@ -537,11 +537,15 @@ function createTools() {
                     if ($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes) != -1){
                         openTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes), 1);
                         scheduleTabs[currentScheduleTab].openTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes), 1);
+                        selectedDivs.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs), 1);
+                        scheduleTabs[currentScheduleTab].selectedDivs.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs), 1);
                         //scheduleObjArray[currentScheduleTab].openTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), openTimes), 1);
                     }
                     if ($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes) != -1){
                         closedTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes), 1);
                         scheduleTabs[currentScheduleTab].closedTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes), 1);
+                        selectedDivs.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs), 1);
+                        scheduleTabs[currentScheduleTab].selectedDivs.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs), 1);
                         //scheduleObjArray[currentScheduleTab].closedTimes.splice($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), closedTimes), 1);
                     }
                     if ($.inArray(("timeslot-div-" + (i+dayStart) + "-" + (k+hourStart)), selectedDivs) != -1){
