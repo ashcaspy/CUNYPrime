@@ -33,7 +33,6 @@ import search.CunyFirstSearch;
 import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import scheduling.*;
-
 import org.json.*;
 import search.BackupSearch;
 
@@ -89,7 +88,6 @@ public class SearchServlet extends HttpServlet {
 
     protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, Integer value, boolean isTimeBased){
         int closeTimeIndex = 0;
-
         if(!day.isCloseTimesEmpty()){
             while (closeTimeIndex < day.getCloseTimeSize()){
                 try{
@@ -134,6 +132,34 @@ public class SearchServlet extends HttpServlet {
         }
     }
     
+    protected void addPtToNonOpenTime(Connection conn, ResultSet res, Schedule schedule, Search searcher, Integer value){
+        try {
+            PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
+                            + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
+            update.setString(2, res.getString("cdept"));
+            update.setString(3, res.getString("cnbr"));
+            update.setString(4, res.getString("sec"));
+            int openTimesIndex = 0;
+            for (int i = 0; i < schedule.getSize(); i++){
+                Day day = schedule.getElementFromSchedule(i);
+                while(openTimesIndex < day.getOpenTimeSize() && 
+                        openTimesIndex < day.getOpenTimeSize()){
+                        if(!(day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                                day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
+                                !(day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
+                                        day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))){
+                             
+                            value++;
+                            update.setInt(1, value);
+
+                        }
+                }
+            }
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        
+    }
     
     protected void searchAction(Connection conn, HashMap<String, List<JSONObject>> reqs, Schedule schedule, Search searcher, boolean isTimeBased){
         
@@ -161,7 +187,6 @@ public class SearchServlet extends HttpServlet {
                     days = resultSet.getString("days");
                     
                     
-                    System.out.println(days);
                     for(int i=0; i<schedule.getWeek().length; ++i) {
                         if (days != null){
                             if(days.contains(schedule.getWeek()[i])) {
@@ -191,11 +216,13 @@ public class SearchServlet extends HttpServlet {
                                    e.printStackTrace();
                                 }
 
-                                if(!hasMatch && reqs.isEmpty()){
-                                        update.setInt(1, value + 1);
-                                        update.execute();
-                                }
+                               
                             } // end for courses
+                            if(!hasMatch && reqs.isEmpty()){
+                                    value++;    
+                                    update.setInt(1, value);
+                                    update.execute();
+                            }
                         } // and if courses!=null
                     } // end if(isTimeBased)
                 } // end while(rs.next())
