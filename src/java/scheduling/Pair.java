@@ -23,6 +23,14 @@ public class Pair {
         this.x = x;
         this.y = y;
     }
+    
+    public int X() {
+        return x;
+    }
+    
+    public int Y() {
+        return y;
+    }
 
 
 }
