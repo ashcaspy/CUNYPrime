@@ -401,11 +401,27 @@ public class SearchServlet extends HttpServlet {
             // Finds go here
             /**********************************************************************/
             searcher = Search.createSearch(conn, id_num, college.toUpperCase(), term);
-
+            
+            /* since time-focused searches cannot be run 
+             *  without selecting some open block,
+             *  find() is guaranteed to be called at least once
+             *  and create the table
+             */
+            Day day;
+            Pair time;
+            for(int i=0; i < schedule.getSize(); ++i) {
+                day = schedule.getElementFromSchedule(i);
+                for(int t = 0; t < day.getOpenTimeSize(); ++t) {
+                    time = day.getOpenTimeElement(t);
+                    searcher.find(null, time.X(), time.Y(), null, null, 
+                            new int[] {day.getDay()}, null);
+                }
+            }
+            
             /**********************************************************************/
             // Sorting goes here
             /**********************************************************************/
-            
+
             
             searchAction(conn, request, schedule, searcher, true);
             createPtBasedTables(conn, searcher, id_num);
