@@ -122,7 +122,7 @@ public class SearchServlet extends HttpServlet {
             
             PreparedStatement myStatement = conn.prepareStatement("delete from " + searcher.tableName() + " where points >= 3");
             myStatement.execute();
-            myStatement = conn.prepareStatement("select * into best_fit_" + id_num + " from " + searcher.tableName() + " where points = 0");
+            myStatement = conn.prepareStatement("select * into best_fit_" + id_num + " from " + searcher.tableName() + " where points <= 0");
             myStatement.execute();
             myStatement = conn.prepareStatement("select * into some_conflicts_" + id_num + " from " + searcher.tableName() + " where points = 1");
             myStatement.execute();
