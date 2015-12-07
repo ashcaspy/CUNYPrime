@@ -27,58 +27,113 @@ var numCoursesPerList = [0, 0, 0, 0];
 
 
 function parseCourseResultset(data){    
-    //alert(data);
-    var tempCourseArray = data.split("ENTRY_END");
-    courseInfoArray[0] = [];
-    courseInfoArray[1] = [];
-    courseInfoArray[2] = [];
-    for (var i = 0; i < tempCourseArray.length - 1; i++){ 
-        var cObj = new courseObj();
-        var tempCourseParts = tempCourseArray[i].split("FIELD_END");
-        for (var k = 0; k < tempCourseParts.length; k++){
-            var coursePart = tempCourseParts[k].split("~");
-            if (coursePart[0] == "Dept")
-                cObj.dept = coursePart[1];
-            else if (coursePart[0] == "CNum")
-                cObj.courseNum = coursePart[1];
-            else if (coursePart[0] == "Name")
-                cObj.name = coursePart[1];
-            else if (coursePart[0] == "Comp")
-                cObj.components = coursePart[1];
-            else if (coursePart[0] == "Req")
-                cObj.requirements = coursePart[1];
-            else if (coursePart[0] == "Desc")
-                cObj.desc = coursePart[1];
-            else if (coursePart[0] == "Cr")
-                cObj.credits = coursePart[1];
-            else if (coursePart[0] == "SNum")
-                cObj.sectionNum = coursePart[1];
-            else if (coursePart[0] == "STime")
-                cObj.startTime = coursePart[1];
-            else if (coursePart[0] == "ETime")
-                cObj.endTime = coursePart[1];
-            else if (coursePart[0] == "Days")
-                cObj.days = coursePart[1];
-            else if (coursePart[0] == "Room")
-                cObj.room = coursePart[1];
-            else if (coursePart[0] == "Inst")
-                cObj.instructor = coursePart[1];
-            else if (coursePart[0] == "Flag"){
-                //alert(coursePart[1]);
-                if (coursePart[1] == "t")    
-                    cObj.flag = true;
-                else if (coursePart[1] == "f")
-                    cObj.flag = false;
+    alert(data);
+    if (data.indexOf("BEST_FIT") == -1){
+        alert("default");
+        var tempCourseArray = data.split("ENTRY_END");
+        courseInfoArray[0] = [];
+        courseInfoArray[1] = [];
+        courseInfoArray[2] = [];
+        for (var i = 0; i < tempCourseArray.length - 1; i++){ 
+            var cObj = new courseObj();
+            var tempCourseParts = tempCourseArray[i].split("FIELD_END");
+            for (var k = 0; k < tempCourseParts.length; k++){
+                var coursePart = tempCourseParts[k].split("~");
+                if (coursePart[0] == "Dept")
+                    cObj.dept = coursePart[1];
+                else if (coursePart[0] == "CNum")
+                    cObj.courseNum = coursePart[1];
+                else if (coursePart[0] == "Name")
+                    cObj.name = coursePart[1];
+                else if (coursePart[0] == "Comp")
+                    cObj.components = coursePart[1];
+                else if (coursePart[0] == "Req")
+                    cObj.requirements = coursePart[1];
+                else if (coursePart[0] == "Desc")
+                    cObj.desc = coursePart[1];
+                else if (coursePart[0] == "Cr")
+                    cObj.credits = coursePart[1];
+                else if (coursePart[0] == "SNum")
+                    cObj.sectionNum = coursePart[1];
+                else if (coursePart[0] == "STime")
+                    cObj.startTime = coursePart[1];
+                else if (coursePart[0] == "ETime")
+                    cObj.endTime = coursePart[1];
+                else if (coursePart[0] == "Days")
+                    cObj.days = coursePart[1];
+                else if (coursePart[0] == "Room")
+                    cObj.room = coursePart[1];
+                else if (coursePart[0] == "Inst")
+                    cObj.instructor = coursePart[1];
+                else if (coursePart[0] == "Flag"){
+                    //alert(coursePart[1]);
+                    if (coursePart[1] == "t")    
+                        cObj.flag = true;
+                    else if (coursePart[1] == "f")
+                        cObj.flag = false;
+                }
             }
-            
-            //alert(coursePart[0]);
+            courseInfoArray[0].push(cObj);
         }
-        //alert(cObj.flag);
-        courseInfoArray[0].push(cObj);
-        courseInfoArray[1].push(cObj);
-        courseInfoArray[2].push(cObj);
-        
     }
+    
+    else{
+        alert("not default");
+        var listArray = new Array();
+        listArray.push(data.substring(data.indexOf("BEST_FIT_START") + 14, data.indexOf("BEST_FIT_END")));
+        listArray.push(data.substring(data.indexOf("SOME_CONFLICTS_START") + 20, data.indexOf("SOME_CONFLICTS_END")));
+        listArray.push(data.substring(data.indexOf("OTHERS_START") + 12, data.indexOf("OTHERS_END")));
+        
+        courseInfoArray[0] = [];
+        courseInfoArray[1] = [];
+        courseInfoArray[2] = [];
+        var tempCourseArray;
+        for (var j = 0; j < 3; j++){
+            tempCourseArray = listArray[j].split("ENTRY_END");
+            for (var i = 0; i < tempCourseArray.length - 1; i++){ 
+                var cObj = new courseObj();
+                var tempCourseParts = tempCourseArray[i].split("FIELD_END");
+                for (var k = 0; k < tempCourseParts.length; k++){
+                    var coursePart = tempCourseParts[k].split("~");
+                    if (coursePart[0] == "Dept")
+                        cObj.dept = coursePart[1];
+                    else if (coursePart[0] == "CNum")
+                        cObj.courseNum = coursePart[1];
+                    else if (coursePart[0] == "Name")
+                        cObj.name = coursePart[1];
+                    else if (coursePart[0] == "Comp")
+                        cObj.components = coursePart[1];
+                    else if (coursePart[0] == "Req")
+                        cObj.requirements = coursePart[1];
+                    else if (coursePart[0] == "Desc")
+                        cObj.desc = coursePart[1];
+                    else if (coursePart[0] == "Cr")
+                        cObj.credits = coursePart[1];
+                    else if (coursePart[0] == "SNum")
+                        cObj.sectionNum = coursePart[1];
+                    else if (coursePart[0] == "STime")
+                        cObj.startTime = coursePart[1];
+                    else if (coursePart[0] == "ETime")
+                        cObj.endTime = coursePart[1];
+                    else if (coursePart[0] == "Days")
+                        cObj.days = coursePart[1];
+                    else if (coursePart[0] == "Room")
+                        cObj.room = coursePart[1];
+                    else if (coursePart[0] == "Inst")
+                        cObj.instructor = coursePart[1];
+                    else if (coursePart[0] == "Flag"){
+                        //alert(coursePart[1]);
+                        if (coursePart[1] == "t")    
+                            cObj.flag = true;
+                        else if (coursePart[1] == "f")
+                            cObj.flag = false;
+                    }
+                }
+                courseInfoArray[j].push(cObj);
+            }
+        }
+    }
+    
     numCoursesPerList[0] = courseInfoArray[0].length;
     numCoursesPerList[1] = courseInfoArray[1].length;
     numCoursesPerList[2] = courseInfoArray[2].length;

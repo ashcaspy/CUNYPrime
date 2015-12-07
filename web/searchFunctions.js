@@ -39,8 +39,8 @@ function searchCourses(type){
     }
     else{
         openTimes = scheduleTabs[currentScheduleTab].openTimes;
-        closedTimes = scheduleTabs[currentScheduleTab].openTimes;
-        classTimes = scheduleTabs[currentScheduleTab].openTimes;
+        closedTimes = scheduleTabs[currentScheduleTab].closedTimes;
+        classTimes = scheduleTabs[currentScheduleTab].classTimes;
     
     }
     

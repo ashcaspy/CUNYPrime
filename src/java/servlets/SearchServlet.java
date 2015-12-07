@@ -159,12 +159,15 @@ public class SearchServlet extends HttpServlet {
                     update.setString(4, resultSet.getString("sec"));
 
                     days = resultSet.getString("days");
-
                     
+                    
+                    System.out.println(days);
                     for(int i=0; i<schedule.getWeek().length; ++i) {
-                        if(days.contains(schedule.getWeek()[i])) {
-                            Day temp = schedule.getElementFromSchedule(i);
-                            closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
+                        if (days != null){
+                            if(days.contains(schedule.getWeek()[i])) {
+                                Day temp = schedule.getElementFromSchedule(i);
+                                closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
+                            }
                         }
                     }
                     
@@ -453,6 +456,7 @@ public class SearchServlet extends HttpServlet {
             String queryBFDrop = "drop table " + "best_fit_" + id_num;
             String querySCDrop = "drop table " + "some_conflicts_" + id_num;
             String queryODrop = "drop table " + "others_" + id_num;
+            String querySectionsDrop = "drop table " + searcher.tableName();
 
             PreparedStatement preparedStatement;
             ResultSet resultSet;
@@ -561,6 +565,8 @@ public class SearchServlet extends HttpServlet {
                 preparedStatement = conn.prepareStatement(queryBFDrop);
                 preparedStatement.execute();
                 preparedStatement = conn.prepareStatement(querySCDrop);
+                preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(querySectionsDrop);
                 preparedStatement.execute();
             }
             catch (SQLException e) {
@@ -726,6 +732,7 @@ public class SearchServlet extends HttpServlet {
             String queryBFDrop = "drop table " + "best_fit_" + id_num;
             String querySCDrop = "drop table " + "some_conflicts_" + id_num;
             String queryODrop = "drop table " + "others_" + id_num;
+            String querySectionsDrop = "drop table " + searcher.tableName();
 
             PreparedStatement preparedStatement;
             ResultSet resultSet;
@@ -835,6 +842,9 @@ public class SearchServlet extends HttpServlet {
                 preparedStatement.execute();
                 preparedStatement = conn.prepareStatement(querySCDrop);
                 preparedStatement.execute();
+                preparedStatement = conn.prepareStatement(querySectionsDrop);
+                preparedStatement.execute();
+  
             }
             catch (SQLException e) {
 
