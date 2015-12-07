@@ -88,7 +88,12 @@ public class BackupSearch extends Search {
             } else {
                 insert.setInt(1, 0);
             }
-            insert.setInt(2, 2400);
+            if(null != end) {
+                int hour = end * 100;
+                insert.setInt(2, hour + minutes);
+            } else {
+                insert.setInt(2, 2400);
+            }
             
             insert.execute();
             
