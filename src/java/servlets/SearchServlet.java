@@ -176,9 +176,8 @@ public class SearchServlet extends HttpServlet {
                     
                     if(isTimeBased){
                         boolean hasMatch = false;
-                        int counter = 0;
+                       
                         for (JSONObject obj : reqs.get(cdept)) {
-                           counter = 0;
                             try {
                                 String cnum = Integer.toString(obj.getInt("cnum"));
                                 String dept = obj.getString("dept");
