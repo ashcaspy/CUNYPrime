@@ -40,6 +40,9 @@ public class Schedule {
 
         if(timesArr.length > 0){
             Arrays.sort(timesArr);
+            for (int i = 0; i < timesArr.length; i++){
+                System.out.println(timesArr[i]);
+            }
         }
 
         for (int i = 0; i < timesArr.length; i++){
