@@ -49,9 +49,10 @@ public abstract class Search {
     
     abstract public void selectTerm(String school, String semester);
 
-    abstract public boolean[] find(MatchValuePair courseNumber,
+    abstract public void find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
-                    int[] days, List<String> departments);
+                    int[] days, List<String> departments,
+                    boolean[] errors);
 
 }

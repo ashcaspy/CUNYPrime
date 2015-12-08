@@ -345,6 +345,9 @@ public class SearchServlet extends HttpServlet {
             keyword = null;
         if ("".equals(prof))
             prof = null;
+        
+        boolean[] findErrors = new boolean[] {false, false, false};
+        
         System.out.println(request.getParameter("search_type"));
 
         if (request.getParameter("search_type").equals("DEFAULT_SEARCH")){
@@ -357,7 +360,8 @@ public class SearchServlet extends HttpServlet {
                     keyword,
                     prof,
                     new int[] {},
-                    Arrays.asList(new String[]{dept})
+                    Arrays.asList(new String[]{dept}),
+                    findErrors
             );
             /******************************************************************/
             // Response parsing -- leave this to Ashley unless you're testing
@@ -454,7 +458,7 @@ public class SearchServlet extends HttpServlet {
                 for(int t = 0; t < day.getOpenTimeSize(); ++t) {
                     time = day.getOpenTimeElement(t);
                     searcher.find(null, time.X(), time.Y(), null, null, 
-                            new int[] {day.getDay()}, null);
+                            new int[] {day.getDay()}, null, findErrors);
                 }
             }
             
@@ -675,7 +679,8 @@ public class SearchServlet extends HttpServlet {
                                     ID.exact, cnum);
                         }
                         searcher.find(courseNumber, null, null, null, null, null, 
-                            Arrays.asList(new String[] {entry.getKey()}));
+                            Arrays.asList(new String[] {entry.getKey()}),
+                            findErrors);
                     } catch(JSONException e) {
                         e.printStackTrace();
                     }
@@ -688,7 +693,8 @@ public class SearchServlet extends HttpServlet {
                     en -> en.getValue().size() > 1).map(Entry::getKey)
                     .collect(Collectors.toList());
 
-            searcher.find(null, null, null, null, null, null, others);
+            searcher.find(null, null, null, null, null, null, others,
+                            findErrors);
             
 
             /**********************************************************************/

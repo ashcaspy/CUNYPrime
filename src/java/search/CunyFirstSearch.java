@@ -50,10 +50,11 @@ public class CunyFirstSearch extends Search {
         client.setup(school, semester);
     }
 
-    public boolean[] find(MatchValuePair courseNumber,
+    public void find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
-                    int[] days, List<String> departments) {
+                    int[] days, List<String> departments,
+                    boolean[] errors) {
 
         //clear previous search parameters in case some of these are null
         client.resetTerms();
@@ -66,13 +67,10 @@ public class CunyFirstSearch extends Search {
 
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
-        // indicates which errors occurred - ignore the ones I'm not expecting
-        boolean[] errors = new boolean[] {false, false, false};
         try {
             Section.createTable(conn, offset());
         } catch(SQLException e) {
             e.printStackTrace();
-            return errors;
         }
         
         if(null != departments) {
@@ -95,7 +93,6 @@ public class CunyFirstSearch extends Search {
                   ErrorCode.fromMsg(e.msg).setArray(errors);
               }
         }
-        return errors;
         /*
         ++counter;
         if(counter > 2) {

@@ -27,10 +27,11 @@ public class BackupSearch extends Search {
         masterTable = Section.tablename + school;
     }
     
-    public boolean[] find(MatchValuePair courseNumber,
+    public void find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
-                    int[] days, List<String> departments) {
+                    int[] days, List<String> departments,
+                    boolean[] errors) {
         
         PreparedStatement insert;
         
@@ -124,14 +125,12 @@ public class BackupSearch extends Search {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        boolean[] res = new boolean[] {false, false, false};
         if(before == after) {
-            ErrorCode.NORESULTS.setArray(res);
+            ErrorCode.NORESULTS.setArray(errors);
         }
         else {
-            ErrorCode.SUCCESS.setArray(res);
+            ErrorCode.SUCCESS.setArray(errors);
         }
-        return res;
     }
     
     private int countResults() {
