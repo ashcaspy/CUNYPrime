@@ -62,10 +62,7 @@ function searchCourses(type){
          return;
         }
         else{
-            alert($("#req_list_dropdown").val());
             reqs = courseReqObjs[$("#req_list_dropdown").val()].reqs;
-            alert(reqs.length + " " + courseReqObjs[$("#req_list_dropdown").val()].reqs.length);
-            alert(courseReqObjs[$("#req_list_dropdown").val()].reqs[0].dept);
         }
     }
     else if (type == "TIME_FOCUSED_SEARCH"){
@@ -235,13 +232,13 @@ function addCourseToSchedule(course){
     
     
     //first run once to see if thereare  conflicts
-    for (var i = 0; i < selectedCourses.length; i++){
-        var tempstart = parseInt(selectedCourses[i].startTime) / 100;
-        var tempend = parseInt(selectedCourses[i].endTime) / 100;
+    for (var i = 0; i < scheduleTabs[currentScheduleTab].selectedCourses.length; i++){
+        var tempstart = parseInt(scheduleTabs[currentScheduleTab].selectedCourses[i].startTime) / 100;
+        var tempend = parseInt(scheduleTabs[currentScheduleTab].selectedCourses[i].endTime) / 100;
         if ((specificStartTime > tempstart && specificStartTime < tempend) ||(specificEndTime > tempstart && specificEndTime < tempend)){
             var tempdays = [];
-            for (var j = 0; j < selectedCourses[i].days.length; j = j + 2){
-                var tempDay = selectedCourses[i].days.substr(j, 2);
+            for (var j = 0; j < scheduleTabs[currentScheduleTab].selectedCourses[i].days.length; j = j + 2){
+                var tempDay = scheduleTabs[currentScheduleTab].selectedCourses[i].days.substr(j, 2);
                 for (var l = 0; l < days.length; l++){
                     if (tempDay == days[l].substr(0, 2))
                         tempdays.push(l);
@@ -262,8 +259,6 @@ function addCourseToSchedule(course){
             
             if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), classTimes) == -1){
                         
-                classTimes.push("timeslot-div-" + courseDays[i] + "-" + k);
-                selectedDivs.push("timeslot-div-" + courseDays[i] + "-" + k);
                 scheduleTabs[currentScheduleTab].classTimes.push("timeslot-div-" + courseDays[i] + "-" + k);
                 scheduleTabs[currentScheduleTab].selectedDivs.push("timeslot-div-" + courseDays[i] + "-" + k);
 
@@ -271,10 +266,10 @@ function addCourseToSchedule(course){
         }
     }
     
-    selectedCourses.push(course);
-    setSelectedCourses(userName, selectedCourses);
-    setClassTimes(userName, classTimes);
-    setSelectedDiv(userName, selectedDivs);
+    scheduleTabs[currentScheduleTab].selectedCourses.push(course);
+    setSelectedCourses(userName, scheduleTabs[currentScheduleTab].selectedCourses);
+    setClassTimes(userName, scheduleTabs[currentScheduleTab].classTimes);
+    setSelectedDiv(userName, scheduleTabs[currentScheduleTab].selectedDivs);
     courseInfoArray[3] = selectedCourses;
     numCoursesPerList[3] = courseInfoArray[3].length;
     
@@ -312,11 +307,11 @@ function removeCourseFromSchedule(course){
             }
         }
 
-        selectedCourses.splice($.inArray(course, selectedCourses), 1);
-        setSelectedCourses(userName, selectedCourses);
-        setClassTimes(userName, classTimes);
-        setSelectedDiv(userName, selectedDivs);
-        courseInfoArray[3] = selectedCourses;
+        scheduleTabs[currentScheduleTab].selectedCourses.splice($.inArray(course, scheduleTabs[currentScheduleTab].selectedCourses), 1);
+        setSelectedCourses(userName, scheduleTabs[currentScheduleTab].selectedCourses);
+        setClassTimes(userName, scheduleTabs[currentScheduleTab].classTimes);
+        setSelectedDiv(userName, scheduleTabs[currentScheduleTab].selectedDivs);
+        courseInfoArray[3] = scheduleTabs[currentScheduleTab].selectedCourses;
         numCoursesPerList[3] = courseInfoArray[3].length;
 
         $("#timeslot-list").html("");

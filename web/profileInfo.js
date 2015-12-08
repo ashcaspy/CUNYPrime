@@ -325,10 +325,7 @@ var courseReqObjs = [];
 function parseAllReqs(){
     courseReqObjs = [];
     var tempReqObjs = [];
-    alert("okhere " + majorReqNames.length + " boo " + allReqCourses.length);
-    
     for (var k = 0; k < majorReqNames.length; k++){
-        alert("all" + allReqCourses[k].length + " " + k);
         for (var i = 0; i < allReqCourses[k].length; i++){
             var dept, cnum, hasAt;
             if (allReqCourses[k][i].length < 3)
@@ -360,7 +357,6 @@ function parseAllReqs(){
             "reqs" : tempReqObjs
         };
         courseReqObjs.push(temp);
-        alert(" ok " + k + courseReqObjs[k].name + " " + courseReqObjs[k].reqs.length);
         tempReqObjs = [];
     }
 }

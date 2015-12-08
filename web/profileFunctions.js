@@ -591,12 +591,12 @@ function Schedule(dayStart, dayEnd, hourStart, hourEnd, openTimes, closedTimes, 
     this.dayEnd = dayEnd;
     this.hourStart = hourStart;
     this.hourEnd = hourEnd;
-    this.openTimes = openTimes;
-    this.closedTimes = closedTimes;
-    this.selectedDivs = selectedDivs;
+    this.openTimes = scheduleTabs[currentScheduleTab].openTimes;
+    this.closedTimes = scheduleTabs[currentScheduleTab].closedTimes;
+    this.selectedDivs = scheduleTabs[currentScheduleTab].selectedDivs;
     this.valid = valid;
-    this.classTimes = classTimes;
-    this.selectedCourses = selectedCourses;
+    this.classTimes = scheduleTabs[currentScheduleTab].classTimes;
+    this.selectedCourses = scheduleTabs[currentScheduleTab].selectedCourses;
 }
 
 
