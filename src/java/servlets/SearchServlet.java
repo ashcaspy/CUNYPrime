@@ -140,20 +140,28 @@ public class SearchServlet extends HttpServlet {
             update.setString(3, res.getString("cnbr"));
             update.setString(4, res.getString("sec"));
             int openTimesIndex = 0;
+            boolean hasMatch = false;
             for (int i = 0; i < schedule.getSize(); i++){
                 Day day = schedule.getElementFromSchedule(i);
                 while(openTimesIndex < day.getOpenTimeSize() && 
                         openTimesIndex < day.getOpenTimeSize()){
-                        if(!(day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                        if((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
                                 day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
-                                !(day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
+                                (day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
                                         day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))){
-                             
-                            value++;
-                            update.setInt(1, value);
-
+                                        
+                            hasMatch = true;
+                            break;
                         }
                 }
+                if(hasMatch){
+                    break;
+                }
+            
+            }
+            if(!hasMatch){
+                value++;
+                update.setInt(1, value);
             }
         } catch(SQLException e){
             e.printStackTrace();
@@ -272,7 +280,6 @@ public class SearchServlet extends HttpServlet {
         try {
                 JSONArray arr=  new JSONArray(request.getParameter("sched_open"));
 
-                                    //System.out.println(arr.getString(i));
 
                 String openTimesArr [] = new String[arr.length()];
                 for (int i =0; i < arr.length(); i++){
@@ -282,8 +289,6 @@ public class SearchServlet extends HttpServlet {
                 
                 
                 schedule.setTimes(openTimesArr, true);
-                
-                //schedule.print();
                 
                 arr = new JSONArray(request.getParameter("sched_closed"));
                 String closedTimesArr[] = new String[arr.length()];
