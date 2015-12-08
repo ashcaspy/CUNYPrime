@@ -11,13 +11,10 @@ function searchCourses(type){
     var reqs = new Array();
     
     if (document.getElementById("search_school") === null || $("#search_school").val() == "none"){
-        collegeValue = majorDivInfo.collegeName;
-        if (majorDivInfo.collegeName == ""){
-            alert("Please select a school from the dropdown, or upload a DIG report.");
+        alert("Please select a school from the dropdown, or upload a DIG report.");
             
-            fadeSearchOverlay();
-            return;
-        }
+        fadeSearchOverlay();
+        return;
     }
     else
         collegeValue = $("#search_school").val();
@@ -41,11 +38,52 @@ function searchCourses(type){
         openTimes = scheduleTabs[currentScheduleTab].openTimes;
         closedTimes = scheduleTabs[currentScheduleTab].closedTimes;
         classTimes = scheduleTabs[currentScheduleTab].classTimes;
-    
+
+        for (var i = 0; i < openTimes.length; i++){
+            if (openTimes[i].length < 17)
+                openTimes[i] = openTimes[i].substring(0, 15) + "0" + openTimes[i].charAt(16);
+        }
+
+        for (var i = 0; i < closedTimes.length; i++){
+            if (closedTimes[i].length < 17)
+                closedTimes[i] = closedTimes[i].substring(0, 15) + "0" + closedTimes[i].charAt(16);
+        }
+
+        for (var i = 0; i < classTimes.length; i++){
+            if (classTimes[i].length < 17)
+                classTimes[i] = classTimes[i].substring(0, 15) + "0" + classTimes[i].charAt(16);
+        }
     }
     
+    if (type == "REQ_FOCUSED_SEARCH"){
+        if ($("#req_list_dropdown").val() == "none"){
+            alert("Please upload a DIG report and select a requirement from the dropdown!");
+            fadeSearchOverlay();
+         return;
+        }
+        else{
+            alert($("#req_list_dropdown").val());
+            reqs = courseReqObjs[$("#req_list_dropdown").val()].reqs;
+            alert(reqs.length + " " + courseReqObjs[$("#req_list_dropdown").val()].reqs.length);
+            alert(courseReqObjs[$("#req_list_dropdown").val()].reqs[0].dept);
+        }
+    }
+    else if (type == "TIME_FOCUSED_SEARCH"){
+        if ($("#req_list_dropdown").val() == "none"){
+            for (var i = 0; i < allReqCourses.length; i++){
+                reqs.concat(courseReqObjs[i].reqs);
+            }
+        }
+        else
+            reqs = courseReqObjs[$("#req_list_dropdown").val()].reqs;
+    }
+    
+            
+    
+    
+    
     // Validate Reqs
-    if (courseReqObjs.length == 0 && type == "REQ_FOCUSED_SEARCH"){
+    if (allReqCourses.length == 0 && type == "REQ_FOCUSED_SEARCH"){
         alert("Please upload a DIG report with your requirements first!");
         fadeSearchOverlay();
         return;
@@ -70,7 +108,7 @@ function searchCourses(type){
             var values = {
                 "college_value": $("#search_school").val(),
                 "term_value": $("#search_term").val(),
-                "reqs": JSON.stringify(courseReqObjs),
+                "reqs": JSON.stringify(reqs),
                 "sched_open": JSON.stringify(openTimes),
                 "sched_closed": JSON.stringify(closedTimes),
                 "sched_class": JSON.stringify(classTimes),
@@ -82,10 +120,10 @@ function searchCourses(type){
             var values = {
                 "college_value": $("#search_school").val(),
                 "term_value": $("#search_term").val(),
-                "reqs": JSON.stringify(courseReqObjs),
-                "sched_open": JSON.stringify(scheduleTabs[currentScheduleTab].openTimes),
-                "sched_closed": JSON.stringify(scheduleTabs[currentScheduleTab].closedTimes),
-                "sched_class": JSON.stringify(scheduleTabs[currentScheduleTab].classTimes),
+                "reqs": JSON.stringify(reqs),
+                "sched_open": JSON.stringify(openTimes),
+                "sched_closed": JSON.stringify(closedTimes),
+                "sched_class": JSON.stringify(classTimes),
                 "id_num": id_num,
                 "search_type": type
             };
@@ -320,4 +358,14 @@ function getTermAndDepts(){
             collegesLoaded = true;
         }
     });
+}
+
+
+
+function getListOfReqs(){
+    var list = "<option value = \"none\">-Select Requirement-</option>";
+    for (var i = 0; i < majorReqNames.length; i++){
+        list = list + "<option value = \"" + i + "\">" +  majorReqNames[i] + "</option>";
+    }
+    $("#req_list_dropdown").html(list);
 }

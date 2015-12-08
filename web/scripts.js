@@ -289,6 +289,7 @@ function loadTab(tabNum){
         if (tabNum == 1){
             $("#left_scroll_wrapper").load("left_tab_1.html");
             collegesLoaded = false;
+            getListOfReqs();
         }
         
         else if (tabNum == 2){

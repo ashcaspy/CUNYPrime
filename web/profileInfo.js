@@ -6,6 +6,9 @@ var majorDivInfo = {
     credReq: ""
 };
 var allReqCourses = [];
+var tempReqCourses = [];
+var majorReqNames = [];
+var courseCounter = 0;
 var allCoursesTaken = [];
 
 
@@ -39,6 +42,7 @@ function prepProfile(){
     array1 = [];
     allReqCourses = [];
     allCoursesTaken = [];
+    majorReqNames = [];
     
     // set content based on user info
     // get college, major
@@ -211,6 +215,15 @@ function displayReq(req, done){
                             req[i][k].credReq.substring(18, req[i][k].credReq.length) 
                         );
                         
+                        /***************/
+                        if (majorReqNames.length > 0){
+                            allReqCourses[majorReqNames.length - 1] = [];
+                            allReqCourses[majorReqNames.length - 1] = tempReqCourses;
+                        }
+                        majorReqNames.push(req[i][k].name);
+                        tempReqCourses = [];
+                        
+                        
                         
                         $reqBox.css({
                             "top" : (25 + (Math.floor(counter/2) * 30)) + "vh",
@@ -254,7 +267,7 @@ function displayReq(req, done){
                                     req[i][k].reqCourses[j] + 
                                     "<br />"
                                 );
-                                allReqCourses.push(req[i][k].reqCourses[j]);
+                                tempReqCourses.push(req[i][k].reqCourses[j]);
                             }
                         }
                     }
@@ -298,40 +311,56 @@ function displayReq(req, done){
                 }   
             }   
         } 
+        allReqCourses[majorReqNames.length - 1] = [];
+        allReqCourses[majorReqNames.length - 1] = tempReqCourses;
+        tempReqCourses = [];
+        courseCounter = 0;
         getCoursesTaken(allCoursesTaken, false);
         parseAllReqs();
+        getListOfReqs();
     }
 }
 
 var courseReqObjs = [];
 function parseAllReqs(){
     courseReqObjs = [];
+    var tempReqObjs = [];
+    alert("okhere " + majorReqNames.length + " boo " + allReqCourses.length);
     
-    for (var i = 0; i < allReqCourses.length; i++){
-        var dept, cnum, hasAt;
-        if (allReqCourses[i].length < 3)
-            continue;
-        //if (allReqCourses[i].charAt(0) == " ")
-        //    allReqCourses[i] = allReqCourses[i].substring(1, allReqCourses[i].length - 1);
-        var values = allReqCourses[i].split(" ");
-        dept = values[0];
-        cnum = values[1];
+    for (var k = 0; k < majorReqNames.length; k++){
+        alert("all" + allReqCourses[k].length + " " + k);
+        for (var i = 0; i < allReqCourses[k].length; i++){
+            var dept, cnum, hasAt;
+            if (allReqCourses[k][i].length < 3)
+                continue;
+            //if (allReqCourses[i].charAt(0) == " ")
+            //    allReqCourses[i] = allReqCourses[i].substring(1, allReqCourses[i].length - 1);
+            var values = allReqCourses[k][i].split(" ");
+            dept = values[0];
+            cnum = values[1];
 
-        if (cnum.indexOf("@") > -1){
-            cnum = cnum.replace("@", "");
-            hasAt = "true";
+            if (cnum.indexOf("@") > -1){
+                cnum = cnum.replace("@", "");
+                hasAt = "true";
+            }
+            else 
+                hasAt = "false";
+
+            cnum = parseFloat(cnum);
+
+            var req = {
+                dept: dept,
+                cnum: cnum,
+                hasAt: hasAt
+            };
+            tempReqObjs.push(req);
         }
-        else 
-            hasAt = "false";
-
-        cnum = parseFloat(cnum);
-
-        var req = {
-            dept: dept,
-            cnum: cnum,
-            hasAt: hasAt
+        var temp = {
+            "name" : majorReqNames[k],
+            "reqs" : tempReqObjs
         };
-        courseReqObjs.push(req);
-        
+        courseReqObjs.push(temp);
+        alert(" ok " + k + courseReqObjs[k].name + " " + courseReqObjs[k].reqs.length);
+        tempReqObjs = [];
     }
 }

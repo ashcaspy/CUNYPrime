@@ -290,8 +290,27 @@ function generatePDF(){
         }
 
     }
-    $("#pdf_view_pane").attr("data", printDoc.output("datauristring"));
-    $("#pdf_view_pane_backup").attr("src", printDoc.output("datauristring"));
+    $("#display_pane").html("<object type='application/pdf' width='100%' height='100%' background = 'blue' id = 'pdf_view_pane'>" +
+            "<p>It appears you don't have a PDF plugin for this browser. You can download your Resum&eacute; <a href = \"#\" onclick = \"javascript:downloadPDF();\">here</a></p>" +
+        "</object>");
+    
+    $("#display_pane").html("");
+    var $pdfview = $("<object>");
+    $pdfview.attr("id", "pdf_view_pane");
+    $pdfview.attr("type", "application/pdf");
+    $pdfview.attr("data", printDoc.output("datauristring"));
+    $pdfview.html("<p>It appears you don't have a PDF plugin for this browser. You can download your Resum&eacute; <a href = \"#\" onclick = \"javascript:downloadPDF();\">here</a></p>");
+    
+    $pdfview.css({
+        "width" : "100%",
+        "height" : "100%",
+        "background" : "blue"
+    });
+    
+    $("#display_pane").append($pdfview);
+    
+    //$("#pdf_view_pane").attr("data", printDoc.output("datauristring"));
+    //$("#pdf_view_pane_backup").attr("src", printDoc.output("datauristring"));
     
     storeUserResume(userName);
 }
