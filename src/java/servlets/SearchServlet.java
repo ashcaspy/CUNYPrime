@@ -213,9 +213,15 @@ public class SearchServlet extends HttpServlet {
                         if(null != courses) {
                             for (JSONObject obj : courses) {
                                 try {
-                                    String cnum = Integer.toString(obj.getInt("cnum"));
+                                    // check if cnum is null
+                                    String cnum;
+                                    if(JSONObject.NULL == obj.get("cnum")){
+                                        cnum = null;
+                                    } else {
+                                        cnum = Integer.toString(obj.getInt("cnum"));
+                                    }
                                     String dept = obj.getString("dept");
-                                    if(cnbr.startsWith(cnum)) {
+                                    if(null == cnum || cnbr.startsWith(cnum)) {
                                             hasMatch = true;
                                             break;
 
