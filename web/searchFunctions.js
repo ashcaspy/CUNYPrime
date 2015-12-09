@@ -38,21 +38,16 @@ function searchCourses(type){
         openTimes = scheduleTabs[currentScheduleTab].openTimes;
         closedTimes = scheduleTabs[currentScheduleTab].closedTimes;
         classTimes = scheduleTabs[currentScheduleTab].classTimes;
-
-        for (var i = 0; i < openTimes.length; i++){
-            if (openTimes[i].length < 17)
-                openTimes[i] = openTimes[i].substring(0, 15) + "0" + openTimes[i].charAt(16);
-        }
-
-        for (var i = 0; i < closedTimes.length; i++){
-            if (closedTimes[i].length < 17)
-                closedTimes[i] = closedTimes[i].substring(0, 15) + "0" + closedTimes[i].charAt(16);
-        }
-
-        for (var i = 0; i < classTimes.length; i++){
-            if (classTimes[i].length < 17)
-                classTimes[i] = classTimes[i].substring(0, 15) + "0" + classTimes[i].charAt(16);
-        }
+        
+        var addZero = function(times) {
+            for(var i = 0; i < times.length; ++i) {
+                if(times[i].length < 17) 
+                    times[i] = times[i].substring(0, 15) + "0" + times[i].charAt(15);
+            }
+        };
+        addZero(openTimes);
+        addZero(closedTimes);
+        addZero(classTimes);
     }
     
     if (type == "REQ_FOCUSED_SEARCH"){
