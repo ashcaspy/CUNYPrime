@@ -673,12 +673,25 @@ public class SearchServlet extends HttpServlet {
                     MatchValuePair courseNumber;
                     try {
                         JSONObject req = entry.getValue().get(0);
-                        String cnum = Integer.toString(req.getInt("cnum"));
+                        String cnum;
+                        // check if cnum is null (ie. ANY course from dept)
+                        try {
+                            cnum = Integer.toString(req.getInt("cnum"));
+                        } catch (JSONException e) {
+                            cnum = null;
+                        }
                         if(req.getBoolean("hasAt")) {
-                            // this is contains and not beginsWith 
-                            // but it's as close as it gets
-                            courseNumber = new MatchValuePair(
+                            // any cnum
+                            if(null == cnum) {
+                                courseNumber = null;
+                            }
+                            else {
+                                // this is contains and not beginsWith 
+                                // but it's as close as it gets
+                                // we'll drop the rest later, anyway
+                                courseNumber = new MatchValuePair(
                                     ID.contains, cnum);
+                            }
                         } else {
                             courseNumber = new MatchValuePair(
                                     ID.exact, cnum);
