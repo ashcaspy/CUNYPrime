@@ -28,13 +28,12 @@ public class Course {
         secs.stream().forEach(s -> sections.add(new Section(s)));
     }
 
-    public void addToTable(Connection conn, String offset) throws SQLException {
-        PreparedStatement insertSection;
+    public void addToTable(Connection conn, String tablename) throws SQLException {
         for(Section sec: sections) {
             try {
-                sec.addToTable(conn, offset, this);
+                sec.addToTable(conn, tablename, this);
             } catch (SQLException e) {
-                //e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
     }
