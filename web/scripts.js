@@ -29,7 +29,7 @@ var numCoursesPerList = [0, 0, 0, 0];
 function parseCourseResultset(data){    
     alert(data);
     if (data.indexOf("BEST_FIT") == -1){
-        alert("default");
+        //alert("default");
         var tempCourseArray = data.split("ENTRY_END");
         courseInfoArray[0] = [];
         courseInfoArray[1] = [];
@@ -73,12 +73,19 @@ function parseCourseResultset(data){
                         cObj.flag = false;
                 }
             }
+            if (cObj.startTime == "null")
+                cObj.startTime = "TBA";
+            if (cObj.endTime == "null")
+                cObj.endTime = "TBA";
+            if (cObj.days == "null")
+                cObj.days = "TBA";
+            
             courseInfoArray[0].push(cObj);
         }
     }
     
     else{
-        alert("not default");
+        //alert("not default");
         var listArray = new Array();
         listArray.push(data.substring(data.indexOf("BEST_FIT_START") + 14, data.indexOf("BEST_FIT_END")));
         listArray.push(data.substring(data.indexOf("SOME_CONFLICTS_START") + 20, data.indexOf("SOME_CONFLICTS_END")));

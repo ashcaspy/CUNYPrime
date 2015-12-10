@@ -1252,10 +1252,20 @@ function createScheduleFooterTools(){
             alert("Too many schedules! Delete one or more.");
             return;
         }
-        var tempTab = new Schedule(0, 6, 0, 23, new Array(), new Array(), new Array(), new Array(), new Array(), true);
+        var tempTab = {
+            dayStart: 0,
+            dayEnd: 6,
+            hourStart: 0,
+            hourEnd: 23,
+            openTimes: new Array(),
+            closedTimes: new Array(),
+            selectedDivs: new Array(),
+            valid: true,
+            classTimes: new Array(),
+            selectedCourses: new Array(),
+        };
         
         scheduleTabs.push(tempTab);
-        //scheduleObjArray.push(tempTab);
         var $tabDiv = $("<div>").addClass("schedule-tab-selector");
         $tabDiv.attr("id", "schedule-tab-" + (scheduleTabs.length - 1));
         $tabDiv.css({
