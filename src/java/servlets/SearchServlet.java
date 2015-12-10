@@ -31,6 +31,7 @@ import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import scheduling.*;
 import org.json.*;
+import search.parser.Section;
 
 /**
  *
@@ -116,14 +117,16 @@ public class SearchServlet extends HttpServlet {
     
     protected void createPtBasedTables(Connection conn, Search searcher, int id_num){
         try {
-            
+            Section.createTable(conn, "best_fit_" + id_num);
+            Section.createTable(conn, "some_conflicts_" + id_num);
+            Section.createTable(conn, "others_" + id_num);
             PreparedStatement myStatement = conn.prepareStatement("delete from " + searcher.tableName() + " where points >= 3");
             myStatement.execute();
-            myStatement = conn.prepareStatement("select * into best_fit_" + id_num + " from " + searcher.tableName() + " where points <= 0");
+            myStatement = conn.prepareStatement("insert into best_fit_" + id_num + " select * from " + searcher.tableName() + " where points <= 0");
             myStatement.execute();
-            myStatement = conn.prepareStatement("select * into some_conflicts_" + id_num + " from " + searcher.tableName() + " where points = 1");
+            myStatement = conn.prepareStatement("insert into some_conflicts_" + id_num + " select * from " + searcher.tableName() + " where points = 1");
             myStatement.execute();
-            myStatement = conn.prepareStatement("select * into others_" + id_num + " from " + searcher.tableName() + " where points = 2");
+            myStatement = conn.prepareStatement("insert into others_" + id_num + " select * from " + searcher.tableName() + " where points = 2");
             myStatement.execute();
             
         } catch (SQLException e){
