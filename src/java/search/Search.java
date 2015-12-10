@@ -25,11 +25,7 @@ public abstract class Search {
     protected int counter = 1;
 
     public String tableName() {
-        return Section.tablename + offset();
-    }
-
-    protected String offset() {
-        return Integer.toString(counter) + "_" + id;
+        return Section.tablename + "_" + id;
     }
     
     public static Search createSearch(Connection c, int id_num, String college, String term) {
