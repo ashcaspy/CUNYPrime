@@ -75,9 +75,9 @@ public class Schedule {
                 if (Math.abs(Integer.parseInt(temp[indexOf3].replaceAll(" ", "")) - prevNum) > 1) {
                     if(Integer.parseInt(temp[indexOf3]) != prevNum) {
                         if(isOpenTimes){
-                            mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                            mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum + 1;
                         } else {
-                            mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() - 1).y = prevNum;
+                            mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() - 1).y = prevNum + 1;
 
                         }
                     }

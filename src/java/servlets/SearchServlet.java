@@ -83,7 +83,7 @@ public class SearchServlet extends HttpServlet {
     }
 
 
-    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, int value [], boolean isTimeBased){
+    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, float value [], boolean isTimeBased){
         int closeTimeIndex = 0;
         if(!day.isCloseTimesEmpty()){
             try {
@@ -134,7 +134,7 @@ public class SearchServlet extends HttpServlet {
         }
     }
     
-    protected void addPtToNonOpenTime(Connection conn, ResultSet res, Schedule schedule, Search searcher, Integer value){
+    protected void addPtToNonOpenTime(Connection conn, ResultSet res, Schedule schedule, Search searcher, int value[]){
         try {
             PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
                             + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
@@ -142,19 +142,47 @@ public class SearchServlet extends HttpServlet {
             update.setString(3, res.getString("cnbr"));
             update.setString(4, res.getString("sec"));
             int openTimesIndex = 0;
+            int closeTimesIndex = 0;
             boolean hasMatch = false;
             for (int i = 0; i < schedule.getSize(); i++){
                 Day day = schedule.getElementFromSchedule(i);
                 while(openTimesIndex < day.getOpenTimeSize() && 
-                        openTimesIndex < day.getOpenTimeSize()){
-                        if((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                        closeTimesIndex < day.getCloseTimeSize()){
+                        if(((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                                day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
+                                (day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
+                                        day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))) || ((day.getClosedTimeElement(closeTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                                day.getClosedTimeElement(closeTimesIndex).X() * 100  <= res.getInt("endtime")) ||
+                                (day.getClosedTimeElement(closeTimesIndex).Y() * 100  >= res.getInt("starttime") &&
+                                        day.getClosedTimeElement(closeTimesIndex).X() * 100 <= res.getInt("starttime")))){
+                                        
+                            hasMatch = true;
+                            break;
+                        }
+                        openTimesIndex++;
+                        closeTimesIndex++;
+                }
+                while (openTimesIndex <day.getOpenTimeSize()){
+                    if((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
                                 day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
                                 (day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
                                         day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))){
                                         
                             hasMatch = true;
                             break;
+                    }
+                    openTimesIndex++;
+                }
+                while (closeTimesIndex < day.getCloseTimeSize()){
+                        if ((day.getClosedTimeElement(closeTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                                day.getClosedTimeElement(closeTimesIndex).X() * 100  <= res.getInt("endtime")) ||
+                                (day.getClosedTimeElement(closeTimesIndex).Y() * 100  >= res.getInt("starttime") &&
+                                        day.getClosedTimeElement(closeTimesIndex).X() * 100 <= res.getInt("starttime"))){
+                                        
+                            hasMatch = true;
+                            break;
                         }
+                    closeTimesIndex++;
                 }
                 if(hasMatch){
                     break;
@@ -162,8 +190,8 @@ public class SearchServlet extends HttpServlet {
             
             }
             if(!hasMatch){
-                value++;
-                update.setInt(1, value);
+                value[0] += 0.5;
+                update.setInt(1, value[0]);
             }
         } catch(SQLException e){
             e.printStackTrace();
