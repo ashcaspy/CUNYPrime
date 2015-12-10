@@ -59,7 +59,7 @@ public class CunyFirstSearch extends Search {
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
         try {
-            Section.createTable(conn, offset());
+            Section.createTable(conn, tableName());
         } catch(SQLException e) {
             e.printStackTrace();
         }
@@ -67,7 +67,7 @@ public class CunyFirstSearch extends Search {
         if(null != departments) {
             for (String dept : departments) {
                 try {
-                    new Parser(client.getResults(dept)).addToTable(conn, offset());
+                    new Parser(client.getResults(dept)).addToTable(conn, tableName());
                     ErrorCode.SUCCESS.setArray(errors);
                 } catch (IOException e) {
                 } catch (SearchError e) {
@@ -77,7 +77,7 @@ public class CunyFirstSearch extends Search {
         }
         else {
             try {
-                new Parser(client.getResults()).addToTable(conn, offset());
+                new Parser(client.getResults()).addToTable(conn, tableName());
                 ErrorCode.SUCCESS.setArray(errors);
             } catch (IOException e) { }
               catch (SearchError e) {

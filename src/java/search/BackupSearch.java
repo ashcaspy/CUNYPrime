@@ -38,7 +38,7 @@ public class BackupSearch extends Search {
         int before = 0, after = 0; // well if the search fails they would be
         
         try {
-            Section.createTable(conn, offset());
+            Section.createTable(conn, tableName());
             
             before = countResults();
             

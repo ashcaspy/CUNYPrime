@@ -106,8 +106,8 @@ public class Section {
      * In the rare event (according to test data) that this section
      * meets at different times it will insert one row for each timeslot
      */
-    void addToTable(Connection conn, String offset, Course owner) throws SQLException {
-        PreparedStatement st = conn.prepareStatement("INSERT INTO " + tablename + offset +
+    void addToTable(Connection conn, String table, Course owner) throws SQLException {
+        PreparedStatement st = conn.prepareStatement("INSERT INTO " + table +
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 
         //default count is 1
@@ -181,9 +181,9 @@ public class Section {
 
     public final static String tablename = "_sections";
 
-    public static void createTable(Connection conn, String offset) throws SQLException {
+    public static void createTable(Connection conn, String table) throws SQLException {
         Statement st = conn.createStatement();
-        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + tablename + offset + "(" +
+        st.executeUpdate("CREATE TABLE IF NOT EXISTS " + table + "(" +
                 "cdept varchar(6)," +
                 "cnbr varchar(7)," +
                 "cname varchar(200)," +
