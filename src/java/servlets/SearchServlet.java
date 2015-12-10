@@ -86,30 +86,33 @@ public class SearchServlet extends HttpServlet {
     }
 
 
-    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, Integer value, boolean isTimeBased){
+    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, int value [], boolean isTimeBased){
         int closeTimeIndex = 0;
         if(!day.isCloseTimesEmpty()){
+            try {
             while (closeTimeIndex < day.getCloseTimeSize()){
-                try{
+                
                     if((day.getClosedTimeElement(closeTimeIndex).Y() * 100 >= res.getInt("endtime") && 
                             day.getClosedTimeElement(closeTimeIndex).X() * 100  <= res.getInt("endtime")) ||
                             (day.getClosedTimeElement(closeTimeIndex).Y() * 100  >= res.getInt("starttime") &&
                                     day.getClosedTimeElement(closeTimeIndex).X() * 100 <= res.getInt("starttime"))){
                         if(isTimeBased){
-                            value += 2;
+                            value[0] += 2;
                         } else {
-                            value += 1;
+                            value[0] += 1;
                         }
-                        update.setInt(1, value);
-
-                        update.execute();
                     }
                     closeTimeIndex++;
-                } catch (SQLException e){
-                    e.printStackTrace();
+            }
+                    if(res.getString("cnbr").equals("20149")){
+                        System.out.println(value[0]);
+                    }
+                    update.setInt(1, value[0]);
 
-                }
+                        update.execute();
 
+            } catch(SQLException e){
+                e.printStackTrace();
             }
         }
 
@@ -173,7 +176,7 @@ public class SearchServlet extends HttpServlet {
         
             PreparedStatement preparedStatement;
             ResultSet resultSet;
-            Integer value = 0; 
+            int value[] = {0}; 
             String queryA = "select * from "+ searcher.tableName();
             //final JSONObject[] reqs = parseJSON(request.getParameter("reqs"));
 
@@ -187,7 +190,7 @@ public class SearchServlet extends HttpServlet {
                         + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
 
                 while (resultSet.next()){
-                    value = 0;
+                    value[0] = 0;
                     update.setString(2, resultSet.getString("cdept"));
                     update.setString(3, resultSet.getString("cnbr"));
                     update.setString(4, resultSet.getString("sec"));
@@ -199,10 +202,12 @@ public class SearchServlet extends HttpServlet {
                         if (days != null){
                             if(days.contains(schedule.getWeek()[i])) {
                                 Day temp = schedule.getElementFromSchedule(i);
+                             
                                 closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
                             }
                         }
                     }
+                 
                     
                     String cnbr = resultSet.getString("cnbr");
                     String cdept = resultSet.getString("cdept");
@@ -233,8 +238,8 @@ public class SearchServlet extends HttpServlet {
                                
                             } // end for courses
                             if(!hasMatch && reqs.isEmpty()){
-                                    value++;    
-                                    update.setInt(1, value);
+                                    value[0]++;    
+                                    update.setInt(1, value[0]);
                                     update.execute();
                             }
                         } // and if courses!=null
