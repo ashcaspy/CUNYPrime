@@ -83,8 +83,9 @@ public class SearchServlet extends HttpServlet {
     }
 
 
-    protected void closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, float value [], boolean isTimeBased){
+    protected float closeTimeMatchAction (ResultSet res, PreparedStatement update, Day day, float value, boolean isTimeBased){
         int closeTimeIndex = 0;
+        
         if(!day.isCloseTimesEmpty()){
             try {
             while (closeTimeIndex < day.getCloseTimeSize()){
@@ -94,24 +95,21 @@ public class SearchServlet extends HttpServlet {
                             (day.getClosedTimeElement(closeTimeIndex).Y() * 100  >= res.getInt("starttime") &&
                                     day.getClosedTimeElement(closeTimeIndex).X() * 100 <= res.getInt("starttime"))){
                         if(isTimeBased){
-                            value[0] += 2;
+                            value += 2.0;
                         } else {
-                            value[0] += 1;
+                            value += 1.0;
                         }
                     }
                     closeTimeIndex++;
             }
-                    if(res.getString("cnbr").equals("20149")){
-                        System.out.println(value[0]);
-                    }
-                    update.setInt(1, value[0]);
 
-                        update.execute();
-
+                    
+        
             } catch(SQLException e){
                 e.printStackTrace();
             }
         }
+            return value;
 
     }
     
@@ -134,7 +132,7 @@ public class SearchServlet extends HttpServlet {
         }
     }
     
-    protected void addPtToNonOpenTime(Connection conn, ResultSet res, Schedule schedule, Search searcher, int value[]){
+    protected float addPtToNonOpenTime(Connection conn, ResultSet res, Schedule schedule, Search searcher, float value){
         try {
             PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
                             + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
@@ -190,12 +188,13 @@ public class SearchServlet extends HttpServlet {
             
             }
             if(!hasMatch){
-                value[0] += 0.5;
-                update.setInt(1, value[0]);
+                value += 0.5;
+                
             }
         } catch(SQLException e){
             e.printStackTrace();
         }
+        return value;
         
     }
     
@@ -203,7 +202,8 @@ public class SearchServlet extends HttpServlet {
         
             PreparedStatement preparedStatement;
             ResultSet resultSet;
-            int value[] = {0}; 
+            float value = 0; 
+            float valueTemp = 0;
             String queryA = "select * from "+ searcher.tableName();
             //final JSONObject[] reqs = parseJSON(request.getParameter("reqs"));
 
@@ -217,7 +217,7 @@ public class SearchServlet extends HttpServlet {
                         + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
 
                 while (resultSet.next()){
-                    value[0] = 0;
+                    value = 0;
                     update.setString(2, resultSet.getString("cdept"));
                     update.setString(3, resultSet.getString("cnbr"));
                     update.setString(4, resultSet.getString("sec"));
@@ -229,15 +229,29 @@ public class SearchServlet extends HttpServlet {
                         if (days != null){
                             if(days.contains(schedule.getWeek()[i])) {
                                 Day temp = schedule.getElementFromSchedule(i);
-                             
-                                closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
+                                if(resultSet.getString("cnbr").equals("20160") && resultSet.getString("cdept").equals("HONS")){
+                                    System.out.println("start");
+
+                                    System.out.println(value);
+                                }
+                                value = closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
+                      if(resultSet.getString("cnbr").equals("20160") && resultSet.getString("cdept").equals("HONS")){
+                                    System.out.println("end");
+
+                                    System.out.println(value);
+                                }
+                                
                             }
                         }
                     }
-                 
+                   
+                    
                     
                     String cnbr = resultSet.getString("cnbr");
                     String cdept = resultSet.getString("cdept");
+                  
+                    
+                    value += addPtToNonOpenTime(conn, resultSet, schedule, searcher, valueTemp);
                     
                     if(isTimeBased){
                         boolean hasMatch = false;
@@ -265,12 +279,16 @@ public class SearchServlet extends HttpServlet {
                                
                             } // end for courses
                             if(!hasMatch && reqs.isEmpty()){
-                                    value[0]++;    
-                                    update.setInt(1, value[0]);
+                                    value += 1;  
+                                    
+                                    update.setFloat(1, value);
                                     update.execute();
                             }
                         } // and if courses!=null
-                    } // end if(isTimeBased)
+                    } else {
+                         update.setFloat(1, value);
+                         update.execute();
+                    }// end if(isTimeBased)
                 } // end while(rs.next())
             } catch (SQLException e) {
                 e.printStackTrace();

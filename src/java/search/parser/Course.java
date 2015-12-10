@@ -34,7 +34,7 @@ public class Course {
             try {
                 sec.addToTable(conn, offset, this);
             } catch (SQLException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
     }
