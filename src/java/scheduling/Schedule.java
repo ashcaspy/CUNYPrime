@@ -94,7 +94,6 @@ public class Schedule {
                 if(Integer.parseInt(temp[indexOf3])!= prevNum) {
 
                     prevNum = Integer.parseInt(temp[indexOf3].replaceAll(" ",""));
-                    System.out.println("here");
                     if(isOpenTimes){
                         mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
                     } else {
