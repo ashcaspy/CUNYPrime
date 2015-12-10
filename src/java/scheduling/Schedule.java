@@ -53,9 +53,10 @@ public class Schedule {
                 if(Integer.parseInt(temp[indexOf2].replaceAll(" ", "")) != index) {
                     if(i != 0){
                         if(isOpenTimes){
-                            mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum;
+                            mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum + 1;
+         
                         } else {
-                            mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() -1 ).y = prevNum;
+                            mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() -1 ).y = prevNum + 1;
                         }
                     }
                     index = Integer.parseInt(temp[indexOf2].replaceAll(" ", ""));
