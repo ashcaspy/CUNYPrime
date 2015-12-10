@@ -3,15 +3,8 @@ package search;
 
 import connections.MainConfig;
 import java.net.URISyntaxException;
-import java.sql.DriverManager;
-import java.util.Arrays;
-
-import search.cunyfirst.*;
 
 import java.sql.*;
-import search.cunyfirst.ID;
-import search.cunyfirst.MatchValuePair;
-import search.cunyfirst.TimeRange;
 
 public class ClassSearcher {
         public static Connection classSearch() throws URISyntaxException, ClassNotFoundException {

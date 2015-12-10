@@ -4,24 +4,15 @@ import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import search.cunyfirst.CunyFirstClient;
 import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
-import search.cunyfirst.TimeRange;
 import search.parser.SearchError;
 
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.jsoup.select.Selector;
-import search.parser.Course;
-import search.parser.CourseData;
 import search.parser.Parser;
 import search.parser.Section;
 

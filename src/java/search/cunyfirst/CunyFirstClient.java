@@ -10,13 +10,6 @@ import java.util.ArrayList;
 import java.io.IOException;
 import java.net.URL;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-
-import java.util.Map;
-
-
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-
 import java.util.Map;
 
 

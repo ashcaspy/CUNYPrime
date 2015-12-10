@@ -5,10 +5,8 @@
  */
 package servlets;
 
-import search.cunyfirst.TimeRange;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.Integer;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,12 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import search.ClassSearcher;
 import search.Search;
-import search.CunyFirstSearch;
 import search.cunyfirst.ID;
 import search.cunyfirst.MatchValuePair;
 import scheduling.*;
 import org.json.*;
-import search.BackupSearch;
 
 /**
  *

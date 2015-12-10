@@ -1,7 +1,6 @@
 package search.cunyfirst;
 import java.util.Arrays;
 
-import java.lang.IllegalArgumentException;
 import java.util.List;
 
 public class MatchValuePair {
