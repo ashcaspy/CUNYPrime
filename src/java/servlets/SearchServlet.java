@@ -118,9 +118,7 @@ public class SearchServlet extends HttpServlet {
             Section.createTable(conn, "best_fit_" + id_num);
             Section.createTable(conn, "some_conflicts_" + id_num);
             Section.createTable(conn, "others_" + id_num);
-            PreparedStatement myStatement = //conn.prepareStatement("delete from " + searcher.tableName() + " where points >= 3");
-            //myStatement.execute();
-            myStatement = conn.prepareStatement("insert into best_fit_" + id_num + " select * from " + searcher.tableName() + " where points < 1");
+            PreparedStatement myStatement = myStatement = conn.prepareStatement("insert into best_fit_" + id_num + " select * from " + searcher.tableName() + " where points < 1");
             myStatement.execute();
             myStatement = conn.prepareStatement("insert into some_conflicts_" + id_num + " select * from " + searcher.tableName() + " where points >= 1 and points < 2");
             myStatement.execute();
@@ -132,7 +130,17 @@ public class SearchServlet extends HttpServlet {
         }
     }
     
-    protected float addPtToNonOpenTime(Connection conn, ResultSet res, Schedule schedule, Search searcher, float value){
+    
+    /**
+     * A function that adds 0.5 points to all results from a search that are not in an open time slot range and not in a closed time range. 
+     * @param conn, A Connection instance.
+     * @param res, The query results.
+     * @param schedule, A Schedule instance containing available and unavailable time slots for each day of the week.
+     * @param searcher, An instance of Search.
+     * @param value, A float containing the current points the result has, so 0.5 can be added to it if applicable.  
+     * @return 
+     */
+    protected float addHalfAPt(Connection conn, ResultSet res, Schedule schedule, Search searcher, float value){
         try {
             
             int openTimesIndex = 0;
@@ -202,7 +210,15 @@ public class SearchServlet extends HttpServlet {
         
     }
     
-    protected void searchAction(Connection conn, HashMap<String, List<JSONObject>> reqs, Schedule schedule, Search searcher, boolean isTimeBased){
+    /**
+     * A function that assigns points to the result of a search based on its start time and end time, and if the result fulfills a requirement.
+     * @param conn, An instance of Connection.
+     * @param reqs, A HashMap containing requirements needed to be fulfilled for a degree. 
+     * @param schedule, A Schedule instance containing available and unavailable time slots for each day of the week.
+     * @param searcher, An instance of Search.
+     * @param isTimeBased, A boolean indicating what type of search (time focused or requirement focused search) so the proper point system can be used. 
+     */
+    protected void assignPts(Connection conn, HashMap<String, List<JSONObject>> reqs, Schedule schedule, Search searcher, boolean isTimeBased){
         
             PreparedStatement preparedStatement;
             ResultSet resultSet;
@@ -246,7 +262,7 @@ public class SearchServlet extends HttpServlet {
                     String cdept = resultSet.getString("cdept");
                     String start = resultSet.getString("starttime");
                   
-                    value = addPtToNonOpenTime(conn, resultSet, schedule, searcher, value);
+                    value = addHalfAPt(conn, resultSet, schedule, searcher, value);
                    
                     if(isTimeBased){
                         boolean hasMatch = false;
@@ -277,7 +293,6 @@ public class SearchServlet extends HttpServlet {
                         } // and if courses!=null
                         if(!hasMatch && !reqs.isEmpty()){
                                 value += 1;  
-                                System.out.println("for some reason I am running");
                                 update.setFloat(1, value);
                                 update.execute();
                         } else{
@@ -528,7 +543,7 @@ public class SearchServlet extends HttpServlet {
             /**********************************************************************/
 
             
-            searchAction(conn, sort_reqs(parseJSON(request.getParameter("reqs"))), 
+            assignPts(conn, sort_reqs(parseJSON(request.getParameter("reqs"))), 
                     schedule, searcher, true);
             createPtBasedTables(conn, searcher, id_num);
             
@@ -811,7 +826,7 @@ public class SearchServlet extends HttpServlet {
             }
             
             // check if any requirements fall within closed times
-            searchAction(conn, sort_reqs(parseJSON(request.getParameter("reqs"))), 
+            assignPts(conn, sort_reqs(parseJSON(request.getParameter("reqs"))), 
                     schedule, searcher, false);
             createPtBasedTables(conn, searcher, id_num);
             
