@@ -34,11 +34,10 @@ public class Schedule {
 
         String temp[];
         int prevNum = 0;
-        int index = 0;
+        int index = -1;
         final int indexOf2 = 2;
         final int indexOf3 = 3;
-
-        if(timesArr.length > 0){
+     if(timesArr.length > 0){
             Arrays.sort(timesArr);
             for (int i = 0; i < timesArr.length; i++){
                 System.out.println(timesArr[i]);
@@ -49,17 +48,21 @@ public class Schedule {
             temp = timesArr[i].split("-");
 
             if(temp.length > 0) {
+           
 
+               
                 if(Integer.parseInt(temp[indexOf2].replaceAll(" ", "")) != index) {
                     if(i != 0){
                         if(isOpenTimes){
                             mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum + 1;
          
                         } else {
+                            
                             mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() -1 ).y = prevNum + 1;
                         }
                     }
                     index = Integer.parseInt(temp[indexOf2].replaceAll(" ", ""));
+                    
                     if(isOpenTimes){
                         mySchedule.get(index).addToOpenTimes(new Pair());
                         mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).x = Integer.parseInt(temp[indexOf3].replaceAll(" ", ""));
@@ -97,6 +100,7 @@ public class Schedule {
                     if(isOpenTimes){
                         mySchedule.get(index).getOpenTimeElement(mySchedule.get(index).getOpenTimeSize() - 1).y = prevNum + 1;
                     } else {
+                     
                         mySchedule.get(index).getClosedTimeElement(mySchedule.get(index).getCloseTimeSize() - 1).y = prevNum + 1;
 
                     }

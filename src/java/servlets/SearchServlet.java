@@ -118,13 +118,13 @@ public class SearchServlet extends HttpServlet {
             Section.createTable(conn, "best_fit_" + id_num);
             Section.createTable(conn, "some_conflicts_" + id_num);
             Section.createTable(conn, "others_" + id_num);
-            PreparedStatement myStatement = conn.prepareStatement("delete from " + searcher.tableName() + " where points >= 3");
+            PreparedStatement myStatement = //conn.prepareStatement("delete from " + searcher.tableName() + " where points >= 3");
+            //myStatement.execute();
+            myStatement = conn.prepareStatement("insert into best_fit_" + id_num + " select * from " + searcher.tableName() + " where points < 1");
             myStatement.execute();
-            myStatement = conn.prepareStatement("insert into best_fit_" + id_num + " select * from " + searcher.tableName() + " where points <= 0");
+            myStatement = conn.prepareStatement("insert into some_conflicts_" + id_num + " select * from " + searcher.tableName() + " where points >= 1 and points < 2");
             myStatement.execute();
-            myStatement = conn.prepareStatement("insert into some_conflicts_" + id_num + " select * from " + searcher.tableName() + " where points = 1");
-            myStatement.execute();
-            myStatement = conn.prepareStatement("insert into others_" + id_num + " select * from " + searcher.tableName() + " where points = 2");
+            myStatement = conn.prepareStatement("insert into others_" + id_num + " select * from " + searcher.tableName() + " where points >=2 and points < 3");
             myStatement.execute();
             
         } catch (SQLException e){
@@ -134,17 +134,18 @@ public class SearchServlet extends HttpServlet {
     
     protected float addPtToNonOpenTime(Connection conn, ResultSet res, Schedule schedule, Search searcher, float value){
         try {
-            PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
-                            + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
-            update.setString(2, res.getString("cdept"));
-            update.setString(3, res.getString("cnbr"));
-            update.setString(4, res.getString("sec"));
+            
             int openTimesIndex = 0;
             int closeTimesIndex = 0;
             boolean hasMatch = false;
-            for (int i = 0; i < schedule.getSize(); i++){
-                Day day = schedule.getElementFromSchedule(i);
-                while(openTimesIndex < day.getOpenTimeSize() && 
+            String days = res.getString("days");
+            for (int i = 0; i < schedule.getWeek().length;i++){
+                if(days.contains(schedule.getWeek()[i])){
+                    hasMatch = false;
+                 
+                    
+                    Day day = schedule.getElementFromSchedule(i);
+                    while(openTimesIndex < day.getOpenTimeSize() && 
                         closeTimesIndex < day.getCloseTimeSize()){
                         if(((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
                                 day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
@@ -159,38 +160,41 @@ public class SearchServlet extends HttpServlet {
                         }
                         openTimesIndex++;
                         closeTimesIndex++;
-                }
-                while (openTimesIndex <day.getOpenTimeSize()){
-                    if((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
-                                day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
-                                (day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
-                                        day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))){
-                                        
-                            hasMatch = true;
-                            break;
                     }
-                    openTimesIndex++;
-                }
-                while (closeTimesIndex < day.getCloseTimeSize()){
-                        if ((day.getClosedTimeElement(closeTimesIndex).Y() * 100 >= res.getInt("endtime") && 
-                                day.getClosedTimeElement(closeTimesIndex).X() * 100  <= res.getInt("endtime")) ||
-                                (day.getClosedTimeElement(closeTimesIndex).Y() * 100  >= res.getInt("starttime") &&
-                                        day.getClosedTimeElement(closeTimesIndex).X() * 100 <= res.getInt("starttime"))){
-                                        
-                            hasMatch = true;
-                            break;
+                    
+                    while (openTimesIndex <day.getOpenTimeSize()){
+                        if((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                                    day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
+                                    (day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
+                                            day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))){
+
+                                hasMatch = true;
+                                break;
                         }
-                    closeTimesIndex++;
-                }
-                if(hasMatch){
-                    break;
-                }
+                        openTimesIndex++;
+                    }
+                    
+                    while (closeTimesIndex < day.getCloseTimeSize()){
+                            if ((day.getClosedTimeElement(closeTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                                    day.getClosedTimeElement(closeTimesIndex).X() * 100  <= res.getInt("endtime")) ||
+                                    (day.getClosedTimeElement(closeTimesIndex).Y() * 100  >= res.getInt("starttime") &&
+                                            day.getClosedTimeElement(closeTimesIndex).X() * 100 <= res.getInt("starttime"))){
+
+                                hasMatch = true;
+                                break;
+                            }
+                        closeTimesIndex++;
+                    }
+                    
+                    if(!hasMatch){
+                       
+                        value += 0.5;
+                    }
             
+                    
+                }
             }
-            if(!hasMatch){
-                value += 0.5;
-                
-            }
+           
         } catch(SQLException e){
             e.printStackTrace();
         }
@@ -203,9 +207,7 @@ public class SearchServlet extends HttpServlet {
             PreparedStatement preparedStatement;
             ResultSet resultSet;
             float value = 0; 
-            float valueTemp = 0;
             String queryA = "select * from "+ searcher.tableName();
-            //final JSONObject[] reqs = parseJSON(request.getParameter("reqs"));
 
             try {
 
@@ -214,13 +216,15 @@ public class SearchServlet extends HttpServlet {
                 preparedStatement.execute();
                 resultSet = preparedStatement.executeQuery();
                 PreparedStatement update = conn.prepareStatement("UPDATE "+searcher.tableName()+" "
-                        + "SET points=? WHERE cdept=? AND cnbr=? AND sec=?");
+                        + "SET points=? WHERE cdept=? AND cnbr=? AND sec=? AND starttime=? AND endtime=?");
 
                 while (resultSet.next()){
                     value = 0;
                     update.setString(2, resultSet.getString("cdept"));
                     update.setString(3, resultSet.getString("cnbr"));
                     update.setString(4, resultSet.getString("sec"));
+                    update.setInt(5, resultSet.getInt("starttime"));
+                    update.setInt(6, resultSet.getInt("endtime"));
 
                     days = resultSet.getString("days");
                     
@@ -229,30 +233,21 @@ public class SearchServlet extends HttpServlet {
                         if (days != null){
                             if(days.contains(schedule.getWeek()[i])) {
                                 Day temp = schedule.getElementFromSchedule(i);
-                                if(resultSet.getString("cnbr").equals("20160") && resultSet.getString("cdept").equals("HONS")){
-                                    System.out.println("start");
-
-                                    System.out.println(value);
-                                }
+                               
                                 value = closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
-                      if(resultSet.getString("cnbr").equals("20160") && resultSet.getString("cdept").equals("HONS")){
-                                    System.out.println("end");
-
-                                    System.out.println(value);
-                                }
+                                
                                 
                             }
                         }
                     }
-                   
-                    
+                  
                     
                     String cnbr = resultSet.getString("cnbr");
                     String cdept = resultSet.getString("cdept");
+                    String start = resultSet.getString("starttime");
                   
-                    
-                    value += addPtToNonOpenTime(conn, resultSet, schedule, searcher, valueTemp);
-                    
+                    value = addPtToNonOpenTime(conn, resultSet, schedule, searcher, value);
+                   
                     if(isTimeBased){
                         boolean hasMatch = false;
                         List<JSONObject> courses = reqs.get(cdept);
@@ -278,13 +273,18 @@ public class SearchServlet extends HttpServlet {
 
                                
                             } // end for courses
-                            if(!hasMatch && reqs.isEmpty()){
-                                    value += 1;  
-                                    
-                                    update.setFloat(1, value);
-                                    update.execute();
-                            }
+                          
                         } // and if courses!=null
+                        if(!hasMatch && !reqs.isEmpty()){
+                                value += 1;  
+                                System.out.println("for some reason I am running");
+                                update.setFloat(1, value);
+                                update.execute();
+                        } else{
+                           
+                            update.setFloat(1, value);
+                            update.execute();
+                        }
                     } else {
                          update.setFloat(1, value);
                          update.execute();
