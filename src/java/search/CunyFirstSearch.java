@@ -29,14 +29,6 @@ public class CunyFirstSearch extends Search {
         selectTerm(college, semester);
     }
 
-    public List<String> getSchools() {
-        return client.getSelect(ID.selectSchool).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
-    }
-
-    public List<String> getSemesters() {
-        return client.getSelect(ID.selectTerm).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
-    }
-
     public void selectTerm(String school, String semester) {
         client.setup(school, semester);
     }

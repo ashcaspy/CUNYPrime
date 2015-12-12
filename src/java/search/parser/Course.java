@@ -28,7 +28,7 @@ public class Course {
         secs.stream().forEach(s -> sections.add(new Section(s)));
     }
 
-    public void addToTable(Connection conn, String tablename) throws SQLException {
+    public void addToTable(Connection conn, String tablename) {
         for(Section sec: sections) {
             try {
                 sec.addToTable(conn, tablename, this);

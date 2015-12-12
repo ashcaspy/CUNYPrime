@@ -35,12 +35,14 @@ public class CunyFirstClient {
 
     private WebClient client;
     private WebRequest request = null;
-    private HtmlPage searchPage = null;
-    HashMap<String, String> searchParameters = null;
-    HashMap<String, String> sectionRequestParams = null;
 
+    private HtmlPage searchPage = null;
+    private HashMap<String, String> searchParameters = null;
     private HashMap<String, String> resetParameters = null;
 
+    private HashMap<String, String> sectionRequestParams = null;
+
+    
     public HtmlSelect getSelect(String id) {
         return (HtmlSelect) searchPage.getElementById(id);
     }

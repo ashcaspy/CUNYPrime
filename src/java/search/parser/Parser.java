@@ -36,9 +36,7 @@ public class Parser {
 
     public void addToTable(Connection conn, String offset) {
         for(Course course: courses) {
-            try {
-                course.addToTable(conn, offset);
-            } catch (SQLException e) {}
+            course.addToTable(conn, offset);
         }
     }
 
