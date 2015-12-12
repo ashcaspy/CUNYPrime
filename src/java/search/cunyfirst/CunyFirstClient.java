@@ -156,7 +156,10 @@ public class CunyFirstClient {
 
     public HtmlPage getResults(String dept) throws IOException {
         searchParameters.put(ID.deptCode, dept);
-        return getResults();
+        HtmlPage results = getResults();
+        // make sure dept is cleared afterwards
+        resetTerms(ID.deptCode);
+        return results;
     }
 
     //assumes setup and setSearchTerms have been already called
