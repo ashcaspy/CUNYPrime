@@ -67,11 +67,20 @@ public class CunyFirstClient {
         client.waitForBackgroundJavaScript(10000);
         
         HtmlSelect selectCareer = getSelect(ID.selectCareer);
-        try {
-            HtmlOption career = selectCareer.getOptionByText("Undergraduate");
-            selectCareer.setSelectedAttribute(career, true);
-        } catch (ElementNotFoundException | NullPointerException e) {
-            // left blank
+        // if there is only one option for career 
+        // (not counting the initial blank one)
+        // select it
+        if(selectCareer.getOptions().size() == 2) {
+            //selectCareer.setSelectedIndex(1);
+            selectCareer.setSelectedAttribute(selectCareer.getOption(1), true);
+        } else {
+        
+            try {
+                HtmlOption career = selectCareer.getOptionByText("Undergraduate");
+                selectCareer.setSelectedAttribute(career, true);
+            } catch (ElementNotFoundException | NullPointerException e) {
+                // left blank
+            }
         }
        
         List<NameValuePair> list = getFormParams(searchPage);
