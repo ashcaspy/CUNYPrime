@@ -80,7 +80,7 @@ public class BackupSearch extends Search {
                 for(int i=0; i<days.length; ++i) {
                     checks[i] = "days LIKE '%"+dayToString(days[i])+"%'";
                 }
-                allDays = "AND " + String.join(" AND ", checks) + " ";
+                allDays = " AND " + String.join(" AND ", checks) + " ";
             } else {
                 allDays = "";
             }
