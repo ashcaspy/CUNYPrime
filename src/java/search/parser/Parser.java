@@ -34,9 +34,9 @@ public class Parser {
     }
     private ArrayList<Course> courses;
 
-    public void addToTable(Connection conn, String offset) {
+    public void addToTable(Connection conn, String table) {
         for(Course course: courses) {
-            course.addToTable(conn, offset);
+            course.addToTable(conn, table);
         }
     }
 
