@@ -67,11 +67,13 @@ public class CunyFirstClient {
         client.waitForBackgroundJavaScript(10000);
         
         HtmlSelect selectCareer = getSelect(ID.selectCareer);
-        HtmlOption career = selectCareer.getOptionByText("Undergraduate");
-        if(career != null) {
+        try {
+            HtmlOption career = selectCareer.getOptionByText("Undergraduate");
             selectCareer.setSelectedAttribute(career, true);
+        } catch (ElementNotFoundException | NullPointerException e) {
+            // left blank
         }
-
+       
         List<NameValuePair> list = getFormParams(searchPage);
         searchParameters = new HashMap<>(list.size());
         for(NameValuePair p: list) {
