@@ -135,7 +135,7 @@ public class CunyFirstClient {
         }
 
         if(null != professor) {
-            searchParameters.put(ID.profMatch, ID.exact);
+            searchParameters.put(ID.profMatch, ID.contains);
             searchParameters.put(ID.professor, professor);
         }
 
