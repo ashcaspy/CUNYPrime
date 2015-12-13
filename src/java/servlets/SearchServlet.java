@@ -246,25 +246,20 @@ public class SearchServlet extends HttpServlet {
 
                     days = resultSet.getString("days");
                     
-                    
-                    for(int i=0; i<schedule.getWeek().length; ++i) {
-                        if (days != null){
+                    // skip if section has no times
+                    if(days != null) {
+                        for(int i=0; i<schedule.getWeek().length; ++i) {
                             if(days.contains(schedule.getWeek()[i])) {
                                 Day temp = schedule.getElementFromSchedule(i);
-                               
                                 value = closeTimeMatchAction(resultSet, update, temp, value, isTimeBased);
-                                
-                                
                             }
                         }
+                        value = addHalfAPt(conn, resultSet, schedule, searcher, value);
                     }
-                  
                     
                     String cnbr = resultSet.getString("cnbr");
                     String cdept = resultSet.getString("cdept");
-                    String start = resultSet.getString("starttime");
-                  
-                    value = addHalfAPt(conn, resultSet, schedule, searcher, value);
+                    
                    
                     if(isTimeBased){
                         boolean hasMatch = false;
@@ -413,6 +408,8 @@ public class SearchServlet extends HttpServlet {
         String keyword = request.getParameter("keyword_value");
         String prof = request.getParameter("prof_value");
         int id_num = Integer.parseInt(request.getParameter("id_num"));
+        
+        System.out.println(term);
         
         MatchValuePair mvpair = null;
         if (!"".equals(course_num)) {
