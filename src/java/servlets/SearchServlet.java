@@ -147,59 +147,61 @@ public class SearchServlet extends HttpServlet {
             int closeTimesIndex = 0;
             boolean hasMatch = false;
             String days = res.getString("days");
-            for (int i = 0; i < schedule.getWeek().length;i++){
-                if(days.contains(schedule.getWeek()[i])){
-                    hasMatch = false;
-                 
-                    
-                    Day day = schedule.getElementFromSchedule(i);
-                    while(openTimesIndex < day.getOpenTimeSize() && 
-                        closeTimesIndex < day.getCloseTimeSize()){
-                        if(((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
-                                day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
-                                (day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
-                                        day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))) || ((day.getClosedTimeElement(closeTimesIndex).Y() * 100 >= res.getInt("endtime") && 
-                                day.getClosedTimeElement(closeTimesIndex).X() * 100  <= res.getInt("endtime")) ||
-                                (day.getClosedTimeElement(closeTimesIndex).Y() * 100  >= res.getInt("starttime") &&
-                                        day.getClosedTimeElement(closeTimesIndex).X() * 100 <= res.getInt("starttime")))){
-                                        
-                            hasMatch = true;
-                            break;
-                        }
-                        openTimesIndex++;
-                        closeTimesIndex++;
-                    }
-                    
-                    while (openTimesIndex <day.getOpenTimeSize()){
-                        if((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+            if(days != null){
+                for (int i = 0; i < schedule.getWeek().length;i++){
+                    if(days.contains(schedule.getWeek()[i])){
+                        hasMatch = false;
+
+
+                        Day day = schedule.getElementFromSchedule(i);
+                        while(openTimesIndex < day.getOpenTimeSize() && 
+                            closeTimesIndex < day.getCloseTimeSize()){
+                            if(((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
                                     day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
                                     (day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
-                                            day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))){
-
-                                hasMatch = true;
-                                break;
-                        }
-                        openTimesIndex++;
-                    }
-                    
-                    while (closeTimesIndex < day.getCloseTimeSize()){
-                            if ((day.getClosedTimeElement(closeTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                                            day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))) || ((day.getClosedTimeElement(closeTimesIndex).Y() * 100 >= res.getInt("endtime") && 
                                     day.getClosedTimeElement(closeTimesIndex).X() * 100  <= res.getInt("endtime")) ||
                                     (day.getClosedTimeElement(closeTimesIndex).Y() * 100  >= res.getInt("starttime") &&
-                                            day.getClosedTimeElement(closeTimesIndex).X() * 100 <= res.getInt("starttime"))){
+                                            day.getClosedTimeElement(closeTimesIndex).X() * 100 <= res.getInt("starttime")))){
 
                                 hasMatch = true;
                                 break;
                             }
-                        closeTimesIndex++;
+                            openTimesIndex++;
+                            closeTimesIndex++;
+                        }
+
+                        while (openTimesIndex <day.getOpenTimeSize()){
+                            if((day.getOpenTimeElement(openTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                                        day.getOpenTimeElement(openTimesIndex).X() * 100  <= res.getInt("endtime")) ||
+                                        (day.getOpenTimeElement(openTimesIndex).Y() * 100  >= res.getInt("starttime") &&
+                                                day.getOpenTimeElement(openTimesIndex).X() * 100 <= res.getInt("starttime"))){
+
+                                    hasMatch = true;
+                                    break;
+                            }
+                            openTimesIndex++;
+                        }
+
+                        while (closeTimesIndex < day.getCloseTimeSize()){
+                                if ((day.getClosedTimeElement(closeTimesIndex).Y() * 100 >= res.getInt("endtime") && 
+                                        day.getClosedTimeElement(closeTimesIndex).X() * 100  <= res.getInt("endtime")) ||
+                                        (day.getClosedTimeElement(closeTimesIndex).Y() * 100  >= res.getInt("starttime") &&
+                                                day.getClosedTimeElement(closeTimesIndex).X() * 100 <= res.getInt("starttime"))){
+
+                                    hasMatch = true;
+                                    break;
+                                }
+                            closeTimesIndex++;
+                        }
+
+                        if(!hasMatch){
+
+                            value += 0.5;
+                        }
+
+
                     }
-                    
-                    if(!hasMatch){
-                       
-                        value += 0.5;
-                    }
-            
-                    
                 }
             }
            
