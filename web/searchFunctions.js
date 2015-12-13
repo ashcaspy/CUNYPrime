@@ -145,32 +145,12 @@ function searchCourses(type){
     });  
 }
 
-//var scheduleObjArray = new Array();
 function loadUserSchedules(loaded){
     if (loaded == false){
         var boolvar = false;
         getSchedules(userName, scheduleTabs, boolvar);
     }
     else if (loaded == true){
-        
-        /*
-        for(var i = 0; i < scheduleObjArray.length; i++)
-        {
-            var tempTab = {
-                dayStart: scheduleObjArray[i].dayStart,
-                dayEnd: scheduleObjArray[i].dayEnd,
-                hourStart: scheduleObjArray[i].hoursStart,
-                hourEnd: scheduleObjArray[i].hoursEnd,
-                openTimes: scheduleObjArray[i].openTimes,
-                closedTimes: scheduleObjArray[i].closeTimes,
-                selectedDivs: scheduleObjArray[i].selectedDiv,
-                valid: scheduleObjArray[i].valid,
-                classTimes: scheduleObjArray[i].classTimes,
-                selectedCourses: scheduleObjArray[i].selectedCourses,
-            };
-            scheduleTabs.push(tempTab);
-        }
-        */
         //create divs in schedule footer
         for (var i = 0; i < scheduleTabs.length; i++){
             if(scheduleTabs[i].valid == true){
@@ -211,7 +191,6 @@ function loadUserSchedules(loaded){
         }
         if (index == -1){
             loadScheduleTab(-1);
-            //loadScheduleOverlay();
         }
     }
 }
@@ -311,7 +290,6 @@ function removeCourseFromSchedule(course){
             for (var k = courseStartTime; k < courseEndTime + 1; k++){
                 scheduleTabs[currentScheduleTab].classTimes.splice($.inArray("timeslot-div-" + courseDays[i] + "-" + k, scheduleTabs[currentScheduleTab].classTimes), 1);
                 scheduleTabs[currentScheduleTab].selectedDivs.splice($.inArray("timeslot-div-" + courseDays[i] + "-" + k, scheduleTabs[currentScheduleTab].selectedDivs), 1);
-                //$("#timeslot-div-" + courseDays[i] + "-" + k).addClass("timeslot-class-div");
             }
         }
 

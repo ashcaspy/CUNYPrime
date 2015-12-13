@@ -10,9 +10,7 @@ function selectSchedulerLoad(){
             fadeResume(true);
         if (profile_loaded)
             fadeProfile(true);
-        //setTimeout(loaderTmeout){
         loadScheduler();
-        //, 500);
     }
     else
         fadeScheduler(false);
@@ -49,7 +47,6 @@ function loadProfile(){
  
     $("#profile").fadeIn("slow");
     $("#profile_blanket").fadeIn("fast");
-    //$("#profile").load("profileContent.html");
     profile_loaded = true;
     if(searching == true){
         fadeSearchOverlay();
@@ -66,7 +63,6 @@ function fadeProfile(needBlanket){
 function loadResume(){
     $("#resume").fadeIn("slow");
     $("#profile_blanket").fadeIn("fast");
-    //$("#resume").load("resumeContent.html");
     resume_loaded = true;
     if(searching == true){
         fadeSearchOverlay();
@@ -85,7 +81,6 @@ function loadScheduler(){
  
     $("#scheduler").fadeIn("slow");
     $("#profile_blanket").fadeIn("fast");
-    //$("#scheduler").load("schedulerContent.html");
     scheduler_loaded = true;
     
     if (currentSearchTab != 0)

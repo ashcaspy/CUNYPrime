@@ -27,8 +27,6 @@ var numCoursesPerList = [0, 0, 0, 0];
 
 
 function parseCourseResultset(data){    
-    alert(data);
-    
     var errorlist = data.substring(data.indexOf("ERRORS_BEGIN") + 12, data.indexOf("ERRORS_END"));
     var errors = errorlist.split(",");
     if (errors[0] == "false"){
@@ -38,7 +36,6 @@ function parseCourseResultset(data){
     else if (errors[2] == "true")
         alert("One or more parts of your request resulted in too many courses!");
     if (data.indexOf("BEST_FIT") == -1){
-        //alert("default");
         var tempCourseArray = data.split("ENTRY_END");
         courseInfoArray[0] = [];
         courseInfoArray[1] = [];
@@ -75,7 +72,6 @@ function parseCourseResultset(data){
                 else if (coursePart[0] == "Inst")
                     cObj.instructor = coursePart[1];
                 else if (coursePart[0] == "Flag"){
-                    //alert(coursePart[1]);
                     if (coursePart[1] == "t")    
                         cObj.flag = true;
                     else if (coursePart[1] == "f")
@@ -94,7 +90,6 @@ function parseCourseResultset(data){
     }
     
     else{
-        //alert("not default");
         var listArray = new Array();
         listArray.push(data.substring(data.indexOf("BEST_FIT_START") + 14, data.indexOf("BEST_FIT_END")));
         listArray.push(data.substring(data.indexOf("SOME_CONFLICTS_START") + 20, data.indexOf("SOME_CONFLICTS_END")));
@@ -138,7 +133,6 @@ function parseCourseResultset(data){
                     else if (coursePart[0] == "Inst")
                         cObj.instructor = coursePart[1];
                     else if (coursePart[0] == "Flag"){
-                        //alert(coursePart[1]);
                         if (coursePart[1] == "t")    
                             cObj.flag = true;
                         else if (coursePart[1] == "f")
@@ -169,7 +163,6 @@ function loadList(num) {
                     "<div class='arrow'></div>" +
                     "<div class='arrow-border'></div>" +
                     "<div class='course_info' id = 'course" + num + i + "'>" + 
-                    //courseInfoArray[0][0] + 
                     "</div>" +
                 "</div>" +
             "</div>";
@@ -223,8 +216,7 @@ function loadList(num) {
         
         listContents += "</ul>";
         document.getElementById("list_section_" + num).innerHTML = listContents;
-        //document.getElementById("list_section_" + num).style.z_index = "999";
-        
+       
         if (num != 3){
             for (var i = 0; i < numCoursesPerList[num]; i++){
                 $("#list" + num + "res" + (i+1)).click(function(event){
@@ -244,17 +236,6 @@ function loadList(num) {
             }
         }
         
-            /*
-            "<li><a href='#'>Result 2</a></li>" +
-            "<li><a href='#'>Result 3</a></li>" +
-            "<li><a href='#'>Result 4</a></li>" +
-            "<li><a href='#'>Result 5</a></li>" +
-            "<li><a href='#'>Result 6</a></li>" +
-            "<li><a href='#'>Result 7</a></li>" +
-            "<li><a href='#'>Result 8</a></li>" +
-            "<li><a href='#'>Result 9</a></li>" +
-            "</ul>";
-            */
         document.getElementById("list_section_header_" + num).style.backgroundImage = "url(images/1.png)";
         document.getElementById("list_section_header_" + num).style.color = "#FFFFFF";
         document.getElementById("list_section_header_" + num).innerHTML = listName.replace("(+)", "(-)");
@@ -316,14 +297,6 @@ function loadTab(tabNum){
     }
         
 }
-//loadTab(2);
-
-function loadInstDeptLists(){
-    // code for loading college names and department names
-    // similar to functions for profile
-    
-}
-
 
 
 

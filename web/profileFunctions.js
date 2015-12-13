@@ -277,7 +277,6 @@ function populateCourseRequirements(inputString){
             courses = [];
             exceptions = [];
             counter = 0;
-            //}
         } 
 
         if(lines[i].indexOf("Taken") > -1){
@@ -492,8 +491,6 @@ if (window.indexedDB){
     //runs only when version is upgraded
     request.onupgradeneeded = function(event){
         thisdb = event.target.result;
-
-                //createDbObject(thisdb);
         if(thisdb.objectStoreNames.contains("gracefulTable")){
             thisdb.deleteObjectStore("gracefulTable");
         }
@@ -524,11 +521,7 @@ function testClick(){
 }
 
 function callback() {
-    if (xhr.readyState == 4){// && xhr.status == 200){    
-        // File(s) uploaded.
-        //var xmlDoc = xhr.responseXML;
-        //var x = xmlDoc.getElementsByTagName("child")[0];
-        //var teststring = x.childNodes[0];
+    if (xhr.readyState == 4){
         var outputString = xhr.responseText.replace(/(\r\n|\n|\r)/gm, "<br>");
         $("#testsubmission").html(outputString);
             
@@ -556,7 +549,6 @@ function uploadPDF() {
     $.ajax({
         type: "POST",
         url: "parseprofilepdf",
-        //enctype: "multipart/form-data",
         data: formData,
         processData: false,
         contentType: false,
@@ -567,13 +559,9 @@ function uploadPDF() {
             populateCourseRequirements(outputString1);
             
             var outputString = data.replace(/(\r\n|\n|\r)/gm, "<br>");
-            //$("#testsubmission").html(outputString);
             
             storeReq(userName);
-            //getIndexForReq(userName, 0, array1); 
-            //displayReq(array1, false);
             prepProfile();
-            //alert(array1[0].name);
         },
         error: function(obj, errType){
             alert("An error has occurred..." + "\n" + "Error: " + errType);
@@ -604,7 +592,6 @@ function Schedule(dayStart, dayEnd, hourStart, hourEnd, openTimes, closedTimes, 
 
 
 //FUNCTIONS FOR SCHEDULES 
-//IT SHOULD GO INTO THE PROFILEFUNCTIONS.JS SO THE VARIABLE DB IS KNOWN!
 
 function createSched(username){
     var open = new Array();
@@ -887,15 +874,8 @@ function getSchedules(username, myArr, boolArr) {
     req.onsuccess = function(){
         var data = req.result;
         
-        //myArr = data.sched;
         scheduleTabs = data.sched;
-        //scheduleObjArray = data.sched;
-        //alert(scheduleObjArray[0].openTimes);
-        /*
-        for(var i = 0; i < data.sched.length; i++){
-            myArr.push(data.sched[i]);
-        }
-        */
+        
         boolArr[0] = true;
         loadUserSchedules(true);
     }
@@ -1045,8 +1025,6 @@ function selectUser(done){
         $("#login_overlay").css({
             "left": ($("#base_page").width()/2) - ($("#login_overlay").width()/2),
         });
-        
-        //$("#login_overlay_link").html();
     }
 }
 
