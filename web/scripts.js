@@ -28,6 +28,15 @@ var numCoursesPerList = [0, 0, 0, 0];
 
 function parseCourseResultset(data){    
     alert(data);
+    
+    var errorlist = data.substring(data.indexOf("ERRORS_BEGIN") + 12, data.indexOf("ERRORS_END"));
+    var errors = errorlist.split(",");
+    if (errors[0] == "false"){
+        alert("No results found!");
+        return;
+    }
+    else if (errors[2] == "true")
+        alert("One or more parts of your request resulted in too many courses!");
     if (data.indexOf("BEST_FIT") == -1){
         //alert("default");
         var tempCourseArray = data.split("ENTRY_END");

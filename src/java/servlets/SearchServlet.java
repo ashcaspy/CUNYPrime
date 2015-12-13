@@ -477,7 +477,7 @@ public class SearchServlet extends HttpServlet {
 
                 preparedStatement = conn.prepareStatement(query4);
                 resultSet = preparedStatement.executeQuery();
-
+                response.getWriter().write("ERRORS_BEGIN" + findErrors[0] + findErrors[1] + findErrors[2] + "ERRORS_END");                
                 while(resultSet.next()) {
                     response.getWriter().write("Dept~"+resultSet.getString("cdept") + "FIELD_END");
                     response.getWriter().write("CNum~"+resultSet.getString("cnbr") + "FIELD_END");
@@ -607,6 +607,7 @@ public class SearchServlet extends HttpServlet {
 
                 preparedStatement = conn.prepareStatement(query3);
                 resultSet = preparedStatement.executeQuery();
+                response.getWriter().write("ERRORS_BEGIN" + findErrors[0] + findErrors[1] + findErrors[2] + "ERRORS_END");                
                 
                 response.getWriter().write("BEST_FIT_START");
                 while(resultSet.next()) {
@@ -890,6 +891,8 @@ public class SearchServlet extends HttpServlet {
 
                 preparedStatement = conn.prepareStatement(query3);
                 resultSet = preparedStatement.executeQuery();
+                response.getWriter().write("ERRORS_BEGIN" + findErrors[0] + "," + findErrors[1]+ "," + findErrors[2] + "ERRORS_END");                
+          
                 
                 response.getWriter().write("BEST_FIT_START");
                 while(resultSet.next()) {

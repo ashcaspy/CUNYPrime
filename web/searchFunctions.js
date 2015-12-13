@@ -1,8 +1,8 @@
+var searching = false;
 var xhrRequest;
 function searchCourses(type){
     // Set up the request.
     loadSearchOverlay();
-    
     // Validate college name
     var collegeValue = "";
     var openTimes = new Array();
@@ -35,9 +35,9 @@ function searchCourses(type){
         }
     }
     else{
-        openTimes = scheduleTabs[currentScheduleTab].openTimes;
-        closedTimes = scheduleTabs[currentScheduleTab].closedTimes;
-        classTimes = scheduleTabs[currentScheduleTab].classTimes;
+        openTimes = scheduleTabs[currentScheduleTab].openTimes.slice(0);
+        closedTimes = scheduleTabs[currentScheduleTab].closedTimes.slice(0);
+        classTimes = scheduleTabs[currentScheduleTab].classTimes.slice(0);
         
         var addZero = function(times) {
             for(var i = 0; i < times.length; ++i) {
@@ -129,6 +129,18 @@ function searchCourses(type){
         success: function(data){
             fadeSearchOverlay();
             parseCourseResultset(data);
+        },
+        error: function(obj, errType){
+            alert("An error has occurred..." + "\n" + "Error: " + errType);
+            fadeSearchOverlay();
+            values = {
+                "id_num": id_num
+            };
+            $.ajax({
+                type: "GET",
+                url: "cleanupsearch",
+                data: values
+            });
         }
     });  
 }
@@ -252,10 +264,11 @@ function addCourseToSchedule(course){
     for (var i = 0; i < courseDays.length; i++){
         for (var k = courseStartTime; k < courseEndTime + 1; k++){
             
-            if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), classTimes) == -1){
+            if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), scheduleTabs[currentScheduleTab].classTimes) == -1){
                         
                 scheduleTabs[currentScheduleTab].classTimes.push("timeslot-div-" + courseDays[i] + "-" + k);
-                scheduleTabs[currentScheduleTab].selectedDivs.push("timeslot-div-" + courseDays[i] + "-" + k);
+                if ($.inArray(("timeslot-div-" + courseDays[i] + "-" + k), scheduleTabs[currentScheduleTab].selectedDivs) == -1)
+                    scheduleTabs[currentScheduleTab].selectedDivs.push("timeslot-div-" + courseDays[i] + "-" + k);
 
             }
         }
@@ -265,7 +278,7 @@ function addCourseToSchedule(course){
     setSelectedCourses(userName, scheduleTabs[currentScheduleTab].selectedCourses);
     setClassTimes(userName, scheduleTabs[currentScheduleTab].classTimes);
     setSelectedDiv(userName, scheduleTabs[currentScheduleTab].selectedDivs);
-    courseInfoArray[3] = selectedCourses;
+    courseInfoArray[3] = scheduleTabs[currentScheduleTab].selectedCourses;
     numCoursesPerList[3] = courseInfoArray[3].length;
     
    
@@ -296,8 +309,8 @@ function removeCourseFromSchedule(course){
         // find timeslot divs that match the days and times
         for (var i = 0; i < courseDays.length; i++){
             for (var k = courseStartTime; k < courseEndTime + 1; k++){
-                classTimes.splice($.inArray("timeslot-div-" + courseDays[i] + "-" + k, classTimes), 1);
-                selectedDivs.splice($.inArray("timeslot-div-" + courseDays[i] + "-" + k, selectedDivs), 1);
+                scheduleTabs[currentScheduleTab].classTimes.splice($.inArray("timeslot-div-" + courseDays[i] + "-" + k, scheduleTabs[currentScheduleTab].classTimes), 1);
+                scheduleTabs[currentScheduleTab].selectedDivs.splice($.inArray("timeslot-div-" + courseDays[i] + "-" + k, scheduleTabs[currentScheduleTab].selectedDivs), 1);
                 //$("#timeslot-div-" + courseDays[i] + "-" + k).addClass("timeslot-class-div");
             }
         }
@@ -328,6 +341,9 @@ function getCollegeList(){
             success: function(data){
                 $("#search_school").html($("#search_school").html() + data);
                 collegesLoaded = true;
+            },
+            error: function(obj, errType){
+                alert("An error has occurred..." + "\n" + "Error: " + errType);
             }
         });
     }
@@ -346,6 +362,9 @@ function getTermAndDepts(){
             $("#search_term").html(defaultValue + results[1]);
             $("#search_dept").html(defaultValue + results[0]);
             collegesLoaded = true;
+        },
+        error: function(obj, errType){
+            alert("An error has occurred..." + "\n" + "Error: " + errType);
         }
     });
 }

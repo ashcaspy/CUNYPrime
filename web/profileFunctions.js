@@ -574,6 +574,9 @@ function uploadPDF() {
             //displayReq(array1, false);
             prepProfile();
             //alert(array1[0].name);
+        },
+        error: function(obj, errType){
+            alert("An error has occurred..." + "\n" + "Error: " + errType);
         }
             
     });
@@ -714,7 +717,7 @@ function setSelectedCourses(username, selectedCourses){
     }
 }
 
-function setClassTimes(username, selectedDiv){
+function setClassTimes(username, classTimes){
     var transaction = db.transaction(["gracefulTable"], "readwrite");
     var store = transaction.objectStore("gracefulTable");
     var req = store.get(username);

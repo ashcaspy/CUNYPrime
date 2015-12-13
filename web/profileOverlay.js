@@ -51,6 +51,10 @@ function loadProfile(){
     $("#profile_blanket").fadeIn("fast");
     //$("#profile").load("profileContent.html");
     profile_loaded = true;
+    if(searching == true){
+        fadeSearchOverlay();
+        searching = true;
+    }
 }
 
 function fadeProfile(needBlanket){
@@ -64,6 +68,10 @@ function loadResume(){
     $("#profile_blanket").fadeIn("fast");
     //$("#resume").load("resumeContent.html");
     resume_loaded = true;
+    if(searching == true){
+        fadeSearchOverlay();
+        searching = true;
+    }
     
 }
 
@@ -86,6 +94,9 @@ function loadScheduler(){
         loadTab(1);
     if (currentScheduleTab == -1)
         loadScheduleOverlay();
+    if(searching == true){
+        loadSearchOverlay();
+    }
 }
 
 function fadeScheduler(needBlanket){
@@ -93,6 +104,10 @@ function fadeScheduler(needBlanket){
     if (needBlanket == false) fadeBlanket();
     scheduler_loaded = false;
     fadeScheduleOverlay();
+    if(searching == true){
+        fadeSearchOverlay();
+        searching = true;
+    }
 }
 
 function fadeBlanket(){
@@ -120,11 +135,13 @@ function fadeScheduleOverlay(){
 }
 
 function loadSearchOverlay(){
+    searching = true;
     $("#search_overlay").fadeIn("fast");
     $("#search_blanket").fadeIn("fast");
 }
 
 function fadeSearchOverlay(){
+    searching = false;
     $("#search_overlay").fadeOut("fast");
     $("#search_blanket").fadeOut("fast");
 }
