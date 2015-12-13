@@ -16,31 +16,50 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-//retrieves and stores data that will never change
+/**
+ * retrieves and stores static school information
+ * @author Kat
+ */
 public class InstitutionData {
     CunyFirstClient client = new CunyFirstClient();
     Connection conn;
 
+    /**
+     * @param c database connection to use
+     */
     public InstitutionData(Connection c) {
         conn = c;
     }
 
+    /**
+     * @return the list of school options
+     */
     public List<HtmlOption> getSchools() {
         return client.getSelect(ID.selectSchool).getOptions();
     }
 
-    //assume setup was called, otherwise returns empty list
+    /**
+     * Get departments for current school, filter out blanks and skippedDepts
+     * @return a list of departments for the current school and semester
+     */
     public List<String> getDepts() {
         return client.getSelect(ID.selectDept).getOptions().stream().map(HtmlOption::getValueAttribute)
                 .filter(d -> !d.isEmpty() && !ID.skippedDepts.contains(d)).collect(Collectors.toList());
     }
 
+    /**
+     * @return semesters (by text) available for current school
+     */
     public List<String> getSemesters() {
         return client.getSelect(ID.selectTerm).getOptions().stream().map(HtmlOption::getText).collect(Collectors.toList());
     }
 
     private final String schoolTable = "schools";
 
+    /**
+     * Fill all tables for school ids, semesters, and departments
+     * @throws SQLException 
+     */
     public void createSelectionTables() throws SQLException {
         Statement sch = conn.createStatement();
         sch.executeUpdate("CREATE TABLE IF NOT EXISTS "+schoolTable+"(" +
@@ -48,19 +67,25 @@ public class InstitutionData {
                 "id varchar(10)," +
                 "PRIMARY KEY(id)" +
                 ");");
+        // insert school ids
         PreparedStatement st = conn.prepareStatement("insert into "+schoolTable+" values(?,?);");
         for(HtmlOption op: getSchools()) {
+            // get school name
             String school = op.getText();
+            // skip blank
             if(school.isEmpty()) {
                 continue;
             }
+            // get school id
             String id = op.getValueAttribute();
             st.setString(1, school);
             st.setString(2, id);
             st.executeUpdate();
 
+            // get all other info for this school
             client.setSchool(school);
 
+            // create depts and terms tables
             String depts_table = "depts_"+id;
             sch.executeUpdate("create table if not exists "+depts_table+"("+
                     "college varchar(6)," +
@@ -76,16 +101,22 @@ public class InstitutionData {
                     ");");
             PreparedStatement insertTerm = conn.prepareStatement("insert into "+college_terms+" values(?,?);");
             PreparedStatement insertDept = conn.prepareStatement("insert into "+depts_table+" values(?,?);");
+            
+            // iterate over semesters to get all depts
             for(String term: getSemesters()) {
+                // skip blank
                 if(term.isEmpty()) {
                     continue;
                 }
+                // insert semester
                 insertTerm.setString(1, id);
                 insertTerm.setString(2, term);
                 insertTerm.executeUpdate();
 
+                // set semester so depts can be accessed
                 client.setup(school, term);
 
+                // insert depts
                 for(String dept: getDepts()) {
                     if(dept.isEmpty()) {
                         continue;
@@ -100,11 +131,18 @@ public class InstitutionData {
         }
     }
     
-    
+    /**
+     * 
+     * @param school_id school id
+     * @return name of the table containing course info for this school
+     */
     public static String coursesTablename(String school_id) {
         return "college_courses" + school_id;
     }
     
+    /**
+     * create course tables for every school, without filling any
+     */
     public void createAllCourseTables() {
         try {
             String id;
@@ -118,15 +156,27 @@ public class InstitutionData {
         }
     }
 
+    /**
+     * Add all courses from this school to table
+     * @param school the school name to use
+     * @throws SQLException 
+     */
     public void addCourses(String school) throws SQLException {
+        // get school id
         PreparedStatement st = conn.prepareStatement("select id from "+schoolTable+" where name=?;");
         st.setString(1, school);
         ResultSet r = st.executeQuery();
         r.next();
         String id = r.getString(1);
+        
+        // get courses table name
         final String table = coursesTablename(id);
+        
+        // use to check if this course is in the table before loading its page
         st = conn.prepareStatement("SELECT * FROM "+table+" WHERE dept=? and nbr=?;");
         ResultSet rs;
+        
+        // iterate over all semesters
         client.setSchool(school);
         for(String sem: getSemesters()) {
             client.setup(school, sem);
@@ -148,6 +198,7 @@ public class InstitutionData {
 
                         //result set is empty
                         if(!rs.isBeforeFirst()) {
+                            // load and parse page
                             String key = Selector.select(ID.sectionNbr, c).get(0).id();
                             CourseData cd = new CourseData(client.getSection(key));
                             try {
@@ -166,7 +217,9 @@ public class InstitutionData {
     }
     
     
-    // create master table for every school without populating it
+    /**
+     * create master table for every school without populating it
+     */
     public void createSectionTables() {
         try {
             PreparedStatement st = conn.prepareStatement("select id from "+schoolTable);
@@ -181,11 +234,19 @@ public class InstitutionData {
         }
     }
     
-    // add all sections found in the given departments to a master table
+    /**
+     * add all sections found in the given departments to a master table
+     * @param school_id the school to check
+     * @param semester the semester to use
+     * @param depts the departments to add
+     */
     public void addSections(String school_id, String semester, Iterable<String> depts) {
         client.setup(school_id, semester);
+        
+        // two criteria - courseNumber and dept
         client.setSearchTerms(new MatchValuePair(ID.greaterThan, "0"), null, null, null, null, null);
 
+        // get depts
         for(String dept: depts) {
             try {
                 new Parser(client.getResults(dept)).addToTable(conn, school_id);

@@ -14,14 +14,24 @@ import java.util.HashSet;
 import java.util.Arrays;
 import java.util.regex.*;
 
+/**
+ * parses section info
+ * @author Kat
+ */
 public class Section {
+    /**
+     * 
+     * @param elem the div containing section info
+     */
     public Section(Element elem) {
+        // find how many timeslots there are
         Pattern p = Pattern.compile(ID.dayTimeRegex);
         Matcher m = p.matcher(Selector.select(ID.sectionTime, elem).get(0).ownText());
         int count;
         for(count = 0; m.find(); ++count){ }
 
 
+        // not TBA, parse timeslots
         if(count > 0) {
             days = new String[count];
             start = new Integer[count];
@@ -30,10 +40,12 @@ public class Section {
             for (int i = 0; m.find(); ++i) {
                 String[] temp = parseTime(m.group());
                 days[i] = temp[0];
+                // handle TBA
                 if (temp[1].equals(ID.TBA)) {
                     start[i] = -1;
                     end[i] = -1;
                 } else {
+                    // set times
                     temp = temp[1].split(" - ");
                     start[i] = hoursToInt(temp[0]);
                     end[i] = hoursToInt(temp[1]);
@@ -46,6 +58,7 @@ public class Section {
             start = end = new Integer[] {-1};
         }
 
+        // set condense
         if(count > 1) {
             HashSet<Integer> starts = new HashSet<>(Arrays.asList(start)), ends = new HashSet<>(Arrays.asList(end));
             //if this happens, then the only reason the timeslots were listed separately is the rooms
@@ -70,9 +83,14 @@ public class Section {
         open = isOpen(elem);
     }
 
-    //return strings representing the days and the hours
+    /**
+     * return the expected array, handle TBA
+     * @param secTime the string representing a day and time
+     * @return String[] {days, start-end}
+     */
     private String[] parseTime(String secTime) {
         if(secTime.equals(ID.TBA)) {
+            // can't split
             return new String[] {ID.TBA, ID.TBA};
         }
         else {
@@ -80,8 +98,15 @@ public class Section {
         }
     }
 
+    /**
+     * Converts time-string to an integer in military tme
+     * @param time
+     * @return 
+     */
     private int hoursToInt(String time) {
+        // strip all non-digits
         int numbers = Integer.parseInt(time.replaceAll("[^\\p{Digit}]", ""));
+        // check for PM
         //we don't need to care about midnight
         if(time.substring(time.length()-2).equals("PM") && !time.substring(0,2).equals("12")) {
             return numbers + 1200;
@@ -91,6 +116,11 @@ public class Section {
         }
     }
 
+    /**
+     * Check if this section is open
+     * @param e the element indicating if a section is open, closed, or waitlisted
+     * @return if the section is open
+     */
     private boolean isOpen(Element e) {
         //just check the alt attribute because this is easier
         return Selector.select(ID.openClosed, e).get(0).getElementsByTag("img").get(0)
@@ -181,6 +211,12 @@ public class Section {
 
     public final static String tablename = "_sections";
 
+    /**
+     * create section table
+     * @param conn database connection
+     * @param table tablename to use
+     * @throws SQLException 
+     */
     public static void createTable(Connection conn, String table) throws SQLException {
         Statement st = conn.createStatement();
         st.executeUpdate("CREATE TABLE IF NOT EXISTS " + table + "(" +

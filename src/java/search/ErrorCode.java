@@ -1,7 +1,7 @@
 package search;
 
 /**
- *
+ * Represents known error types
  * @author Kat
  */
 public enum ErrorCode {
@@ -25,18 +25,29 @@ public enum ErrorCode {
     // some fourth error we don't know about or didn't anticipate
     // I know there's one for not selecting Term/Institution but that should never come up
     
+    // for setting error array in find()
     ErrorCode(int i) {
         index = i;
     }
     
     public final int index;
+    
+    /**
+     * set the relevant element to true
+     * @param arr the array to modify
+     */
     public void setArray(boolean[] arr) {
+        // error types with an index of -1 are unexpected and ignored
         if(index >= 0) {
             arr[index] = true;
         }
     }
     
-    // chooses a value that best represents the error message
+    /**
+     * determine which error occurred from the error message
+     * @param msg Cunyfirst's error message
+     * @return the error type
+     */
     public static ErrorCode fromMsg(String msg) {
         if(msg.contains("maximum")) {
             return TOOMANY;
@@ -49,7 +60,12 @@ public enum ErrorCode {
         }
     }
     
-    // returns whichever of the two given values should take precedent
+    /**
+     * returns whichever of the two given values should take precedent
+     * @param ec1 first error type
+     * @param ec2 second error type
+     * @return the more important type
+     */
     public static ErrorCode max(ErrorCode ec1, ErrorCode ec2) {
         
         // check for equivalence

@@ -22,11 +22,27 @@ public class BackupSearch extends Search {
     
     private String masterTable;
     
-    // ignore semester since the tables don't keep that info
+    /**
+     * set school to search
+     * @param school school id
+     * @param semester ignored, here for compatibility reasons. Sections are from Spring 2016
+     */
     public void selectTerm(String school, String semester) {
         masterTable = Section.tablename + school;
+        // ignore semester since the tables don't keep that info
     }
     
+    /**
+     * insert sections
+     * @param courseNumber course number and comparison
+     * @param start min start hour
+     * @param end max end hour
+     * @param keyword unused
+     * @param professor uses contains
+     * @param days 
+     * @param departments departments to search for
+     * @param errors boolean array to set if there are any errors
+     */
     public void find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
@@ -38,9 +54,12 @@ public class BackupSearch extends Search {
         int before = 0, after = 0; // well if the search fails they would be
         
         try {
+            // todo: handle failed inserts gracefully
             Section.createTable(conn, tableName());
             
             before = countResults();
+            
+            // create select statement
             
             String depts, cnbr, allDays;
             
@@ -96,6 +115,7 @@ public class BackupSearch extends Search {
             // search within a half hour of the cutoff
             final int minutes = 30;
 
+            // set remaining search parameters
             if(null != start) {
                 int hour = (start-1) * 100;
                 insert.setInt(1, hour + minutes);
@@ -125,6 +145,7 @@ public class BackupSearch extends Search {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        // check if there were no results
         if(before == after) {
             ErrorCode.NORESULTS.setArray(errors);
         }
@@ -133,6 +154,9 @@ public class BackupSearch extends Search {
         }
     }
     
+    /**
+     * @return counts rows in tableName()
+     */
     private int countResults() {
         try {
             PreparedStatement count;
@@ -147,6 +171,11 @@ public class BackupSearch extends Search {
         }
     }
     
+    /**
+     * Get the string representing the given day
+     * @param day a number between 0 and 6
+     * @return the two-letter prefix Cunyfirst uses for that day
+     */
     protected String dayToString(int day) {
         switch(day) {
             case 0:

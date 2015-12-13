@@ -3,6 +3,10 @@ import java.util.Arrays;
 
 import java.util.List;
 
+/**
+ * Pair with the comparison type to use and the value to check for
+ * @author Kat
+ */
 public class MatchValuePair {
     public MatchValuePair(String comparison, String value) {
         if(!validComps.contains(comparison)) {

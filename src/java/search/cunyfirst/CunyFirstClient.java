@@ -13,15 +13,20 @@ import java.net.URL;
 import java.util.Map;
 
 
-
+/**
+ * For running searches on the publicly available class schedules
+ * @author Kat
+ */
 public class CunyFirstClient {
     public CunyFirstClient() {
-        client = new WebClient(BrowserVersion.CHROME); //silence errors
+        //silence errors
+        client = new WebClient(BrowserVersion.CHROME); 
         client.getOptions().setCssEnabled(false);
         client.getOptions().setJavaScriptEnabled(true);
         client.getCookieManager().setCookiesEnabled(true);
         client.setIncorrectnessListener(new Silent());
 
+        // create the connection
         try {
             request = new WebRequest(
                     new URL(ID.url),
@@ -38,15 +43,26 @@ public class CunyFirstClient {
 
     private HtmlPage searchPage = null;
     private HashMap<String, String> searchParameters = null;
+    // a copy of searchParameters when it is made, so params can be reset later
     private HashMap<String, String> resetParameters = null;
-
+    
+    // for loading course/section info after getting section results
     private HashMap<String, String> sectionRequestParams = null;
 
-    
+    /**
+     * 
+     * @param id the id of the select element
+     * @return the specified element cast as HtmlSelect
+     */
     public HtmlSelect getSelect(String id) {
         return (HtmlSelect) searchPage.getElementById(id);
     }
 
+    /**
+     * Sets the school by itself
+     * waits for all other options to be updated before returning
+     * @param school the school id
+     */
     public void setSchool(String school) {
         HtmlSelect inst = getSelect(ID.selectSchool);
         inst.setSelectedAttribute(school, true);
@@ -54,11 +70,18 @@ public class CunyFirstClient {
     }
 
 
-    //set institution, term
-    //has the effect of resetting all other search terms
+    /**
+     * Sets the initial search options: school, semester.
+     * Resets searchParameters.
+     * Defaults to Undergraduate where possible.
+     * @param school the school id
+     * @param semester the text representing the term ("year season Term"), if null will choose the last and presumably latest term
+     */
     public void setup(String school, String semester) {
+        // set school
         setSchool(school);
 
+        // set term
         HtmlSelect term = getSelect(ID.selectTerm);
         if(null != semester) {
             term.setSelectedAttribute(term.getOptionByText(semester), true);
@@ -68,6 +91,8 @@ public class CunyFirstClient {
         }
         client.waitForBackgroundJavaScript(10000);
         
+        // set career if there is only one option OR "Undergraduate" is valid
+        // for at least one school neither of these is applicable
         HtmlSelect selectCareer = getSelect(ID.selectCareer);
         // if there is only one option for career 
         // (not counting the initial blank one)
@@ -85,20 +110,27 @@ public class CunyFirstClient {
             }
         }
        
+        // set searchParameters
         List<NameValuePair> list = getFormParams(searchPage);
         searchParameters = new HashMap<>(list.size());
         for(NameValuePair p: list) {
             searchParameters.put(p.getName(), p.getValue());
         }
 
+        // set the code needed to submit the form
         searchParameters.put(ID.submitCode.getName(), ID.submitCode.getValue());
+        
+        // show closed classes
         searchParameters.put(ID.showClosed.getName(), ID.showClosed.getValue());
 
         //defaults
         resetParameters = (HashMap<String, String>) searchParameters.clone();
     }
 
-    //reset select search terms
+    /**
+     * reset the named search parameters
+     * @param keys 
+     */
     public void resetTerms(String... keys) {
         for(String k: keys) {
             searchParameters.put(k, resetParameters.get(k));
@@ -112,7 +144,16 @@ public class CunyFirstClient {
         }
     }
 
-    //call after setup
+    /**
+     * sets non-null search parameters - only call after setup()
+     * time parameters will be offset by a half hour
+     * @param courseNumber courseNumber a (comparison, text) pair to check against course number, defaults to >='0' which should get everything
+     * @param start earliest start hour
+     * @param end earlier end hour
+     * @param keyword keyword option
+     * @param professor professor option, uses contains
+     * @param days the days to select. "Include only" gets classes that meet on ALL of these days but not necessarily ONLY these days
+     */
     public void setSearchTerms(MatchValuePair courseNumber, Integer start, Integer end,
                                String keyword, String professor, int[] days) {
         if(null != courseNumber) {
@@ -147,13 +188,24 @@ public class CunyFirstClient {
         }
     }
 
-    //sets one search term (selectId -> pair.comparison, textId -> pair.value)
+    /**
+     * sets one two-part search term (selectId -> pair.comparison, textId -> pair.value)
+     * @param selectId the id of the select element
+     * @param textId the id of the text box
+     * @param pair pair.comparison sets the select, pair.value sets the text
+     */
     void setMatch(String selectId, String textId, MatchValuePair pair) {
         HtmlSelect match = getSelect(selectId);
         match.setSelectedAttribute(match.getOptionByValue(pair.comparison), true);
         ((HtmlTextInput)searchPage.getElementById(textId)).setText(pair.value);
     }
 
+    /**
+     * 
+     * @param dept the department to search for
+     * @return the results page of all current search terms
+     * @throws IOException 
+     */
     public HtmlPage getResults(String dept) throws IOException {
         searchParameters.put(ID.deptCode, dept);
         HtmlPage results = getResults();
@@ -162,7 +214,12 @@ public class CunyFirstClient {
         return results;
     }
 
-    //assumes setup and setSearchTerms have been already called
+    /**
+     * Runs a search and returns the results. 
+     * assumes setup and setSearchTerms have been already called
+     * @return the results page of all current search terms
+     * @throws IOException 
+     */
     public HtmlPage getResults() throws IOException {
         request.setRequestParameters(paramsToList(searchParameters));
         HtmlPage results = client.getPage(request);
@@ -178,12 +235,23 @@ public class CunyFirstClient {
         return results;
     }
 
+    /**
+     * load course/section info page (contains enrollment info we don't use and course info that we do use)
+     * @param sectionNbr the id of the element containing the section number
+     * @return the section page
+     * @throws IOException 
+     */
     public HtmlPage getSection(String sectionNbr) throws IOException {
         sectionRequestParams.put(ID.submitCode.getName(), sectionNbr);
         request.setRequestParameters(paramsToList(sectionRequestParams));
         return client.getPage(request);
     }
 
+    /**
+     * converts a map to a list of NameValuePair
+     * @param params a map of String pairs
+     * @return params.toList.map(new NameValuePair(_,_))
+     */
     private List<NameValuePair> paramsToList(HashMap<String, String> params) {
         //convert map to list
         List<NameValuePair> newParams = new ArrayList<>();
@@ -191,6 +259,11 @@ public class CunyFirstClient {
         return newParams;
     }
 
+    /**
+     * Get request parameters from the first form on page. Works for both searchPage and results pages
+     * @param page the page containing the form
+     * @return request parameters
+     */
     private List<NameValuePair> getFormParams(HtmlPage page) {
         return page.getForms().get(0).getWebRequest(null).getRequestParameters();
     }

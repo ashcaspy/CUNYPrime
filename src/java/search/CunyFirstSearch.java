@@ -16,30 +16,60 @@ import java.util.stream.Collectors;
 import search.parser.Parser;
 import search.parser.Section;
 
-// find sections using cunyfirst
+/** 
+ * search for sections using CUNYirst
+ * 
+ * @author Kat
+ */
 public class CunyFirstSearch extends Search {
+    // the connection to CUNYFirst
     private CunyFirstClient client = new CunyFirstClient();
 
     protected CunyFirstSearch(Connection c, int id) {
         super(c, id);
     }
 
+    /**
+     * initialize and select school and term
+     * @param c the database connection to use
+     * @param id the Search id to create a unique table
+     * @param college forwarded to selectTerm
+     * @param semester forwarded to selectTerm
+     */
     protected CunyFirstSearch(Connection c, int id, String college, String semester) {
         this(c, id);
         selectTerm(college, semester);
     }
 
+    /**
+     * Sets the school and semester, which are required for accessing everything else
+     * @param school the school id
+     * @param semester the semester (by text)
+     */
     public void selectTerm(String school, String semester) {
         client.setup(school, semester);
     }
 
+    /**
+     * Runs a search with these parameters, adds the results to the table sections_#
+     * Any set to null will be ignored
+     * @param courseNumber a (comparison, text) pair to check against course number, defaults to >='0' which should get everything
+     * @param start minimum start time (an hour between 0 and 23)
+     * @param end maximum end time
+     * @param keyword keyword option
+     * @param professor professor option, uses contains
+     * @param days the days to select. Will get classes that meet on ALL of these days but not necessarily ONLY these days
+     * @param departments a list of departments to check - will run one search for EACH department
+     * @param errors - a boolean array that gets set to true if a result happens. More than one may be set. {SUCCESS, NORESULTS, TOOMANY}
+     */
     public void find(MatchValuePair courseNumber,
                     Integer start, Integer end,
                     String keyword, String professor,
                     int[] days, List<String> departments,
                     boolean[] errors) {
 
-        //clear previous search parameters in case some of these are null
+        //clear previous search parameters 
+        //in case some of the new ones are null and should be cleared
         client.resetTerms();
         
         if(null == courseNumber) {
