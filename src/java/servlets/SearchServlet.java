@@ -792,6 +792,22 @@ public class SearchServlet extends HttpServlet {
 
             // delete any rows that aren't actually requirements
             
+            // get all 1-course depts where hasAt is true and cnum is not null
+            // since contains is not foolproof
+            for(Entry<String, List<JSONObject>> entry : reqs_by_dept.entrySet()) {
+                if(entry.getValue().size() == 1) {
+                    try {
+                        JSONObject obj = entry.getValue().get(0);
+                        if(obj.getBoolean("hasAt")
+                                && obj.get("cnum") != JSONObject.NULL) {
+                            others.add(entry.getKey());
+                        }
+                    } catch (JSONException e) {
+                        continue;
+                    }
+                }
+            }
+            
             PreparedStatement delete;
             for(String department: others) {
                 // courses to keep
