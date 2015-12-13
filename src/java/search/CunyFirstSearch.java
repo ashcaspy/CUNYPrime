@@ -77,17 +77,6 @@ public class CunyFirstSearch extends Search {
             // ensures at least one was picked
             courseNumber = new MatchValuePair(ID.greaterThan, "0");
         }
-        
-        // add an additional criteria that doesn't filter anything
-        // since for some schools (I think just the Grad Center now, 
-        // since it has neither "Undergraduate" not only one option)
-        // the career option isn't selected
-        // and error-handling assumes that MORECRITERIA will never happen
-        // use 1 since client subtracts a half hour from the start time
-        // I don't think anyone cares about classes that start before 12:30AM
-        if(null == start) {
-            start = 1;
-        }
 
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
