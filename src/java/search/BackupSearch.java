@@ -93,7 +93,7 @@ public class BackupSearch extends Search {
             }
             
             // check days
-            if(days != null) {
+            if(days != null && days.length > 0) {
                 // todo: probably bugged
                 String[] checks = new String[days.length];
                 for(int i=0; i<days.length; ++i) {

@@ -436,7 +436,7 @@ public class SearchServlet extends HttpServlet {
                     keyword,
                     prof,
                     new int[] {},
-                    Arrays.asList(new String[]{dept}),
+                    ("none".equalsIgnoreCase(dept)) ? null : Arrays.asList(new String[]{dept}),
                     findErrors
             );
             /******************************************************************/
