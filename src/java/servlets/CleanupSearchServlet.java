@@ -76,7 +76,7 @@ public class CleanupSearchServlet extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String query1 ="drop table if exists _sections1_" + id_num;
+        String query1 ="drop table if exists _sections_" + id_num;
         String query2 ="drop table if exists best_fit_" + id_num;
         String query3 ="drop table if exists some_conflicts_" + id_num;
         String query4 ="drop table if exists others_" + id_num;
