@@ -97,14 +97,14 @@ public class BackupSearch extends Search {
                 // todo: probably bugged
                 String[] checks = new String[days.length];
                 for(int i=0; i<days.length; ++i) {
-                    checks[i] = "days LIKE '%"+dayToString(days[i])+"%'";
+                    checks[i] = "days LIKE '%"+ID.daysPrefixes[i]+"%'";
                 }
                 allDays = " AND " + String.join(" AND ", checks) + " ";
             } else {
                 allDays = "";
             }
-
             
+
             insert = conn.prepareStatement("INSERT INTO " + tableName() + " SELECT * FROM "+ masterTable +
                     " WHERE " + " cnbr" + cnbr + depts + allDays +
                     " AND starttime>=?" +
@@ -168,32 +168,6 @@ public class BackupSearch extends Search {
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
-        }
-    }
-    
-    /**
-     * Get the string representing the given day
-     * @param day a number between 0 and 6
-     * @return the two-letter prefix Cunyfirst uses for that day
-     */
-    protected String dayToString(int day) {
-        switch(day) {
-            case 0:
-                return "Su";
-            case 1:
-                return "Mo";
-            case 2:
-                return "Tu";
-            case 3:
-                return "We";
-            case 4:
-                return "Th";
-            case 5:
-                return "Fr";
-            case 6:
-                return "Sa";
-            default:
-                return "";
         }
     }
 }

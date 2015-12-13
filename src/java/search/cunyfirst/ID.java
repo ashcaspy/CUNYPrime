@@ -104,10 +104,11 @@ public class ID {
     private final static String dayFormat = "\\p{Upper}\\p{Lower}";
     private final static String timeFormat = "\\p{Digit}\\p{Digit}?:\\p{Digit}\\p{Digit}[AP]M";
     public final static String dayTimeRegex = "("+dayFormat+")+ "+timeFormat+" - "+timeFormat;
+    
+    public static String[] daysPrefixes = new String[] {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
     //open or closed
     public final static String openClosed = searchId("win0divDERIVED_CLSRCH_SSR_STATUS_LONG");
-    //public final static
 
     //section page
     public final static String secCourseName = "DERIVED_CLSRCH_DESCR200";
