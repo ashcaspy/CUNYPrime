@@ -36,7 +36,7 @@ function parseCourseResultset(data){
     else if (errors[2] == "true")
         alert("One or more parts of your request resulted in too many courses!");
     if (data.indexOf("BEST_FIT") == -1){
-        var tempCourseArray = data.split("ENTRY_END");
+        var tempCourseArray = data.substring(data.indexOf("ERRORS_END") + 10).split("ENTRY_END");
         courseInfoArray[0] = [];
         courseInfoArray[1] = [];
         courseInfoArray[2] = [];
