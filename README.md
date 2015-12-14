@@ -1,4 +1,4 @@
-# [CUNYPrime](http://safe-dusk-8588.herokuapp.com)
+# [CUNYPrime](http://cunyprime.herokuapp.com)
 
 Retrieves CUNYFirst class schedules dynamically (undergraduate only) and builds alternate weekly schedules based on preferred times. 
 Additional course information (eg. description, requirements, credits) is available for some schools.
