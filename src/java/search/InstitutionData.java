@@ -158,28 +158,22 @@ public class InstitutionData {
 
     /**
      * Add all courses from this school to table
-     * @param school the school name to use
+     * @param school_id the school name to use
      * @throws SQLException 
      */
-    public void addCourses(String school) throws SQLException {
-        // get school id
-        PreparedStatement st = conn.prepareStatement("select id from "+schoolTable+" where name=?;");
-        st.setString(1, school);
-        ResultSet r = st.executeQuery();
-        r.next();
-        String id = r.getString(1);
-        
+    public void addCourses(String school_id) throws SQLException {
         // get courses table name
-        final String table = coursesTablename(id);
+        final String table = coursesTablename(school_id);
         
         // use to check if this course is in the table before loading its page
+        PreparedStatement st;
         st = conn.prepareStatement("SELECT * FROM "+table+" WHERE dept=? and nbr=?;");
         ResultSet rs;
         
         // iterate over all semesters
-        client.setSchool(school);
+        client.setSchool(school_id);
         for(String sem: getSemesters()) {
-            client.setup(school, sem);
+            client.setup(school_id, sem);
             for (String dept : getDepts()) {
                 if (ID.skippedDepts.contains(dept)) {
                     continue;
