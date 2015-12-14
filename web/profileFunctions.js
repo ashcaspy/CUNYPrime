@@ -84,6 +84,9 @@ function populateMajors(){
 */
 function isAClass(input){
     var inputSplit = input.split(" ");
+    if(isNaN(input) == false){
+         return true;
+    }
     if(inputSplit.length < 2  || input == "Sublist:"){
         return false;
     }
@@ -243,7 +246,7 @@ function populateCourseRequirements(inputString){
             temp = temp.replace("and", "");
             var temp2 =  temp.split(" ");
 
-            if(temp2[0] == "FALL" || temp2[0] == "SPRING" || temp2[0] == "SUMMER" || temp2[0] == "WINTER"){
+            if(temp2[0] == "FALL" || temp2[0] == "SPRING" || temp2[0] == "SUMMER" || temp2[0] == "WINTER" || isNaN(temp) == false){
                 courses[courses.length -1] = courses[courses.length-1].concat(temp);
             } else {
                 courses.push(temp);

@@ -145,7 +145,7 @@ public class ProfileParser {
     /**
      * A function that checks to see if all the characters in a given String is in all caps.
      * @param param, A String to be checked to see if all its character is in all caps.
-     * @return A boolean that indciates whether the string passed to the function, param, is in all caps.
+     * @return A boolean that indicates whether the string passed to the function, param, is in all caps.
      */
     public static boolean isAllCaps(String param) {
         for (int i = 0; i < param.length(); i++) {
@@ -214,7 +214,7 @@ public class ProfileParser {
 
     /**
      * A function that parses the information of interest from a pdf or cgi file, and returns the information as a string.
-     * @param fileInput, An InputSTream that is the pdf or cgi file to be parsed.
+     * @param fileInput, An InputStream that is the pdf or cgi file to be parsed.
      * @return, A string that contains information parsed from the pdf or cgi file.
      */
     public String parseProfile(InputStream fileInput) {
