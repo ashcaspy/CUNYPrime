@@ -10,6 +10,7 @@ import search.parser.SearchError;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,6 +78,11 @@ public class CunyFirstSearch extends Search {
             // ensures at least one was picked
             courseNumber = new MatchValuePair(ID.greaterThan, "0");
         }
+        
+        if(null == departments || departments.isEmpty()) {
+            departments = new ArrayList<>();
+            departments.add("");
+        }
 
         client.setSearchTerms(courseNumber, start, end, keyword, professor, days);
 
@@ -86,26 +92,16 @@ public class CunyFirstSearch extends Search {
             e.printStackTrace();
         }
         
-        if(null != departments) {
-            for (String dept : departments) {
-                try {
-                    new Parser(client.getResults(dept)).addToTable(conn, tableName());
-                    ErrorCode.SUCCESS.setArray(errors);
-                } catch (IOException e) {
-                } catch (SearchError e) {
-                    ErrorCode.fromMsg(e.msg).setArray(errors);
-                }
+        for (String dept : departments) {
+            try {
+                new Parser(client.getResults(dept)).addToTable(conn, tableName());
+                ErrorCode.SUCCESS.setArray(errors);
+            } catch (IOException e) {
+            } catch (SearchError e) {
+                ErrorCode.fromMsg(e.msg).setArray(errors);
             }
         }
-        else {
-            try {
-                new Parser(client.getResults()).addToTable(conn, tableName());
-                ErrorCode.SUCCESS.setArray(errors);
-            } catch (IOException e) { }
-              catch (SearchError e) {
-                  ErrorCode.fromMsg(e.msg).setArray(errors);
-              }
-        }
+        
         /*
         ++counter;
         if(counter > 2) {
